@@ -11,7 +11,6 @@ import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 
 public class brewRecipes {
-//FIXME: fix all the brewing shit cuz idk how the fuck to do it and everything broke.
     public void registerRecipes(){
         BrewingRecipeRegistry.addRecipe(new BrewingRecipe(Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION),Potions.WATER)), Ingredient.of(new ItemStack(ModItems.SULPHUR.get())), new ItemStack(ModItems.ACID.get())));
     }
