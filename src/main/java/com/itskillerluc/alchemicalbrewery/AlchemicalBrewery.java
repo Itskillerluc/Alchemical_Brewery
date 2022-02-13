@@ -1,6 +1,8 @@
 package com.itskillerluc.alchemicalbrewery;
 
+import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
+import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
 import net.minecraft.world.level.block.Blocks;
@@ -24,6 +26,8 @@ public class AlchemicalBrewery
         // Register the setup method for modloading
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.register(eventBus);
+        ModFluids.register(eventBus);
+        ModBlocks.register(eventBus);
 
         eventBus.addListener(this::setup);
 

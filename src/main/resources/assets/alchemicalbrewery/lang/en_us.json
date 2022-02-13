@@ -1,6 +1,8 @@
 {
   "item.alchemicalbrewery.sulphur": "Sulphur",
   "item.alchemicalbrewery.acid": "Acid",
+  "item.alchemicalbrewery.acid_bucket": "Acid",
+  "item.alchemicalbrewery.salt": "Salt",
 
   "tooltip.alchemicalbrewery.acid": "\u00A75I wouldn't drink this if I were you."
 }

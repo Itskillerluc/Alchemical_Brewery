@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "alchemicalbrewery:acid_flowing",
+    "alchemicalbrewery:acid_fluid"
+  ]
+}
