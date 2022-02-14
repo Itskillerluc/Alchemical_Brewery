@@ -1,8 +1,10 @@
 {
   "item.alchemicalbrewery.sulphur": "Sulphur",
   "item.alchemicalbrewery.acid": "Acid",
-  "item.alchemicalbrewery.acid_bucket": "Acid",
+  "item.alchemicalbrewery.acid_bucket": "Bucket Of Acid",
+  "item.alchemicalbrewery.chemical_bucket": "Bucket Of Chemicals",
   "item.alchemicalbrewery.salt": "Salt",
+  "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
 
   "tooltip.alchemicalbrewery.acid": "\u00A75I wouldn't drink this if I were you."
 }

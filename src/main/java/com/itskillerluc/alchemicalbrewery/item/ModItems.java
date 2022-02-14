@@ -16,6 +16,7 @@ public class ModItems {
     public static final RegistryObject<Item> ACID = ITEMS.register("acid", () -> new AcidItem(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB).stacksTo(16)));
     public static final RegistryObject<Item> SALT = ITEMS.register("salt", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
     public static final RegistryObject<Item> ACID_BUCKET = ITEMS.register("acid_bucket", () -> new BucketItem(()->ModFluids.ACID_FLUID.get(),new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB).stacksTo(1)));
+    public static final RegistryObject<Item> CHEMICAL_BUCKET = ITEMS.register("chemical_bucket", () -> new BucketItem(()->ModFluids.CHEMICAL_FLUID.get(),new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB).stacksTo(1)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
