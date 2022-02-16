@@ -1,0 +1,20 @@
+package com.itskillerluc.alchemicalbrewery.tileentity;
+
+import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
+import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+public class ModTileEntities {
+    public static DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, AlchemicalBrewery.MOD_ID);
+
+    public static RegistryObject<BlockEntityType<ElementalExtractorTile>> ELEMENTALEXTRACTORTILE =  TILE_ENTITIES.register("elementalextractortile",()->BlockEntityType.Builder.of(ElementalExtractorTile::new, ModBlocks.ELEMENTALEXTRACTOR.get()).build(null));
+
+    public static void register(IEventBus eventBus){
+        TILE_ENTITIES.register(eventBus);
+    }
+
+}

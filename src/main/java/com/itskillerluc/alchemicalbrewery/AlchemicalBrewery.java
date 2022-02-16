@@ -1,14 +1,20 @@
 package com.itskillerluc.alchemicalbrewery;
 
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
+import com.itskillerluc.alchemicalbrewery.container.ModContainers;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
+import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
+import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
+import com.mojang.blaze3d.platform.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +34,8 @@ public class AlchemicalBrewery
         ModItems.register(eventBus);
         ModFluids.register(eventBus);
         ModBlocks.register(eventBus);
+        ModContainers.register(eventBus);
+        ModTileEntities.register(eventBus);
 
         eventBus.addListener(this::setup);
 
@@ -49,5 +57,11 @@ public class AlchemicalBrewery
 
     public void registerRecipes() {
         new brewRecipes().registerRecipes();
+    }
+
+    private void doClientStuff(final FMLClientSetupEvent event){
+        event.enqueueWork(()->{
+            MenuScreens.register(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), ElementalExtractorScreen::new);
+        });
     }
 }
