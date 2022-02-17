@@ -1,25 +1,25 @@
-# eclipse
+.gitattributes
+.gradle
 bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
+build
+logs
+run
+src/generated/resources/.cache
 
-# idea
-out
+.classpath
+.idea
+.metadata
+.project
+.settings
+.vscode
+*.iml
 *.ipr
 *.iws
-*.iml
-.idea
-
-# gradle
-build
-.gradle
-
-# other
+*.launch
 eclipse
-run
+out
+src/test
 
-# Files from Forge MDK
-forge*changelog.txt
+.DS_Store
+desktop.ini
+thumbs.db
