@@ -19,19 +19,19 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 
 public class ElementalExtractorContainer extends AbstractContainerMenu {
-    private final BlockEntity tileEntity;
+    private final ElementalExtractorTile tileEntity;
     private final IItemHandler playerInventory;
     private final ContainerData data;
     private final Level level;
 
-    public ElementalExtractorContainer(int windowId, Inventory inv) {
-        this(windowId, inv, new SimpleContainerData(4));
+    public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf friendlyByteBuf) {
+        this(windowId, inv, inv.player.level.getBlockEntity(friendlyByteBuf.readBlockPos()), new SimpleContainerData(4));
     }
 
-    public ElementalExtractorContainer(int windowId, Inventory playerInventory,ContainerData data) {
+    public ElementalExtractorContainer(int windowId, Inventory playerInventory,BlockEntity entity,ContainerData data) {
         super(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), windowId);
         checkContainerSize(playerInventory, 4);
-        tileEntity = ((ElementalExtractorTile) data);
+        tileEntity = ((ElementalExtractorTile)entity);
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
         layoutPlayerInventorySlots(8, 86);

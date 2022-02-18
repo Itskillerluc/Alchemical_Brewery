@@ -179,7 +179,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
-        return new ElementalExtractorContainer(pContainerId, pInventory, data);
+        return new ElementalExtractorContainer(pContainerId, pInventory,this, this.data);
     }
 
 
