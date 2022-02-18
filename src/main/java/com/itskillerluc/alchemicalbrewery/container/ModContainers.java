@@ -19,7 +19,7 @@ public class ModContainers {
     public static DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, AlchemicalBrewery.MOD_ID);
 
     public static final RegistryObject<MenuType<ElementalExtractorContainer>> ELEMENTALEXTRACTORCONTAINER =
-            registerMenuType(ElementalExtractorContainer::new, "cobalt_blaster_menu");
+            registerMenuType(ElementalExtractorContainer::new, "elementalextractorcontainer");
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory,
                                                                                                   String name) {

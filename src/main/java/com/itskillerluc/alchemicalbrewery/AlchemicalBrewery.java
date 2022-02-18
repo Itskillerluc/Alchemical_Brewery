@@ -38,6 +38,7 @@ public class AlchemicalBrewery
         ModTileEntities.register(eventBus);
 
         eventBus.addListener(this::setup);
+        eventBus.addListener(this::doClientStuff);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

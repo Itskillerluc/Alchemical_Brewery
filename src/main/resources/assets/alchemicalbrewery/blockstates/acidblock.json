@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "minecraft:block/lava"
+    },
+    "level=1": {
+      "model": "minecraft:block/lava"
+    },
+    "level=2": {
+      "model": "minecraft:block/lava"
+    },
+    "level=3": {
+      "model": "minecraft:block/lava"
+    },
+    "level=4": {
+      "model": "minecraft:block/lava"
+    },
+    "level=5": {
+      "model": "minecraft:block/lava"
+    },
+    "level=6": {
+      "model": "minecraft:block/lava"
+    },
+    "level=7": {
+      "model": "minecraft:block/lava"
+    },
+    "level=8": {
+      "model": "minecraft:block/lava"
+    },
+    "level=9": {
+      "model": "minecraft:block/lava"
+    },
+    "level=10": {
+      "model": "minecraft:block/lava"
+    },
+    "level=11": {
+      "model": "minecraft:block/lava"
+    },
+    "level=12": {
+      "model": "minecraft:block/lava"
+    },
+    "level=13": {
+      "model": "minecraft:block/lava"
+    },
+    "level=14": {
+      "model": "minecraft:block/lava"
+    },
+    "level=15": {
+      "model": "minecraft:block/lava"
+    }
+  }
+}

@@ -24,16 +24,14 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     private final ContainerData data;
     private final Level level;
 
-    public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf extraData) {
-        this(windowId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
+    public ElementalExtractorContainer(int windowId, Inventory inv) {
+        this(windowId, inv, new SimpleContainerData(4));
     }
 
-    //,BlockPos pos, Level level , Player player,
-
-    public ElementalExtractorContainer(int windowId, Inventory playerInventory,BlockEntity entity, ContainerData data) {
+    public ElementalExtractorContainer(int windowId, Inventory playerInventory,ContainerData data) {
         super(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), windowId);
         checkContainerSize(playerInventory, 4);
-        tileEntity = ((ElementalExtractorTile) entity);
+        tileEntity = ((ElementalExtractorTile) data);
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
         layoutPlayerInventorySlots(8, 86);
@@ -55,7 +53,8 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(tileEntity.getLevel(), tileEntity.getBlockPos()), pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());
+        return stillValid(ContainerLevelAccess.create(level,tileEntity.getBlockPos()),
+                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());
     }
 
 

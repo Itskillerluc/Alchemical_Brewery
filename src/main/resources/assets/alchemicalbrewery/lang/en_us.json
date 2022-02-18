@@ -1,10 +1,13 @@
 {
   "item.alchemicalbrewery.sulphur": "Sulphur",
   "item.alchemicalbrewery.acid": "Acid",
+  "item.alchemicalbrewery.fuelmix": "Fuelmix",
   "item.alchemicalbrewery.acid_bucket": "Bucket Of Acid",
   "item.alchemicalbrewery.chemical_bucket": "Bucket Of Chemicals",
   "item.alchemicalbrewery.salt": "Salt",
   "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
+  "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
+  "screen.alchemicalbrewery.elementalextractor": "Elemental Extractor",
 
   "tooltip.alchemicalbrewery.acid": "\u00A75I wouldn't drink this if I were you."
 }

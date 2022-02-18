@@ -1,14 +1,22 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
 
+import com.itskillerluc.alchemicalbrewery.block.custom.ElementalExtractorBlock;
+import com.itskillerluc.alchemicalbrewery.container.ElementalExtractorContainer;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.TickTask;
 import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,6 +25,8 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.phys.AABB;
@@ -29,7 +39,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ElementalExtractorTile extends BlockEntity {
+public class ElementalExtractorTile extends BlockEntity implements MenuProvider {
 
     private final ItemStackHandler itemHandler = createHandler();
     private final LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
@@ -161,16 +171,26 @@ public class ElementalExtractorTile extends BlockEntity {
 
     }
 
+    @Override
+    public Component getDisplayName() {
+        return new TextComponent("Elemental Extractor");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+        return new ElementalExtractorContainer(pContainerId, pInventory, data);
+    }
+
 
 
     //FIXME
-    public static void tick(ElementalExtractorTile pTileEntity){
-
-        if(pTileEntity.IsBurning){
-            pTileEntity.BurnTime --;
+    public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
+        if(pBlockEntity.IsBurning){
+            pBlockEntity.BurnTime --;
         }
-        if(pTileEntity.BurnTime <= 0 && pTileEntity.IsBurning){
-            pTileEntity.OutputItem();
+        if(pBlockEntity.BurnTime <= 0 && pBlockEntity.IsBurning){
+            pBlockEntity.OutputItem();
         }
     }
 
@@ -200,19 +220,5 @@ public class ElementalExtractorTile extends BlockEntity {
         super.onLoad();
     }
 
-    @Override
-    public AABB getRenderBoundingBox() {
-        return super.getRenderBoundingBox();
-    }
 
-    @Override
-    public void requestModelDataUpdate() {
-        super.requestModelDataUpdate();
-    }
-
-    @NotNull
-    @Override
-    public IModelData getModelData() {
-        return super.getModelData();
-    }
 }
