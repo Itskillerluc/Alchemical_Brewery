@@ -39,8 +39,8 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
             if(entity instanceof ElementalExtractorTile) {
-                NetworkHooks.openGui(((ServerPlayer)pPlayer), (ElementalExtractorTile)entity);
-                //pPlayer.openMenu((MenuProvider) entity);
+                //NetworkHooks.openGui(((ServerPlayer)pPlayer), (ElementalExtractorTile)entity, pPos);
+                pPlayer.openMenu((ElementalExtractorTile)entity);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }
@@ -53,7 +53,7 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return ModTileEntities.ELEMENTALEXTRACTORTILE.get().create(pPos, pState);
+        return new ElementalExtractorTile(pPos, pState);
     }
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {

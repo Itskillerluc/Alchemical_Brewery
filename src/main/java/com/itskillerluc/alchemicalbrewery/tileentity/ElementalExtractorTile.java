@@ -203,6 +203,7 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
 
     //FIXME
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
+        Log.info("tick");
         if(!pBlockEntity.IsBurning){
             pBlockEntity.ElementCreate();
         }

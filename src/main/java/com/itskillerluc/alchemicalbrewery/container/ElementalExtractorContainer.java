@@ -46,6 +46,7 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
         this.addSlot(new Slot(container, 1, 69, 34));
         this.addSlot(new Slot(container, 2, 69, 66));
         this.addSlot(new Slot(container, 3, 136, 34));
+        this.addDataSlots(data);
     }
 
     public boolean isBurning(){
