@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.TickTask;
+import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -22,10 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEventListener;
@@ -38,8 +36,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jline.utils.Log;
 
-public class ElementalExtractorTile extends BlockEntity implements MenuProvider {
+public class ElementalExtractorTile extends BaseContainerBlockEntity implements MenuProvider {
 
     private final ItemStackHandler itemHandler = createHandler();
     private final LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
@@ -154,10 +153,19 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         boolean ElementInFirstSlot = this.itemHandler.getStackInSlot(0).getCount() > 0 && this.itemHandler.getStackInSlot(0).getItem() == Items.DIAMOND;
         boolean CapsuleInSecondSlot = this.itemHandler.getStackInSlot(1).getCount() > 0 && this.itemHandler.getStackInSlot(1).getItem() == Items.IRON_INGOT;
         boolean FuelInThirdSlot = this.itemHandler.getStackInSlot(2).getCount() > 0 && this.itemHandler.getStackInSlot(2).getItem() == ModItems.FUELMIX.get();
-
+        if (ElementInFirstSlot){
+            Log.info("element");
+        }
+        if (CapsuleInSecondSlot){
+            Log.info("Capsule");
+        }
+        if (FuelInThirdSlot){
+            Log.info("fuel");
+        }
         if (ElementInFirstSlot && CapsuleInSecondSlot && FuelInThirdSlot && !IsBurning){
+            Log.info("craft");
             this.itemHandler.getStackInSlot(0).shrink(1);
-            this.itemHandler.getStackInSlot(2).shrink(1);
+            this.itemHandler.getStackInSlot(1).shrink(1);
             this.itemHandler.getStackInSlot(2).shrink(1);
             this.BurnTime = TotalBurnTime;
             this.IsBurning = true;
@@ -166,26 +174,38 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
 
     public void OutputItem(){
         //TODO: change to correct item
-        this.itemHandler.insertItem(1, new ItemStack(Items.NETHER_STAR), false);
+        this.itemHandler.insertItem(4, new ItemStack(Items.NETHER_STAR), false);
         IsBurning = false;
 
     }
-
+    /*
     @Override
     public Component getDisplayName() {
         return new TextComponent("Elemental Extractor");
-    }
+    }*/
 
+    @Override
+    protected Component getDefaultName() {
+        return new TextComponent("Elemental Extractor");
+    }
+    /*
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
         return new ElementalExtractorContainer(pContainerId, pInventory,this, this.data);
-    }
+    }*/
 
+    @Override
+    protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
+        return new ElementalExtractorContainer(pContainerId, pInventory,this, this.data);
+    }
 
 
     //FIXME
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
+        if(!pBlockEntity.IsBurning){
+            pBlockEntity.ElementCreate();
+        }
         if(pBlockEntity.IsBurning){
             pBlockEntity.BurnTime --;
         }
@@ -221,4 +241,47 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
     }
 
 
+    @Override
+    public int getContainerSize() {
+        return 4;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getItem(int pIndex) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeItem(int pIndex, int pCount) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int pIndex) {
+        return null;
+    }
+
+    @Override
+    public void setItem(int pIndex, ItemStack pStack) {
+
+    }
+
+    @Override
+    public boolean stillValid(Player pPlayer) {
+        if (this.level.getBlockEntity(this.worldPosition) != this) {
+            return false;
+        } else {
+            return pPlayer.distanceToSqr((double)this.worldPosition.getX() + 0.5D, (double)this.worldPosition.getY() + 0.5D, (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
+        }
+    }
+
+    @Override
+    public void clearContent() {
+
+    }
 }

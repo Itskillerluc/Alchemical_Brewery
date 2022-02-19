@@ -38,8 +38,7 @@ public class ElementalExtractorScreen extends AbstractContainerScreen<ElementalE
         RenderSystem.setShaderTexture(0, GUI);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight);
-
+        this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight+32);
         if (menu.isBurning()){
             blit(pPoseStack, x + 67, y + 51, 180, 4, 17, 14);
         }

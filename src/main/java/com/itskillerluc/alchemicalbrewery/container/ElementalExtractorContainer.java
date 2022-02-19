@@ -6,6 +6,8 @@ import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalExtractorTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
@@ -19,32 +21,31 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 
 public class ElementalExtractorContainer extends AbstractContainerMenu {
-    private final ElementalExtractorTile tileEntity;
+    //private final ElementalExtractorTile tileEntity;
     private final IItemHandler playerInventory;
     private final ContainerData data;
     private final Level level;
+    private final Container container;
 
-    public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf friendlyByteBuf) {
-        this(windowId, inv, inv.player.level.getBlockEntity(friendlyByteBuf.readBlockPos()), new SimpleContainerData(4));
+    public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf extraData) {
+        this(windowId, inv, new SimpleContainer(3), new SimpleContainerData(1));
     }
 
-    public ElementalExtractorContainer(int windowId, Inventory playerInventory,BlockEntity entity,ContainerData data) {
+    public ElementalExtractorContainer(int windowId, Inventory playerInventory,Container container,ContainerData data) {
         super(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), windowId);
         checkContainerSize(playerInventory, 4);
-        tileEntity = ((ElementalExtractorTile)entity);
+        //this.tileEntity = ((ElementalExtractorTile) entity);
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
         layoutPlayerInventorySlots(8, 86);
         this.data = data;
+        this.container = container;
 
-        if (tileEntity != null){
-            tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                addSlot(new SlotItemHandler(h, 0, 17, 33));
-                addSlot(new SlotItemHandler(h, 1, 68, 33));
-                addSlot(new SlotItemHandler(h, 2, 68, 65));
-                addSlot(new SlotItemHandler(h, 3, 135, 33));
-            });
-        }
+
+        this.addSlot(new Slot(container, 0, 18, 34));
+        this.addSlot(new Slot(container, 1, 69, 34));
+        this.addSlot(new Slot(container, 2, 69, 66));
+        this.addSlot(new Slot(container, 3, 136, 34));
     }
 
     public boolean isBurning(){
@@ -53,8 +54,10 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player pPlayer) {
+        return this.container.stillValid(pPlayer);
+        /*
         return stillValid(ContainerLevelAccess.create(level,tileEntity.getBlockPos()),
-                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());
+                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());*/
     }
 
 
