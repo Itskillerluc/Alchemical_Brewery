@@ -39,8 +39,7 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
             if(entity instanceof ElementalExtractorTile) {
-                //NetworkHooks.openGui(((ServerPlayer)pPlayer), (ElementalExtractorTile)entity, pPos);
-                pPlayer.openMenu((ElementalExtractorTile)entity);
+                NetworkHooks.openGui(((ServerPlayer)pPlayer), (ElementalExtractorTile)entity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }
@@ -76,8 +75,4 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
-
-
-
-
 }

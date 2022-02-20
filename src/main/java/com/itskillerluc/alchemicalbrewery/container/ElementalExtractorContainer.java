@@ -1,7 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.container;
 
-
-
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalExtractorTile;
 import net.minecraft.core.BlockPos;
@@ -19,33 +17,33 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-
 public class ElementalExtractorContainer extends AbstractContainerMenu {
-    //private final ElementalExtractorTile tileEntity;
+    private final ElementalExtractorTile tileEntity;     // CHANGE HERE
     private final IItemHandler playerInventory;
     private final ContainerData data;
     private final Level level;
-    private final Container container;
 
     public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf extraData) {
-        this(windowId, inv, new SimpleContainer(3), new SimpleContainerData(1));
+        this(windowId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(3));     // CHANGE HERE
     }
 
-    public ElementalExtractorContainer(int windowId, Inventory playerInventory,Container container,ContainerData data) {
+    public ElementalExtractorContainer(int windowId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), windowId);
         checkContainerSize(playerInventory, 4);
-        //this.tileEntity = ((ElementalExtractorTile) entity);
+        this.tileEntity = ((ElementalExtractorTile) entity); // CHANGE HERE
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
         layoutPlayerInventorySlots(8, 86);
         this.data = data;
-        this.container = container;
 
+        // CHANGE HERE
+        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+            this.addSlot(new SlotItemHandler(handler, 0, 18, 34));
+            this.addSlot(new SlotItemHandler(handler, 1, 69, 34));
+            this.addSlot(new SlotItemHandler(handler, 2, 69, 66));
+            this.addSlot(new SlotItemHandler(handler, 3, 136, 34));
+        });
 
-        this.addSlot(new Slot(container, 0, 18, 34));
-        this.addSlot(new Slot(container, 1, 69, 34));
-        this.addSlot(new Slot(container, 2, 69, 66));
-        this.addSlot(new Slot(container, 3, 136, 34));
         this.addDataSlots(data);
     }
 
@@ -53,12 +51,11 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
         return data.get(0) != 0;
     }
 
+    // CHANGE HERE
     @Override
     public boolean stillValid(Player pPlayer) {
-        return this.container.stillValid(pPlayer);
-        /*
         return stillValid(ContainerLevelAccess.create(level,tileEntity.getBlockPos()),
-                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());*/
+                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());
     }
 
 
@@ -82,10 +79,22 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     }
 
     private void layoutPlayerInventorySlots(int leftCol, int topRow) {
-        addSlotBox(playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
+        addSlotBox(playerInventory, 9, leftCol+1, topRow, 9, 18, 3, 18);
 
         topRow += 58;
-        addSlotRange(playerInventory, 0, leftCol, topRow, 9, 18);
+        addSlotRange(playerInventory, 0, leftCol+1, topRow, 9, 18);
+    }
+
+    public int getScaledProgress() {
+        int progress = this.data.get(1);
+        int maxProgress = this.data.get(2);  // Max Progress
+        int progressArrowSize = 14; // This is the width in pixels of your arrow
+
+        return (maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0);
+    }
+
+    public int offset(){
+         return 14-getScaledProgress();
     }
 
 
