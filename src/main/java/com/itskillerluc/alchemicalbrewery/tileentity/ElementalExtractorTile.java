@@ -1,7 +1,7 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
 
-import com.itskillerluc.alchemicalbrewery.block.custom.ElementalExtractorBlock;
 import com.itskillerluc.alchemicalbrewery.container.ElementalExtractorContainer;
+import com.itskillerluc.alchemicalbrewery.data.recipes.ElementalExtractorRecipe;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,8 +10,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.TickTask;
-import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -22,13 +20,8 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.*;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEventListener;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -36,17 +29,25 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jline.utils.Log;
+
+import java.util.Optional;
 
 public class ElementalExtractorTile extends BaseContainerBlockEntity implements MenuProvider {
 
-    private final ItemStackHandler itemHandler = createHandler();
+    private final ItemStackHandler itemHandler = new ItemStackHandler(4) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
     private final LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
     protected final ContainerData data;
     int BurnTime = 0;
-    int TotalBurnTime = 500; // CHANGE HERE (because I didn't wanna wait 50 seconds xD)
+    int TotalBurnTime = 1000;
     boolean IsBurning;
+    private boolean iscrafting = false;
+    private boolean finished = false;
 
     public void drops() {
         SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
@@ -88,7 +89,6 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
         };
     }
 
-
     @Override
     public void load(CompoundTag pTag) {
         this.IsBurning = pTag.getBoolean("IsBurning");
@@ -105,6 +105,7 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
         super.saveAdditional(pTag);
     }
 
+    /*
     private ItemStackHandler createHandler(){
         return new ItemStackHandler(4){
             @Override
@@ -133,7 +134,7 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
                 return super.insertItem(slot, stack, simulate);
             }
         };
-    }
+    }*/
 
     @NotNull
     @Override
@@ -153,6 +154,7 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
         return super.getCapability(cap);
     }
 
+    /*
     public void ElementCreate(){
         //TODO: change these to correct items
         boolean ElementInFirstSlot = this.itemHandler.getStackInSlot(0).getCount() > 0 && this.itemHandler.getStackInSlot(0).getItem() == Items.DIAMOND;
@@ -165,14 +167,17 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
             this.BurnTime = 0;
             this.IsBurning = true;
         }
-    }
+    }*/
 
+    /*
     public void OutputItem(){
         //TODO: change to correct item
         this.itemHandler.insertItem(3, new ItemStack(Items.NETHER_STAR), false); // CHANGE HERE from 4 to 3
         IsBurning = false;
 
-    }
+    }*/
+
+
 
     @Override
     protected Component getDefaultName() {
@@ -185,14 +190,23 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
     }
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
-        if(!pBlockEntity.IsBurning){
-            pBlockEntity.ElementCreate();
-        }
-        if(pBlockEntity.IsBurning){
-            pBlockEntity.BurnTime++;
-        }
-        if(pBlockEntity.BurnTime >= pBlockEntity.TotalBurnTime && pBlockEntity.IsBurning){
-            pBlockEntity.OutputItem();
+
+        if(hasRecipe(pBlockEntity)) {
+            if(!pBlockEntity.IsBurning) {
+                craftItem(pBlockEntity);
+                setChanged(pLevel, pPos, pState);
+            }
+            if(pBlockEntity.iscrafting) {
+                pBlockEntity.BurnTime++;
+                setChanged(pLevel, pPos, pState);
+                if(pBlockEntity.BurnTime > pBlockEntity.TotalBurnTime) {
+                    pBlockEntity.finished = true;
+                    craftItem(pBlockEntity);
+                }
+            }
+        } else {
+            pBlockEntity.resetProgress();
+            setChanged(pLevel, pPos, pState);
         }
     }
 
@@ -265,5 +279,66 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
     @Override
     public void clearContent() {
 
+    }
+
+    private static boolean hasRecipe(ElementalExtractorTile entity) {
+        Level level = entity.level;
+        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
+        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
+            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
+        }
+
+        Optional<ElementalExtractorRecipe> match = level.getRecipeManager()
+                .getRecipeFor(ElementalExtractorRecipe.Type.INSTANCE, inventory, level);
+
+        return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
+                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem());
+    }
+
+    private static void craftItem(ElementalExtractorTile entity) {
+        Level level = entity.level;
+        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
+        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
+            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
+        }
+
+        Optional<ElementalExtractorRecipe> match = level.getRecipeManager()
+                .getRecipeFor(ElementalExtractorRecipe.Type.INSTANCE, inventory, level);
+
+        if(match.isPresent()) {
+            if(!entity.iscrafting){
+                entity.iscrafting = true;
+                entity.IsBurning = true;
+                entity.itemHandler.extractItem(3,1, false);
+            }
+            if(entity.finished){
+                donecrafting(entity, match);
+                entity.IsBurning = false;
+                entity.finished = false;
+                entity.iscrafting = false;
+            }
+        }
+    }
+
+    private static void donecrafting(ElementalExtractorTile entity, Optional<ElementalExtractorRecipe> match) {
+        entity.itemHandler.extractItem(1,1, false);
+        entity.itemHandler.extractItem(2,1, false);
+
+        entity.itemHandler.setStackInSlot(4, new ItemStack(match.get().getResultItem().getItem(),
+                entity.itemHandler.getStackInSlot(4).getCount() + match.get().getOutputcount()));
+
+        entity.resetProgress();
+    }
+
+    private void resetProgress() {
+        this.BurnTime = 0;
+    }
+
+    private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack output) {
+        return inventory.getItem(4).getItem() == output.getItem() || inventory.getItem(4).isEmpty();
+    }
+
+    private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
+        return inventory.getItem(4).getMaxStackSize() > inventory.getItem(4).getCount();
     }
 }

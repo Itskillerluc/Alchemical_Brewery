@@ -1,0 +1,18 @@
+{
+  "type": "alchemicalbrewery:extractor",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "minecraft:nether_star"
+  },
+  "count": 2
+}

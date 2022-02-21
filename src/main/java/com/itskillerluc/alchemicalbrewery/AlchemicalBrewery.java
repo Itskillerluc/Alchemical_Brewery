@@ -2,6 +2,7 @@ package com.itskillerluc.alchemicalbrewery;
 
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.ModContainers;
+import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -36,6 +37,7 @@ public class AlchemicalBrewery
         ModBlocks.register(eventBus);
         ModContainers.register(eventBus);
         ModTileEntities.register(eventBus);
+        ModRecipeTypes.register(eventBus);
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
