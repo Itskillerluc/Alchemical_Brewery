@@ -109,36 +109,6 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         super.saveAdditional(pTag);
     }
 
-    /*
-    private ItemStackHandler createHandler(){
-        return new ItemStackHandler(4){
-            @Override
-            protected void onContentsChanged(int slot) {
-                setChanged();
-            }
-
-            @Override
-            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                switch (slot){
-                    case 0: return stack.getItem() == Items.DIAMOND;// CHANGE HERE
-                    case 1: return stack.getItem() == Items.IRON_INGOT;
-                    case 2: return stack.getItem() == ModItems.FUELMIX.get();
-                    case 3: return stack.getItem() == Items.NETHER_STAR; // CHANGE HERE
-                    default: return false;
-                }
-            }
-
-            @NotNull
-            @Override
-            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-                if (!isItemValid(slot, stack)){
-                    return stack;
-                }
-
-                return super.insertItem(slot, stack, simulate);
-            }
-        };
-    }*/
 
     @NotNull
     @Override
@@ -155,30 +125,6 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         super.invalidateCaps();
         handler.invalidate();
     }
-
-
-    /*
-    public void ElementCreate(){
-        //TODO: change these to correct items
-        boolean ElementInFirstSlot = this.itemHandler.getStackInSlot(0).getCount() > 0 && this.itemHandler.getStackInSlot(0).getItem() == Items.DIAMOND;
-        boolean CapsuleInSecondSlot = this.itemHandler.getStackInSlot(1).getCount() > 0 && this.itemHandler.getStackInSlot(1).getItem() == Items.IRON_INGOT;
-        boolean FuelInThirdSlot = this.itemHandler.getStackInSlot(2).getCount() > 0 && this.itemHandler.getStackInSlot(2).getItem() == ModItems.FUELMIX.get();
-        if (ElementInFirstSlot && CapsuleInSecondSlot && FuelInThirdSlot && !IsBurning){
-            this.itemHandler.getStackInSlot(0).shrink(1);
-            this.itemHandler.getStackInSlot(1).shrink(1);
-            this.itemHandler.getStackInSlot(2).shrink(1);
-            this.BurnTime = 0;
-            this.IsBurning = true;
-        }
-    }*/
-
-    /*
-    public void OutputItem(){
-        //TODO: change to correct item
-        this.itemHandler.insertItem(3, new ItemStack(Items.NETHER_STAR), false); // CHANGE HERE from 4 to 3
-        IsBurning = false;
-
-    }*/
 
     @Override
     public void onLoad() {
