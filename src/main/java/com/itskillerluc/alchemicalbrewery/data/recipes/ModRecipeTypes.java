@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModRecipeTypes {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, AlchemicalBrewery.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<ElementalExtractorRecipe>> EXTRACTOR_SERIALIZER = RECIPE_SERIALIZER.register("extractor", ()->ElementalExtractorRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<ElementalExtractorRecipe>> EXTRACTOR_SERIALIZER = RECIPE_SERIALIZER.register("extracting", ()->ElementalExtractorRecipe.Serializer.INSTANCE);
 
     public static void register(IEventBus eventBus){
         RECIPE_SERIALIZER.register(eventBus);

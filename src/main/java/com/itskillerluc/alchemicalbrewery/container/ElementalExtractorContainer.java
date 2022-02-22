@@ -1,6 +1,7 @@
 package com.itskillerluc.alchemicalbrewery.container;
 
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
+import com.itskillerluc.alchemicalbrewery.container.slot.ModResultSlot;
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalExtractorTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -33,15 +34,18 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
         this.tileEntity = ((ElementalExtractorTile) entity); // CHANGE HERE
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
-        layoutPlayerInventorySlots(8, 86);
+        //layoutPlayerInventorySlots(8, 86);
         this.data = data;
+
+        addPlayerHotbar(playerInventory);
+        addPlayerInventory(playerInventory);
 
         // CHANGE HERE
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
             this.addSlot(new SlotItemHandler(handler, 0, 18, 34));
             this.addSlot(new SlotItemHandler(handler, 1, 69, 34));
             this.addSlot(new SlotItemHandler(handler, 2, 69, 66));
-            this.addSlot(new SlotItemHandler(handler, 3, 136, 34));
+            this.addSlot(new ModResultSlot(handler, 3, 136, 34));
         });
 
         this.addDataSlots(data);
@@ -59,6 +63,7 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     }
 
 
+
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {
             addSlot(new SlotItemHandler(handler, index, x, y));
@@ -68,7 +73,6 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
 
         return index;
     }
-
     private int addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(handler, index, x, y, horAmount, dx);
@@ -83,6 +87,20 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
 
         topRow += 58;
         addSlotRange(playerInventory, 0, leftCol+1, topRow, 9, 18);
+    }
+
+    private void addPlayerInventory(Inventory playerInventory) {
+        for (int i = 0; i < 3; ++i) {
+            for (int l = 0; l < 9; ++l) {
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 86 + i * 18));
+            }
+        }
+    }
+
+    private void addPlayerHotbar(Inventory playerInventory) {
+        for (int i = 0; i < 9; ++i) {
+            this.addSlot(new Slot(playerInventory, i, 9 + i * 18, 144));
+        }
     }
 
     public int getScaledProgress() {

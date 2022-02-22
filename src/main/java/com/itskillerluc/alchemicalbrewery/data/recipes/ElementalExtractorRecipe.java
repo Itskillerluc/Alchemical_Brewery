@@ -26,19 +26,21 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int outputcount;
+    private final boolean capsule;
 
-    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount) {
+    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.outputcount = outputcount;
+        this.capsule = hascapsule;
     }
 
 
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        if(recipeItems.get(0).test(pContainer.getItem(0))&&recipeItems.get(1).test(pContainer.getItem(1))){
-            return recipeItems.get(2).test(pContainer.getItem(2));
+        if(recipeItems.get(0).test(pContainer.getItem(0))&&recipeItems.get(2).test(pContainer.getItem(2))){
+            return (capsule) ? pContainer.getItem(1).is(ModItems.CAPSULE_MEDIUM.get())||pContainer.getItem(1).is(ModItems.CAPSULE_LARGE.get())||pContainer.getItem(1).is(ModItems.CAPSULE_SMALL.get()) : recipeItems.get(1).test(pContainer.getItem(1));
         }
         return false;
     }
@@ -62,6 +64,8 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     public int getOutputcount(){
         return outputcount;
     }
+
+    public boolean getIfCapsule(){return capsule;}
 
     @Override
     public ResourceLocation getId() {
@@ -93,6 +97,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
         public ElementalExtractorRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
             int count = GsonHelper.getAsInt(pSerializedRecipe, "count");
+            boolean capsule = GsonHelper.getAsBoolean(pSerializedRecipe, "capsule");
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(3, Ingredient.EMPTY);
@@ -101,7 +106,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count);
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule);
         }
 
         @Nullable
@@ -114,7 +119,8 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             }
             int count = buf.readInt();
             ItemStack output = buf.readItem();
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count);
+            boolean capsule = buf.readBoolean();
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule);
         }
 
         @Override

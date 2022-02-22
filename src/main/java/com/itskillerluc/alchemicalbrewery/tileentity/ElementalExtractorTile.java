@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class ElementalExtractorTile extends BaseContainerBlockEntity implements MenuProvider {
+public class ElementalExtractorTile extends BlockEntity implements MenuProvider {
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(4) {
         @Override
@@ -40,7 +40,7 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
             setChanged();
         }
     };
-    private final LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
+    private LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
     protected final ContainerData data;
     int BurnTime = 0;
@@ -91,17 +91,21 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
 
     @Override
     public void load(CompoundTag pTag) {
-        this.IsBurning = pTag.getBoolean("IsBurning");
-        this.BurnTime = pTag.getInt("BurnTime");
-        itemHandler.deserializeNBT(serializeNBT().getCompound("inv"));
         super.load(pTag);
+        this.IsBurning = pTag.getBoolean("isburning");
+        this.BurnTime = pTag.getInt("burntime");
+        this.iscrafting = pTag.getBoolean("iscrafting");
+        this.finished = pTag.getBoolean("finished");
+        itemHandler.deserializeNBT(pTag.getCompound("inv"));
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
-        pTag.putBoolean("IsBurning", IsBurning);
-        pTag.putInt("BurnTime", BurnTime);
+        pTag.putBoolean("isburning", IsBurning);
+        pTag.putInt("burntime", BurnTime);
         pTag.put("inv", itemHandler.serializeNBT());
+        pTag.putBoolean("iscrafting",iscrafting);
+        pTag.putBoolean("finished",finished);
         super.saveAdditional(pTag);
     }
 
@@ -146,13 +150,12 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
         return super.getCapability(cap, side);
     }
 
-
-
-    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
-        return super.getCapability(cap);
+    public void invalidateCaps()  {
+        super.invalidateCaps();
+        handler.invalidate();
     }
+
 
     /*
     public void ElementCreate(){
@@ -177,16 +180,10 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
 
     }*/
 
-
-
     @Override
-    protected Component getDefaultName() {
-        return new TextComponent("Elemental Extractor");
-    }
-
-    @Override
-    protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
-        return new ElementalExtractorContainer(pContainerId, pInventory,this, this.data);
+    public void onLoad() {
+        super.onLoad();
+        handler = LazyOptional.of(() -> itemHandler);
     }
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
@@ -231,56 +228,6 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
         super.handleUpdateTag(tag);
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-    }
-
-
-    @Override
-    public int getContainerSize() {
-        return 4;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public ItemStack getItem(int pIndex) {
-        return null;
-    }
-
-    @Override
-    public ItemStack removeItem(int pIndex, int pCount) {
-        return null;
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int pIndex) {
-        return null;
-    }
-
-    @Override
-    public void setItem(int pIndex, ItemStack pStack) {
-
-    }
-
-    @Override
-    public boolean stillValid(Player pPlayer) {
-        if (this.level.getBlockEntity(this.worldPosition) != this) {
-            return false;
-        } else {
-            return pPlayer.distanceToSqr((double)this.worldPosition.getX() + 0.5D, (double)this.worldPosition.getY() + 0.5D, (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
-        }
-    }
-
-    @Override
-    public void clearContent() {
-
-    }
-
     private static boolean hasRecipe(ElementalExtractorTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
@@ -309,25 +256,58 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
             if(!entity.iscrafting){
                 entity.iscrafting = true;
                 entity.IsBurning = true;
-                entity.itemHandler.extractItem(3,1, false);
             }
             if(entity.finished){
-                donecrafting(entity, match);
-                entity.IsBurning = false;
-                entity.finished = false;
-                entity.iscrafting = false;
+                if(!match.get().getIfCapsule()) {
+                    entity.itemHandler.extractItem(0, 1, false);
+                    entity.itemHandler.extractItem(2,1, false);
+                    entity.itemHandler.extractItem(1, 1, false);
+
+                    entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItem().getItem(),
+                            entity.itemHandler.getStackInSlot(3).getCount() + match.get().getOutputcount()));
+
+                    entity.resetProgress();
+
+                    entity.IsBurning = false;
+                    entity.finished = false;
+                    entity.iscrafting = false;
+                }else{
+                    if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_SMALL.get())){
+                        entity.itemHandler.extractItem(0, 1, false);
+                        entity.itemHandler.extractItem(1, 1, false);
+                        entity.itemHandler.extractItem(2,1, false);
+                        entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItem().getItem(),
+                                entity.itemHandler.getStackInSlot(3).getCount() + 1));
+                        entity.resetProgress();
+                        entity.IsBurning = false;
+                        entity.finished = false;
+                        entity.iscrafting = false;
+
+                    }else if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_MEDIUM.get())){
+                        entity.itemHandler.extractItem(0, 1, false);
+                        entity.itemHandler.extractItem(1, 1, false);
+                        entity.itemHandler.extractItem(2,1, false);
+                        entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItem().getItem(),
+                                entity.itemHandler.getStackInSlot(3).getCount() + 4));
+                        entity.resetProgress();
+                        entity.IsBurning = false;
+                        entity.finished = false;
+                        entity.iscrafting = false;
+
+                    }else if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_LARGE.get())){
+                        entity.itemHandler.extractItem(0, 1, false);
+                        entity.itemHandler.extractItem(1, 1, false);
+                        entity.itemHandler.extractItem(2,1, false);
+                        entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItem().getItem(),
+                                entity.itemHandler.getStackInSlot(3).getCount() + 9));
+                        entity.resetProgress();
+                        entity.IsBurning = false;
+                        entity.finished = false;
+                        entity.iscrafting = false;
+                    }
+                }
             }
         }
-    }
-
-    private static void donecrafting(ElementalExtractorTile entity, Optional<ElementalExtractorRecipe> match) {
-        entity.itemHandler.extractItem(1,1, false);
-        entity.itemHandler.extractItem(2,1, false);
-
-        entity.itemHandler.setStackInSlot(4, new ItemStack(match.get().getResultItem().getItem(),
-                entity.itemHandler.getStackInSlot(4).getCount() + match.get().getOutputcount()));
-
-        entity.resetProgress();
     }
 
     private void resetProgress() {
@@ -335,10 +315,21 @@ public class ElementalExtractorTile extends BaseContainerBlockEntity implements 
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack output) {
-        return inventory.getItem(4).getItem() == output.getItem() || inventory.getItem(4).isEmpty();
+        return inventory.getItem(3).getItem() == output.getItem() || inventory.getItem(3).isEmpty();
     }
 
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
-        return inventory.getItem(4).getMaxStackSize() > inventory.getItem(4).getCount();
+        return inventory.getItem(3).getMaxStackSize() > inventory.getItem(3).getCount();
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return new TextComponent("Elemental Extractor");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+        return new ElementalExtractorContainer(pContainerId, pInventory, this, this.data);
     }
 }

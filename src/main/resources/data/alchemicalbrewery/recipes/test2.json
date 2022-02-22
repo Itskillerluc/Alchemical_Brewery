@@ -2,18 +2,18 @@
   "type": "alchemicalbrewery:elemental_extracting",
   "ingredients": [
     {
-      "item": "minecraft:diamond"
+      "item": "minecraft:lava_bucket"
     },
     {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:coal"
     },
     {
       "item": "alchemicalbrewery:fuelmix"
     }
   ],
   "output": {
-    "item": "minecraft:nether_star"
+    "item": "alchemicalbrewery:element_basic"
   },
-  "count": 2,
-  "capsule": false
+  "count": 1,
+  "capsule": true
 }
