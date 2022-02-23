@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": {"model": "alchemicalbrewery:block/elementalextractor"}
+    "facing=north": { "model": "alchemicalbrewery:block/elementalextractor" },
+    "facing=east": { "model": "alchemicalbrewery:block/elementalextractor", "y": 90 },
+    "facing=south": { "model": "alchemicalbrewery:block/elementalextractor", "y": 180 },
+    "facing=west": { "model": "alchemicalbrewery:block/elementalextractor", "y": 270 }
   }
 }
