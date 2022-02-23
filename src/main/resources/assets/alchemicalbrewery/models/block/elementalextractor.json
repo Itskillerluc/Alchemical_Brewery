@@ -1,10 +1,10 @@
 {
 	"textures": {
-		"0": "assets/alchemicalbrewery/textures/block/extractor_inpu1.png",
-		"1": "assets/alchemicalbrewery/textures/block/extractor_pipe.png",
-		"2": "assets/alchemicalbrewery/textures/block/extractor_input2.png",
-		"3": "assets/alchemicalbrewery/textures/block/extractor_window.png",
-		"particle": "assets/alchemicalbrewery/textures/block/extractor_input2.png"
+		"0": "alchemicalbrewery:textures/block/extractor_inpu1.png",
+		"1": "alchemicalbrewery:textures/block/extractor_pipe.png",
+		"2": "alchemicalbrewery:textures/block/extractor_input2.png",
+		"3": "alchemicalbrewery:textures/block/extractor_window.png",
+		"particle": "alchemicalbrewery:textures/block/extractor_input2.png"
 	},
 	"elements": [
 		{
