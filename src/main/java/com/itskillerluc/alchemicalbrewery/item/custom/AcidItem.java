@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 public class AcidItem extends Item {
 
-
     public AcidItem(Properties pProperties) {
         super(pProperties);
     }

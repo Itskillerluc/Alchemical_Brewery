@@ -1,5 +1,6 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
 
+import com.itskillerluc.alchemicalbrewery.block.custom.ElementalExtractorBlock;
 import com.itskillerluc.alchemicalbrewery.container.ElementalExtractorContainer;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ElementalExtractorRecipe;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -20,6 +21,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -151,6 +153,10 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
             pBlockEntity.resetProgress();
             setChanged(pLevel, pPos, pState);
         }
+
+        pState = pState.setValue(ElementalExtractorBlock.LIT, Boolean.valueOf(pBlockEntity.IsBurning));
+        pLevel.setBlock(pPos, pState, 3);
+        setChanged(pLevel, pPos, pState);
     }
 
 

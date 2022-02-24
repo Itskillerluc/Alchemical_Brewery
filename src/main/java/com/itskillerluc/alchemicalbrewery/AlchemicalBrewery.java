@@ -11,6 +11,8 @@ import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
 import com.mojang.blaze3d.platform.ScreenManager;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -65,6 +67,8 @@ public class AlchemicalBrewery
     private void doClientStuff(final FMLClientSetupEvent event){
         event.enqueueWork(()->{
             MenuScreens.register(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), ElementalExtractorScreen::new);
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ELEMENTALEXTRACTOR.get(), RenderType.translucent());
+
         });
     }
 }
