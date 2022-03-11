@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "BDC",
+    "GHG"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_bars"
+    },
+    "B": {
+      "item": "minecraft:brewing_stand"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "result": {
+    "item": "alchemicalbrewery:elementalextractor",
+    "count": 1
+  }
+}
