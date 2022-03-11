@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#C#",
+    "CUC",
+    "#C#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "C": {
+      "item": "alchemicalbrewery:activatedcharcoal"
+    },
+    "U": {
+      "item": "minecraft:chest"
+    }
+  },
+  "result": {
+    "item":"alchemicalbrewery:capsule_small",
+    "count":4
+  }
+}

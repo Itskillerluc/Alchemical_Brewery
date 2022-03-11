@@ -62,8 +62,8 @@ public class ChemicalLiquidRecipe implements Recipe<Inventory> {
     }
 
     public static class Type implements RecipeType<ChemicalLiquidRecipe> {
-        private Type() { }
-        public static final ChemicalLiquidRecipe.Type INSTANCE = new ChemicalLiquidRecipe.Type();
+        public Type() { }
+        public static ChemicalLiquidRecipe.Type INSTANCE = new ChemicalLiquidRecipe.Type();
         public static final String ID = "chemical_bathing";
     }
 

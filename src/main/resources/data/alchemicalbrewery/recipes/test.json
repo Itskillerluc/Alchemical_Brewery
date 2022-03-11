@@ -15,5 +15,7 @@
     "item": "minecraft:nether_star"
   },
   "count": 2,
-  "capsule": false
+  "capsule": false,
+  "itemcolor": 0,
+  "element": "NONE"
 }

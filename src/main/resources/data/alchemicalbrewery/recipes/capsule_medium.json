@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#g#",
+    "gCg",
+    "#g#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:emerald"
+    },
+    "g": {
+      "item": "alchemicalbrewery:corroded_gold"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    }
+  },
+  "result": {
+    "item":"alchemicalbrewery:capsule_medium",
+    "count":4
+  }
+}

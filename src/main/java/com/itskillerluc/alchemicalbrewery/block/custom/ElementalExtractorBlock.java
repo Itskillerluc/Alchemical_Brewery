@@ -166,8 +166,8 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
             double d5 = direction$axis == Direction.Axis.X ? (double)direction.getStepX() * 0.52D : d4;
             double d6 = pRand.nextDouble() * 6.0D / 16.0D;
             double d7 = direction$axis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52D : d4;
-            pLevel.addParticle(ParticleTypes.SOUL_FIRE_FLAME, d0, d1, d2, 0.0D, 0.0D, 0.0D);
-            pLevel.addParticle(ParticleTypes.SOUL, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+            pLevel.addParticle(ParticleTypes.SOUL_FIRE_FLAME, d0, d1, d2, 0.0D, 0.2D, 0.0D);
+            pLevel.addParticle(ParticleTypes.SOUL, d0, d1+0.5D, d2, 0.0D, 0.2D, 0.0D);
         }
     }
 }

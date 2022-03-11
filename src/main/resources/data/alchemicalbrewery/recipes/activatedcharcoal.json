@@ -1,0 +1,11 @@
+{
+  "type": "alchemicalbrewery:chemical_bathing",
+  "ingredients": [
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:activatedcharcoal"
+  }
+}

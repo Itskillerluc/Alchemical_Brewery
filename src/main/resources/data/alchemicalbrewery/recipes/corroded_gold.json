@@ -2,10 +2,10 @@
   "type": "alchemicalbrewery:chemical_bathing",
   "ingredients": [
     {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:gold_ingot"
     }
   ],
   "output": {
-    "item": "minecraft:gold_ingot"
+    "item": "alchemicalbrewery:corroded_gold"
   }
 }

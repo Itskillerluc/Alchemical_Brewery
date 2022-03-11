@@ -27,13 +27,17 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<Ingredient> recipeItems;
     private final int outputcount;
     private final boolean capsule;
+    private final int itemColor;
+    private final String element;
 
-    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule) {
+    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule, int itemColor, String element) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.outputcount = outputcount;
         this.capsule = hascapsule;
+        this.itemColor = itemColor;
+        this.element = element;
     }
 
 
@@ -48,6 +52,13 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     @Override
     public ItemStack assemble(SimpleContainer pContainer) {
         return output;
+    }
+
+    public int getItemColor(){
+        return itemColor;
+    }
+    public String getElement(){
+        return element;
     }
 
 
@@ -83,9 +94,13 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     }
 
     public static class Type implements RecipeType<ElementalExtractorRecipe> {
-        private Type() { }
-        public static final Type INSTANCE = new Type();
+        public Type() { }
+        public static Type INSTANCE = new Type();
         public static final String ID = "elemental_extracting";
+    }
+
+    public static ItemStack itemStackFromJson(JsonObject pStackObject) {
+        return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(pStackObject, true, true);
     }
 
 
@@ -98,6 +113,8 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
             int count = GsonHelper.getAsInt(pSerializedRecipe, "count");
             boolean capsule = GsonHelper.getAsBoolean(pSerializedRecipe, "capsule");
+            int color = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor");
+            String element = GsonHelper.getAsString(pSerializedRecipe, "element");
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(3, Ingredient.EMPTY);
@@ -106,7 +123,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule);
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element);
         }
 
         @Nullable
@@ -120,7 +137,9 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             int count = buf.readInt();
             ItemStack output = buf.readItem();
             boolean capsule = buf.readBoolean();
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule);
+            int color = buf.readInt();
+            String element = buf.toString();
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element);
         }
 
         @Override

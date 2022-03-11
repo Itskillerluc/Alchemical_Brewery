@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#D#",
+        "DCD",
+        "#D#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:redstone"
+        },
+        "D": {
+            "item": "alchemicalbrewery:hardened_diamond"
+        },
+        "C": {
+            "item": "minecraft:chest"
+        }
+    },
+    "result": {
+		"item":"alchemicalbrewery:capsule_large",
+		"count":4
+	}
+}
