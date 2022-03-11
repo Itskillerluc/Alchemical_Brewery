@@ -6,10 +6,12 @@ import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
 import com.mojang.blaze3d.platform.ScreenManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -69,6 +71,10 @@ public class AlchemicalBrewery
             MenuScreens.register(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), ElementalExtractorScreen::new);
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ELEMENTALEXTRACTOR.get(), RenderType.translucent());
 
+            Minecraft.getInstance().getItemColors().register(new Element_Basic.ColorHandler(), ModItems.ELEMENT_BASIC.get());
+
         });
     }
+
+
 }

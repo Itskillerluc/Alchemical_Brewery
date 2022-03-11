@@ -22,18 +22,18 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AlchemicalBrewery.MOD_ID);
 
-    public static final RegistryObject<Block> ELEMENTALEXTRACTOR = registerBlock("elementalextractor", () -> new ElementalExtractorBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL).noOcclusion()),ModCreativeTab.ALCHEMICALBREWERY_TAB);
+    public static final RegistryObject<Block> ELEMENTALEXTRACTOR = registerBlock("elementalextractor", () -> new ElementalExtractorBlock(BlockBehaviour.Properties.of(Material.HEAVY_METAL).strength(5, 5).requiresCorrectToolForDrops().noOcclusion()),ModCreativeTab.ALCHEMICALBREWERY_TAB,1);
 
-    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {
+    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab,int stackSize) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn, tab);
+        registerBlockItem(name, toReturn, tab, stackSize);
         return toReturn;
     }
 
     private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block,
-                                                                            CreativeModeTab tab) {
+                                                                            CreativeModeTab tab, int stackSize) {
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(),
-                new Item.Properties().tab(tab)));
+                new Item.Properties().tab(tab).stacksTo(stackSize)));
     }
 
     public static void register(IEventBus eventBus){

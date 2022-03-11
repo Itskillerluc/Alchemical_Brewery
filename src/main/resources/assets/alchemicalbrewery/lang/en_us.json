@@ -8,7 +8,7 @@
   "item.alchemicalbrewery.capsule_small": "Small Element Capsule",
   "item.alchemicalbrewery.capsule_medium": "Medium Element capsule",
   "item.alchemicalbrewery.capsule_large": "Large Element capsule",
-  "item.alchemicalbrewery.element_basic": "Element",
+  "item.alchemicalbrewery.element_basic": "Element %1$s",
   "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
   "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
   "screen.alchemicalbrewery.elementalextractor": "Elemental Extractor",

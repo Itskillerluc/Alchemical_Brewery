@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -28,11 +29,11 @@ public class ChemicalLiquidBlock extends LiquidBlock {
 
     @Override
     public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
-        if(pEntity instanceof Player player&&(!pLevel.isClientSide)){
-            player.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 5));
-            player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20, 5));
-            player.addEffect(new MobEffectInstance(MobEffects.POISON, 20, 5));
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 3));
+        if(pEntity instanceof LivingEntity entity&&(!pLevel.isClientSide)){
+            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 5));
+            entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20, 5));
+            entity.addEffect(new MobEffectInstance(MobEffects.POISON, 20, 5));
+            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 3));
         }
         for (final Recipe<?> recipe : ModRecipeTypes.getRecipes(ChemicalLiquidRecipe.Type.INSTANCE, pLevel.getRecipeManager()).values()){
             final ChemicalLiquidRecipe chemicalLiquidRecipe = (ChemicalLiquidRecipe) recipe;
