@@ -12,6 +12,7 @@ public class ModTileEntities {
     public static DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, AlchemicalBrewery.MOD_ID);
 
     public static RegistryObject<BlockEntityType<ElementalExtractorTile>> ELEMENTALEXTRACTORTILE =  TILE_ENTITIES.register("elementalextractortile",()->BlockEntityType.Builder.of(ElementalExtractorTile::new, ModBlocks.ELEMENTALEXTRACTOR.get()).build(null));
+    public static RegistryObject<BlockEntityType<ElementalInjectorTile>> ELEMENTALINJECTORTILE = TILE_ENTITIES.register("elementalinjectortile",()->BlockEntityType.Builder.of(ElementalInjectorTile::new, ModBlocks.ELEMENTALINJECTOR.get()).build(null));
 
     public static void register(IEventBus eventBus){
         TILE_ENTITIES.register(eventBus);

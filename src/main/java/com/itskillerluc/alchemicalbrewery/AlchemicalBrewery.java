@@ -8,6 +8,7 @@ import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
+import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
 import com.mojang.blaze3d.platform.ScreenManager;
@@ -69,6 +70,7 @@ public class AlchemicalBrewery
     private void doClientStuff(final FMLClientSetupEvent event){
         event.enqueueWork(()->{
             MenuScreens.register(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), ElementalExtractorScreen::new);
+            MenuScreens.register(ModContainers.ELEMENTALINJECTORCONTAINER.get(), ElementalInjectorScreen::new);
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ELEMENTALEXTRACTOR.get(), RenderType.translucent());
 
             Minecraft.getInstance().getItemColors().register(new Element_Basic.ColorHandler(), ModItems.ELEMENT_BASIC.get());

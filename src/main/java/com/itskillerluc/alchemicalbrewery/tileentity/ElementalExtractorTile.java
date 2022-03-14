@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class    ElementalExtractorTile extends BlockEntity implements MenuProvider {
+public class ElementalExtractorTile extends BlockEntity implements MenuProvider {
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(4) {
         @Override
@@ -226,7 +226,7 @@ public class    ElementalExtractorTile extends BlockEntity implements MenuProvid
                     entity.iscrafting = false;
                 }else{
                     if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_SMALL.get())){
-                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 9);
+                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 1);
                         if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
                             CompoundTag nbt = result.getOrCreateTag();
                             nbt.putInt("ItemColor", match.get().getItemColor());
@@ -242,7 +242,7 @@ public class    ElementalExtractorTile extends BlockEntity implements MenuProvid
                         entity.iscrafting = false;
 
                     }else if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_MEDIUM.get())){
-                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 9);
+                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 4);
                         if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
                             CompoundTag nbt = result.getOrCreateTag();
                             nbt.putInt("ItemColor", match.get().getItemColor());

@@ -2,13 +2,10 @@ package com.itskillerluc.alchemicalbrewery.container;
 
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.slot.ModResultSlot;
-import com.itskillerluc.alchemicalbrewery.tileentity.ElementalExtractorTile;
-import net.minecraft.core.BlockPos;
+import com.itskillerluc.alchemicalbrewery.tileentity.ElementalInjectorTile;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -18,23 +15,22 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class ElementalExtractorContainer extends AbstractContainerMenu {
-    private final ElementalExtractorTile tileEntity;     // CHANGE HERE
+public class ElementalInjectorContainer extends AbstractContainerMenu {
+    private final ElementalInjectorTile tileEntity;     // CHANGE HERE
     private final IItemHandler playerInventory;
     private final ContainerData data;
     private final Level level;
 
-    public ElementalExtractorContainer(int windowId, Inventory inv, FriendlyByteBuf extraData) {
-        this(windowId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(3));     // CHANGE HERE
+    public ElementalInjectorContainer(int windowId, Inventory inv, FriendlyByteBuf extraData) {
+        this(windowId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));     // CHANGE HERE
     }
 
-    public ElementalExtractorContainer(int windowId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
-        super(ModContainers.ELEMENTALEXTRACTORCONTAINER.get(), windowId);
-        checkContainerSize(playerInventory, 4);
-        this.tileEntity = ((ElementalExtractorTile) entity); // CHANGE HERE
+    public ElementalInjectorContainer(int windowId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
+        super(ModContainers.ELEMENTALINJECTORCONTAINER.get(), windowId);
+        checkContainerSize(playerInventory, 3);
+        this.tileEntity = ((ElementalInjectorTile) entity); // CHANGE HERE
         this.level = playerInventory.player.level;
         this.playerInventory = new InvWrapper(playerInventory);
-        //layoutPlayerInventorySlots(8, 86);
         this.data = data;
 
         addPlayerHotbar(playerInventory);
@@ -42,14 +38,15 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
 
         // CHANGE HERE
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
-            this.addSlot(new SlotItemHandler(handler, 0, 18, 34));
-            this.addSlot(new SlotItemHandler(handler, 1, 69, 34));
-            this.addSlot(new SlotItemHandler(handler, 2, 69, 66));
-            this.addSlot(new ModResultSlot(handler, 3, 136, 34));
+            this.addSlot(new SlotItemHandler(handler, 0, 11, 35));
+            this.addSlot(new SlotItemHandler(handler, 1, 55, 35));
+            this.addSlot(new ModResultSlot(handler, 2, 144, 35));
         });
 
         this.addDataSlots(data);
     }
+
+    public int getCharge(){return data.get(3);}
 
     public boolean isBurning(){
         return data.get(0) != 0;
@@ -59,7 +56,15 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level,tileEntity.getBlockPos()),
-                pPlayer, ModBlocks.ELEMENTALEXTRACTOR.get());
+                pPlayer, ModBlocks.ELEMENTALINJECTOR.get());
+    }
+
+    public int getScaledProgress() {
+        int progress = this.data.get(1);
+        int maxProgress = this.data.get(2);  // Max Progress
+        int progressArrowSize = 15; // This is the width in pixels of your arrow
+
+        return (maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0);
     }
 
 
@@ -83,38 +88,25 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     }
 
     private void layoutPlayerInventorySlots(int leftCol, int topRow) {
-        addSlotBox(playerInventory, 9, leftCol+1, topRow, 9, 19, 3, 18);
+        addSlotBox(playerInventory, 9, leftCol+1, topRow, 9, 18, 3, 18);
 
         topRow += 58;
-        addSlotRange(playerInventory, 0, leftCol+1, topRow, 9, 18);
+        addSlotRange(playerInventory, 0, leftCol+1, topRow, 9, 16);
     }
 
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 9 + l * 18, 86 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 9 + i * 18, 144));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
     }
-
-    public int getScaledProgress() {
-        int progress = this.data.get(1);
-        int maxProgress = this.data.get(2);  // Max Progress
-        int progressArrowSize = 14; // This is the width in pixels of your arrow
-
-        return (maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0);
-    }
-
-    public int offset(){
-         return 14-getScaledProgress();
-    }
-
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
     // must assign a slot number to each of the slots used by the GUI.
@@ -132,7 +124,7 @@ public class ElementalExtractorContainer extends AbstractContainerMenu {
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     // THIS YOU HAVE TO DEFINE!
-    private static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 3;  // must be the number of slots you have!
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {

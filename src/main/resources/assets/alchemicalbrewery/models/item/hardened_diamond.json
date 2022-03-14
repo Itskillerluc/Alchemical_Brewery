@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "alchemicalbrewery:item/hardeneddiamond"
+    "layer0": "alchemicalbrewery:item/hardened_diamond"
   }
 }

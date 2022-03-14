@@ -21,6 +21,8 @@ public class ModContainers {
     public static final RegistryObject<MenuType<ElementalExtractorContainer>> ELEMENTALEXTRACTORCONTAINER =
             registerMenuType(ElementalExtractorContainer::new, "elementalextractorcontainer");
 
+    public static final RegistryObject<MenuType<ElementalInjectorContainer>> ELEMENTALINJECTORCONTAINER = registerMenuType(ElementalInjectorContainer::new, "elementalinjectorcontainer");
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory,
                                                                                                   String name) {
         return CONTAINERS.register(name, () -> IForgeMenuType.create(factory));
