@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_extracting",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "itemcolor": 6525687,
+  "element": "Water",
+  "count": 1,
+  "capsule": true
+}

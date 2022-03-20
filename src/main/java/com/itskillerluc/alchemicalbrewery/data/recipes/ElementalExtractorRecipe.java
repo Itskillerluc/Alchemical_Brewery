@@ -138,7 +138,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             ItemStack output = buf.readItem();
             boolean capsule = buf.readBoolean();
             int color = buf.readInt();
-            String element = buf.toString();
+            String element = buf.readUtf();
             return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element);
         }
 
@@ -148,7 +148,11 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             for (Ingredient ing : recipe.getIngredients()) {
                 ing.toNetwork(buf);
             }
+            buf.writeInt(recipe.outputcount);
             buf.writeItemStack(recipe.getResultItem(), false);
+            buf.writeBoolean(recipe.capsule);
+            buf.writeInt(recipe.itemColor);
+            buf.writeUtf(recipe.element);
         }
 
         @Override

@@ -1,0 +1,36 @@
+{
+  "type": "alchemicalbrewery:elemental_combining",
+  "ingredients": [
+    {
+      "item": "minecraft:coal",
+      "element": "null",
+      "count": 1
+    },
+    {
+      "item": "minecraft:coal",
+      "element": "null",
+      "count": 1
+    },
+    {
+      "item": "minecraft:coal",
+      "element": "null",
+      "count": 1
+    },
+    {
+      "item": "minecraft:coal",
+      "element": "null",
+      "count": 1
+    },
+    {
+      "item": "minecraft:coal",
+      "element": "null",
+      "count": 1
+    }
+  ],
+  "haselement": false,
+  "output": {
+    "item": "minecraft:diamond",
+    "element": "null",
+    "itemcolor": 0
+  }
+}

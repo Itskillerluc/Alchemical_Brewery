@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#H#",
+    "iZi",
+    "#C#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_bars"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "Z": {
+      "item": "alchemicalbrewery:capsule_medium"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    }
+  },
+  "result": {
+    "item": "alchemicalbrewery:elementalinjector",
+    "count": 1
+  }
+}

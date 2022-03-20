@@ -15,6 +15,7 @@
   "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
   "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
   "block.alchemicalbrewery.elementalinjector": "Elemental Injector",
+  "block.alchemicalbrewery.elementalcombiner": "Elemental Combiner",
   "screen.alchemicalbrewery.elementalextracctor": "Elemental Extractor",
 
   "tooltip.alchemicalbrewery.acid": "\u00A75I wouldn't drink this if I were you."

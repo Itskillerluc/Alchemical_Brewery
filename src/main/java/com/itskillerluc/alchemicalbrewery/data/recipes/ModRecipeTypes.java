@@ -28,6 +28,9 @@ public class ModRecipeTypes {
 
             ElementalInjectorRecipe.Type.INSTANCE = new ElementalInjectorRecipe.Type();
             Registry.register(Registry.RECIPE_TYPE,ElementalInjectorRecipe.Type.ID, ElementalInjectorRecipe.Type.INSTANCE);
+
+            ElementalCombinerRecipe.Type.INSTANCE = new ElementalCombinerRecipe.Type();
+            Registry.register(Registry.RECIPE_TYPE,ElementalCombinerRecipe.Type.ID, ElementalCombinerRecipe.Type.INSTANCE);
         });
 
         RECIPE_SERIALIZER.register(eventBus);
@@ -38,6 +41,7 @@ public class ModRecipeTypes {
     public static final RegistryObject<RecipeSerializer<ElementalExtractorRecipe>> EXTRACTOR_SERIALIZER = RECIPE_SERIALIZER.register("extracting", ()->ElementalExtractorRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<ChemicalLiquidRecipe>> CHEMICAL_SERIALIZER = RECIPE_SERIALIZER.register("bathing", ()->ChemicalLiquidRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<ElementalInjectorRecipe>> ELEMENTAL_INJECTOR = RECIPE_SERIALIZER.register("injecting",()->ElementalInjectorRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<ElementalCombinerRecipe>> ELEMENTAL_COMBINER = RECIPE_SERIALIZER.register("combining",()->ElementalCombinerRecipe.Serializer.INSTANCE);
 
     public static Map<ResourceLocation, Recipe<?>> getRecipes(RecipeType<?> type, RecipeManager manager) {
         final Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes = ObfuscationReflectionHelper

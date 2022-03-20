@@ -13,6 +13,7 @@ public class ModTileEntities {
 
     public static RegistryObject<BlockEntityType<ElementalExtractorTile>> ELEMENTALEXTRACTORTILE =  TILE_ENTITIES.register("elementalextractortile",()->BlockEntityType.Builder.of(ElementalExtractorTile::new, ModBlocks.ELEMENTALEXTRACTOR.get()).build(null));
     public static RegistryObject<BlockEntityType<ElementalInjectorTile>> ELEMENTALINJECTORTILE = TILE_ENTITIES.register("elementalinjectortile",()->BlockEntityType.Builder.of(ElementalInjectorTile::new, ModBlocks.ELEMENTALINJECTOR.get()).build(null));
+    public static RegistryObject<BlockEntityType<ElementalCombinerTile>> ELEMENTALCOMBINER = TILE_ENTITIES.register("elementalcombinertile",()->BlockEntityType.Builder.of(ElementalCombinerTile::new, ModBlocks.ELEMENTALCOMBINER.get()).build(null));
 
     public static void register(IEventBus eventBus){
         TILE_ENTITIES.register(eventBus);

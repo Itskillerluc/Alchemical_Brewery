@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#D#",
+    "DHD",
+    "#D#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_block"
+    },
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "H": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "alchemicalbrewery:elementalcombiner",
+    "count": 1
+  }
+}
