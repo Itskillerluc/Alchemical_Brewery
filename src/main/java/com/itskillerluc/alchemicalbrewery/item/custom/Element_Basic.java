@@ -28,7 +28,7 @@ public class Element_Basic extends Item {
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
         Level plevel = pAttacker.getLevel();
         if(pTarget.isDeadOrDying()){
-            //TODO: add config setting (optional. default is this)
+            //TODO: add config setting (optional. default is this). also this has to be on a different element item.
             if(plevel.getServer().isDedicatedServer()){
                 if (pTarget instanceof Player){
                     if(pAttacker instanceof Player){

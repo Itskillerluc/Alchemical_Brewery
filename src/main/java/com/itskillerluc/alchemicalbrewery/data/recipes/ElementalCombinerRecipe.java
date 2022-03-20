@@ -60,7 +60,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
         if (haselement) {
             AtomicInteger iteration = new AtomicInteger(0);
             ingredientList.forEach((ele) -> {
-                if(ele.is(ModItems.ELEMENT_BASIC.get())) {
+                if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
                     ele.getOrCreateTag().putString("Element", getElement(iteration.get()));
                 }
                 iteration.getAndIncrement();

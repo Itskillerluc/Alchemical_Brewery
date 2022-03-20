@@ -12,6 +12,7 @@
   "item.alchemicalbrewery.corroded_gold": "Corroded Gold",
   "item.alchemicalbrewery.hardened_diamond": "Hardened Diamond",
   "item.alchemicalbrewery.element_basic": "Element %1$s",
+  "item.alchemicalbrewery.element_crafting": "Crafting Element %1$s",
   "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
   "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
   "block.alchemicalbrewery.elementalinjector": "Elemental Injector",

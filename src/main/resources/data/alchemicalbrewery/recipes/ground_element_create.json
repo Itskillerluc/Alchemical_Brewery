@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_extracting",
+  "ingredients": [
+    {
+      "item": "minecraft:dirt"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "itemcolor": 6176544,
+  "element": "Ground",
+  "count": 1,
+  "capsule": true
+}

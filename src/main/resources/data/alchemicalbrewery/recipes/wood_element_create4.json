@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_extracting",
+  "ingredients": [
+    {
+      "item": "minecraft:jungle_planks"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "itemcolor": 9530956,
+  "element": "Wood",
+  "count": 1,
+  "capsule": true
+}

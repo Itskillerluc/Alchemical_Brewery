@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_extracting",
+  "ingredients": [
+    {
+      "item": "minecraft:charcoal"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "itemcolor": 3949122,
+  "element": "Charcoal",
+  "count": 1,
+  "capsule": true
+}

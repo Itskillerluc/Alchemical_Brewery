@@ -4,6 +4,7 @@ import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.custom.AcidItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +26,12 @@ public class ModItems {
     public static final RegistryObject<Item> CAPSULE_MEDIUM = ITEMS.register("capsule_medium", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
     public static final RegistryObject<Item> CAPSULE_LARGE = ITEMS.register("capsule_large", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
     public static final RegistryObject<Item> ELEMENT_BASIC = ITEMS.register("element_basic", () -> new Element_Basic(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)){
+        @Override
+        public boolean isFoil(ItemStack pStack) {
+            return true;
+        }
+    });
+    public static final RegistryObject<Item> ELEMENT_CRAFTING = ITEMS.register("element_crafting", () -> new Element_Crafting(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)){
         @Override
         public boolean isFoil(ItemStack pStack) {
             return true;

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "addition": {
+    "item": "minecraft:crafting_table"
+  },
+  "result": {
+    "item": "alchemicalbrewery:element_crafting"
+  }
+}

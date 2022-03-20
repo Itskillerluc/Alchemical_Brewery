@@ -2,20 +2,20 @@
   "type": "alchemicalbrewery:elemental_combining",
   "ingredients": [
     {
-      "item": "alchemicalbrewery:element_basic",
-      "element": "Water",
+      "item": "alchemicalbrewery:element_crafting",
+      "element": "Ground",
       "count": 1
     },
     {
-      "item": "alchemicalbrewery:element_basic",
-      "element": "Lava",
+      "item": "alchemicalbrewery:element_crafting",
+      "element": "Charcoal",
       "count": 1
     }
   ],
   "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Stone",
-    "itemcolor": 7500402
+    "element": "Coal",
+    "itemcolor": 2171169
   }
 }

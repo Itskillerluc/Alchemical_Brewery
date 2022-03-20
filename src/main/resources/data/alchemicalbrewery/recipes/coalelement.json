@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_combining",
+  "ingredients": [
+    {
+      "item": "alchemicalbrewery:element_crafting",
+      "element": "stone",
+      "count": 64
+    },
+    {
+      "item": "alchemicalbrewery:element_crafting",
+      "element": "BlackInk",
+      "count": 5
+    }
+  ],
+  "haselement": true,
+  "output": {
+    "item": "alchemicalbrewery:element_basic",
+    "element": "Coal",
+    "itemcolor": 2171169
+  }
+}

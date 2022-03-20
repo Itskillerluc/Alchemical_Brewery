@@ -54,7 +54,7 @@ public class ElementalCombinerTile extends BlockEntity {
         }
         AtomicInteger increment = new AtomicInteger(0);
         items.forEach((ele)->{
-            if(ele.is(ModItems.ELEMENT_BASIC.get())) {
+            if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
                 ele.getOrCreateTag().putString("Element", serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getString("Element"));
                 ele.getOrCreateTag().putInt("ItemColor", serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getInt("ItemColor"));
                 increment.getAndIncrement();
@@ -137,7 +137,7 @@ public class ElementalCombinerTile extends BlockEntity {
         }
         AtomicInteger increment = new AtomicInteger(0);
         items.forEach((ele)->{
-            if(ele.is(ModItems.ELEMENT_BASIC.get())) {
+            if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
                 ele.getOrCreateTag().putString("Element", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getString("Element"));
                 increment.getAndIncrement();
             }
@@ -205,7 +205,7 @@ public class ElementalCombinerTile extends BlockEntity {
         int slot = (!entity.itemHandler.getStackInSlot(7).isEmpty()) ? 7 : (!entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : (!entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (!entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (!entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (!entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (!entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : 0;
         if(!entity.itemHandler.getStackInSlot(0).isEmpty()||!entity.itemHandler.getStackInSlot(1).isEmpty()||!entity.itemHandler.getStackInSlot(2).isEmpty()||!entity.itemHandler.getStackInSlot(3).isEmpty()||!entity.itemHandler.getStackInSlot(4).isEmpty()||!entity.itemHandler.getStackInSlot(5).isEmpty()||!entity.itemHandler.getStackInSlot(6).isEmpty()||!entity.itemHandler.getStackInSlot(7).isEmpty()){
             ItemStack item = entity.itemHandler.getStackInSlot(slot).copy();
-            if(item.is(ModItems.ELEMENT_BASIC.get())){
+            if(item.is(ModItems.ELEMENT_CRAFTING.get())){
                 item.getOrCreateTag().putString("Element", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(slot).getCompound("ForgeCaps").getString("Element"));
                 item.getOrCreateTag().putInt("ItemColor", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(slot).getCompound("ForgeCaps").getInt("ItemColor"));
             }
@@ -234,7 +234,7 @@ public class ElementalCombinerTile extends BlockEntity {
             for (int i = 0; i < items.size(); i++) {
                 message.append(counts.get(i).toString());
                 message.append(" x ");
-                if(entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_BASIC.get())){
+                if(entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_CRAFTING.get())){
                         message.append("Element: "+ entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element"));
                 }else {
                     message.append(items.get(i));
