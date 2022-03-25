@@ -1,0 +1,21 @@
+{
+  "type": "alchemicalbrewery:elemental_extracting",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "alchemicalbrewery:fuelmix"
+    }
+  ],
+  "output": {
+    "item": "alchemicalbrewery:element_basic"
+  },
+  "itemcolor": 14737632,
+  "element": "Iron",
+  "count": 1,
+  "capsule": true
+}

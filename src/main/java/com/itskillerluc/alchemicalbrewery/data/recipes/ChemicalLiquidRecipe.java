@@ -7,13 +7,15 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class ChemicalLiquidRecipe implements Recipe<Inventory> {
+public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
@@ -25,14 +27,16 @@ public class ChemicalLiquidRecipe implements Recipe<Inventory> {
     }
 
     @Override
-    public boolean matches(Inventory pContainer, Level pLevel) {
+    public boolean matches(SimpleContainer container, Level pLevel) {
         return true;
     }
 
-    public ItemStack getinput(){return recipeItems.get(0).getItems()[0];}
+    public ItemStack getInput(){
+        return recipeItems.get(0).getItems()[0];
+    }
 
     @Override
-    public ItemStack assemble(Inventory pContainer) {
+    public ItemStack assemble(SimpleContainer container) {
         return output;
     }
 
@@ -63,13 +67,13 @@ public class ChemicalLiquidRecipe implements Recipe<Inventory> {
 
     public static class Type implements RecipeType<ChemicalLiquidRecipe> {
         public Type() { }
-        public static ChemicalLiquidRecipe.Type INSTANCE = new ChemicalLiquidRecipe.Type();
+        public static Type INSTANCE = new Type();
         public static final String ID = "chemical_bathing";
     }
 
 
     public static class Serializer implements RecipeSerializer<ChemicalLiquidRecipe>{
-        public static final ChemicalLiquidRecipe.Serializer INSTANCE = new ChemicalLiquidRecipe.Serializer();
+        public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(AlchemicalBrewery.MOD_ID,"chemical_bathing");
 
         @Override

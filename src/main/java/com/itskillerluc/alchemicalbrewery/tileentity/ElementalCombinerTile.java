@@ -42,29 +42,26 @@ public class ElementalCombinerTile extends BlockEntity {
     };
     private LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
-    public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
-        }
-
+    public SimpleContainer additemtags(){
         List<ItemStack> items = new ArrayList<ItemStack>();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             items.add(itemHandler.getStackInSlot(i));
         }
-        AtomicInteger increment = new AtomicInteger(0);
         items.forEach((ele)->{
-            if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
-                ele.getOrCreateTag().putString("Element", serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getString("Element"));
-                ele.getOrCreateTag().putInt("ItemColor", serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getInt("ItemColor"));
-                increment.getAndIncrement();
-            }
+            ele.serializeNBT().getCompound("ForgeCaps").getAllKeys().forEach((element)->{
+                ele.getOrCreateTag().put(element, ele.serializeNBT().getCompound("ForgeCaps").get(element));
+            });
         });
+        SimpleContainer tagitems = new SimpleContainer(9);
         for(int i=0;i<items.size();i++){
-            itemHandler.setStackInSlot(i,items.get(i));
+            tagitems.setItem(i, items.get(i));
         }
+        return tagitems;
+    }
 
-        Containers.dropContents(this.level, this.worldPosition, inventory);
+    public void drops() {
+        SimpleContainer tagitems = additemtags();
+        Containers.dropContents(this.level, this.worldPosition, tagitems);
     }
 
 
@@ -129,26 +126,11 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     public static boolean hasRecipe(ElementalCombinerTile entity) {
-        Level level = entity.level;
+        Level level = entity.getLevel();
 
-        List<ItemStack> items = new ArrayList<ItemStack>();
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            items.add(entity.itemHandler.getStackInSlot(i));
-        }
-        AtomicInteger increment = new AtomicInteger(0);
-        items.forEach((ele)->{
-            if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
-                ele.getOrCreateTag().putString("Element", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(increment.get()).getCompound("ForgeCaps").getString("Element"));
-                increment.getAndIncrement();
-            }
-        });
-        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }
-
+        SimpleContainer tagItems = entity.additemtags();
         Optional<ElementalCombinerRecipe> match = level.getRecipeManager()
-                .getRecipeFor(ElementalCombinerRecipe.Type.INSTANCE, inventory, level);
+                .getRecipeFor(ElementalCombinerRecipe.Type.INSTANCE, tagItems, level);
 
         return match.isPresent();
     }
@@ -197,18 +179,9 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     public void extractItem(Player pPlayer, ElementalCombinerTile entity) {
-        /*
-        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }*/
         int slot = (!entity.itemHandler.getStackInSlot(7).isEmpty()) ? 7 : (!entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : (!entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (!entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (!entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (!entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (!entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : 0;
         if(!entity.itemHandler.getStackInSlot(0).isEmpty()||!entity.itemHandler.getStackInSlot(1).isEmpty()||!entity.itemHandler.getStackInSlot(2).isEmpty()||!entity.itemHandler.getStackInSlot(3).isEmpty()||!entity.itemHandler.getStackInSlot(4).isEmpty()||!entity.itemHandler.getStackInSlot(5).isEmpty()||!entity.itemHandler.getStackInSlot(6).isEmpty()||!entity.itemHandler.getStackInSlot(7).isEmpty()){
-            ItemStack item = entity.itemHandler.getStackInSlot(slot).copy();
-            if(item.is(ModItems.ELEMENT_CRAFTING.get())){
-                item.getOrCreateTag().putString("Element", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(slot).getCompound("ForgeCaps").getString("Element"));
-                item.getOrCreateTag().putInt("ItemColor", entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(slot).getCompound("ForgeCaps").getInt("ItemColor"));
-            }
+            ItemStack item = entity.additemtags().getItem(slot);
             pPlayer.setItemInHand(InteractionHand.MAIN_HAND, item);
 
             entity.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
@@ -229,14 +202,19 @@ public class ElementalCombinerTile extends BlockEntity {
                 allEmpty = false;
             }
         }
+
+        SimpleContainer tagItems = entity.additemtags();
+
         TextComponent message = new TextComponent("");
         if (!allEmpty) {
             for (int i = 0; i < items.size(); i++) {
                 message.append(counts.get(i).toString());
                 message.append(" x ");
-                if(entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_CRAFTING.get())){
-                        message.append("Element: "+ entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element"));
-                }else {
+                if (entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_CRAFTING.get())) {
+                    message.append("Element: " + entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element"));
+                } else if(entity.itemHandler.getStackInSlot(i).hasTag()){
+                    message.append(items.get(i) + " {"+tagItems.getItem(i).getTag().toString()+"}");
+                }else{
                     message.append(items.get(i));
                 }
                 if(i+1<items.size()) {
