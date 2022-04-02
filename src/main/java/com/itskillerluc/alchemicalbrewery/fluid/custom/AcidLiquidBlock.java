@@ -24,7 +24,7 @@ public class AcidLiquidBlock extends LiquidBlock {
             if (item.getItem().is(ModItems.SALT.get())){
                 item.kill();
                 pLevel.destroyBlock(pPos, false);
-                pLevel.setBlock(pPos, ModFluids.CHEMICAL_BLOCK.get().defaultBlockState(), 2);
+                pLevel.setBlock(pPos, ModFluids.CHEMICAL_BLOCK.get().defaultBlockState(), 3);
             }
         }
         super.entityInside(pState, pLevel, pPos, pEntity);

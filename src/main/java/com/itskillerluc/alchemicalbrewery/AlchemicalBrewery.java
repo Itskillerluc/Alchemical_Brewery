@@ -4,9 +4,12 @@ import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.ModContainers;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
+import com.itskillerluc.alchemicalbrewery.events.EventHandler;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
@@ -18,6 +21,8 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -46,6 +51,8 @@ public class AlchemicalBrewery
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
+        MinecraftForge.EVENT_BUS.register(this);
+
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -73,8 +80,9 @@ public class AlchemicalBrewery
             MenuScreens.register(ModContainers.ELEMENTALINJECTORCONTAINER.get(), ElementalInjectorScreen::new);
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ELEMENTALEXTRACTOR.get(), RenderType.translucent());
 
+            Minecraft.getInstance().getItemColors().register(new Element_UseItem.ColorHandler(), ModItems.ELEMENT_USE.get());
+            Minecraft.getInstance().getItemColors().register(new Element_Crafting.ColorHandler(), ModItems.ELEMENT_CRAFTING.get());
             Minecraft.getInstance().getItemColors().register(new Element_Basic.ColorHandler(), ModItems.ELEMENT_BASIC.get());
-
         });
     }
 

@@ -45,12 +45,7 @@ public class ModRecipeTypes {
     public static final RegistryObject<RecipeSerializer<ChemicalLiquidRecipe>> CHEMICAL_SERIALIZER = RECIPE_SERIALIZER.register("bathing", ()->ChemicalLiquidRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<ElementalInjectorRecipe>> ELEMENTAL_INJECTOR = RECIPE_SERIALIZER.register("injecting",()->ElementalInjectorRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<ElementalCombinerRecipe>> ELEMENTAL_COMBINER = RECIPE_SERIALIZER.register("combining",()->ElementalCombinerRecipe.Serializer.INSTANCE);
-    /*
-    public static Map<ResourceLocation, Recipe<?>> getRecipes(RecipeType<?> type, RecipeManager manager) {
-        final Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes = ObfuscationReflectionHelper
-                .getPrivateValue(RecipeManager.class, manager, "recipes");
-        return recipes.get(type);
-    }*/
+
 }
 
 

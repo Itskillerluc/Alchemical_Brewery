@@ -62,6 +62,11 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
             ingredientList.forEach((ele) -> {
                 if(ele.is(ModItems.ELEMENT_CRAFTING.get())) {
                     ele.getOrCreateTag().putString("Element", getElement(iteration.get()));
+                    try{
+                        ele.getOrCreateTag().putInt("ItemColor", pContainer.getItem(iteration.get()).getTag().getInt("ItemColor"));
+                    }catch (NullPointerException except){
+
+                    }
                 }
                 iteration.getAndIncrement();
             });

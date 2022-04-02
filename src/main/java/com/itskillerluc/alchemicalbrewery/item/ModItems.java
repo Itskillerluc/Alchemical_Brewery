@@ -5,6 +5,7 @@ import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.custom.AcidItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -49,6 +50,7 @@ public class ModItems {
     public static final RegistryObject<Item> ACTIVATEDCHARCOAL = ITEMS.register("activatedcharcoal", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
     public static final RegistryObject<Item> CORRODED_GOLD = ITEMS.register("corroded_gold", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
     public static final RegistryObject<Item> HARDENED_DIAMOND = ITEMS.register("hardened_diamond", () -> new Item(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
+    public static final RegistryObject<Item> ELEMENT_USE = ITEMS.register("element_use", ()-> new Element_UseItem(new Item.Properties().tab(ModCreativeTab.ALCHEMICALBREWERY_TAB)));
 
 
     public static void register(IEventBus eventBus){

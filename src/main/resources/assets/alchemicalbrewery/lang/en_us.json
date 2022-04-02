@@ -13,6 +13,7 @@
   "item.alchemicalbrewery.hardened_diamond": "Hardened Diamond",
   "item.alchemicalbrewery.element_basic": "Element %1$s",
   "item.alchemicalbrewery.element_crafting": "Crafting Element %1$s",
+  "item.alchemicalbrewery.element_use": "Usable element %1$s",
   "itemGroup.alchemicalbrewerytab": "Alchemical Brewery",
   "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
   "block.alchemicalbrewery.elementalinjector": "Elemental Injector",
