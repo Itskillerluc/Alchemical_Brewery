@@ -4,6 +4,7 @@ import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.ModContainers;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
+import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
 import com.itskillerluc.alchemicalbrewery.events.EventHandler;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -48,6 +49,7 @@ public class AlchemicalBrewery
         ModContainers.register(eventBus);
         ModTileEntities.register(eventBus);
         ModRecipeTypes.register(eventBus);
+        ModEntityTypes.register(eventBus);
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
