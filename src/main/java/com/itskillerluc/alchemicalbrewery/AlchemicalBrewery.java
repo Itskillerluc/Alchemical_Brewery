@@ -5,6 +5,7 @@ import com.itskillerluc.alchemicalbrewery.container.ModContainers;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
+import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileRenderer;
 import com.itskillerluc.alchemicalbrewery.events.EventHandler;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -20,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -86,6 +88,8 @@ public class AlchemicalBrewery
             Minecraft.getInstance().getItemColors().register(new Element_Crafting.ColorHandler(), ModItems.ELEMENT_CRAFTING.get());
             Minecraft.getInstance().getItemColors().register(new Element_Basic.ColorHandler(), ModItems.ELEMENT_BASIC.get());
         });
+
+        EntityRenderers.register(ModEntityTypes.ELEMENTPROJECTILE.get(), ElementProjectileRenderer::new);
     }
 
 
