@@ -6,6 +6,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -25,6 +28,11 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<String> DATA_ELEMENT = SynchedEntityData.defineId(ElementProjectileEntity.class, EntityDataSerializers.STRING);
 
     public LivingEntity Owner;
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return ParticleTypes.DRAGON_BREATH;
+    }
 
     @Override
     protected boolean shouldBurn() {
@@ -80,7 +88,7 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         super.onHitEntity(pResult);
         if (!this.level.isClientSide && getElement() != null) {
             BlockPos pos = pResult.getEntity().blockPosition();
-            useElement(pos);
+            useElement(pos, Direction.UP);
         }
     }
 
@@ -89,19 +97,19 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         super.onHitBlock(pResult);
         if (!this.level.isClientSide && getElement() != null) {
             BlockPos pos = pResult.getBlockPos();
-            useElement(pos);
+            useElement(pos, pResult.getDirection());
         }
     }
 
 
-    private void useElement(BlockPos pos) {
+    private void useElement(BlockPos pos, Direction dir) {
         try {
             if (getElement().matches("Lava")) {
-                Element_UseItem.elementfunctions.Lava(Direction.UP,pos, this.level, Owner);
+                Element_UseItem.elementfunctions.Lava(dir,pos, this.level, Owner);
             } else if (getElement().matches("Water")) {
-                Element_UseItem.elementfunctions.Water(Direction.UP,pos, this.level, Owner);
+                Element_UseItem.elementfunctions.Water(dir,pos, this.level, Owner);
             }else if(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(getElement())) != null){
-                Element_UseItem.elementfunctions.Block(Direction.UP,pos, this.level, Owner, ForgeRegistries.BLOCKS.getValue(new ResourceLocation((getElement()))));
+                Element_UseItem.elementfunctions.Block(dir,pos, this.level, Owner, ForgeRegistries.BLOCKS.getValue(new ResourceLocation((getElement()))));
             }
         }
         catch (NullPointerException | ResourceLocationException exception){
