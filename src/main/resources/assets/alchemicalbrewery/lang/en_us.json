@@ -18,7 +18,9 @@
   "block.alchemicalbrewery.elementalextractor": "Elemental Extractor",
   "block.alchemicalbrewery.elementalinjector": "Elemental Injector",
   "block.alchemicalbrewery.elementalcombiner": "Elemental Combiner",
+  "block.alchemicalbrewery.voidwell": "Voidwell",
   "screen.alchemicalbrewery.elementalextracctor": "Elemental Extractor",
+  "entity.alchemicalbrewery.elementprojectile": "Element Projectile",
 
   "tooltip.alchemicalbrewery.acid": "\u00A75I wouldn't drink this if I were you."
 }
