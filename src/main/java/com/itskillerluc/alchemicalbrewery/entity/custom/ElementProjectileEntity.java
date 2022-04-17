@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ElementProjectileEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<String> DATA_ELEMENT = SynchedEntityData.defineId(ElementProjectileEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(ElementProjectileEntity.class, EntityDataSerializers.INT);
 
     public LivingEntity Owner;
 
@@ -42,14 +44,23 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     public ElementProjectileEntity(EntityType<? extends ElementProjectileEntity> type, Level level) {
         super(type, level);
     }
-    public ElementProjectileEntity(Level level, LivingEntity owner, double x, double y, double z) {
-        super(ModEntityTypes.ELEMENTPROJECTILE.get(), owner, x, y, z, level);
+    public ElementProjectileEntity(Level level, LivingEntity owner, double x, double y, double z, double xpower, double ypower, double zpower, int color, String element) {
+        super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
         this.Owner = owner;
+        setElement(element);
+        setColor(color);
     }
 
     public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
     }
+
+    public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower, int color, String element) {
+        super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
+        setElement(element);
+        setColor(color);
+    }
+
 
     public void setElement(String element) {
         this.getEntityData().set(DATA_ELEMENT, element);
@@ -63,9 +74,17 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         String element = this.getElementRaw();
         return getElementRaw().isEmpty() ? null : element;
     }
+    public void setColor(int color) {
+        this.getEntityData().set(DATA_COLOR, color);
+    }
+
+    public int getColor() {
+        return this.getEntityData().get(DATA_COLOR);
+    }
     @Override
     protected void defineSynchedData() {
         this.getEntityData().define(DATA_ELEMENT, "None");
+        this.getEntityData().define(DATA_COLOR, 0);
     }
 
     protected void onHit(HitResult pResult) {
@@ -105,11 +124,11 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     private void useElement(BlockPos pos, Direction dir) {
         try {
             if (getElement().matches("Lava")) {
-                Element_UseItem.elementfunctions.Lava(dir,pos, this.level, Owner);
+                Element_UseItem.elementfunctions.Lava(dir,pos, this.level, Owner, InteractionHand.MAIN_HAND);
             } else if (getElement().matches("Water")) {
-                Element_UseItem.elementfunctions.Water(dir,pos, this.level, Owner);
+                Element_UseItem.elementfunctions.Water(dir,pos, this.level, Owner, InteractionHand.MAIN_HAND);
             }else if(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(getElement())) != null){
-                Element_UseItem.elementfunctions.Block(dir,pos, this.level, Owner, ForgeRegistries.BLOCKS.getValue(new ResourceLocation((getElement()))));
+                Element_UseItem.elementfunctions.Block(dir,pos, this.level, Owner, ForgeRegistries.BLOCKS.getValue(new ResourceLocation((getElement()))), InteractionHand.MAIN_HAND);
             }
         }
         catch (NullPointerException | ResourceLocationException exception){
@@ -127,6 +146,8 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         if (!element.isEmpty()) {
             pCompound.putString("Element", element);
         }
+        int color = this.getColor();
+        pCompound.putInt("Color", color);
 
     }
 
@@ -134,6 +155,8 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         super.readAdditionalSaveData(pCompound);
         String element = pCompound.getString("Element");
         this.setElement(element);
+        int color = pCompound.getInt("Color");
+        this.setColor(color);
     }
 
 }

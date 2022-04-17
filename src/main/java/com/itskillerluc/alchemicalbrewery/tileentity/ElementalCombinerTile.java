@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ElementalCombinerTile extends BlockEntity {
 
@@ -43,7 +42,7 @@ public class ElementalCombinerTile extends BlockEntity {
     private LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
     public SimpleContainer additemtags(){
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             items.add(itemHandler.getStackInSlot(i));
         }
