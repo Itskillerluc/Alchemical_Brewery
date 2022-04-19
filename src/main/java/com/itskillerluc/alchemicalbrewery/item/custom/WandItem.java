@@ -199,7 +199,7 @@ public class WandItem extends Item {
             }else if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) > 0){
                 int slot = 0;
                 setvar(pPlayer.getItemInHand(pUsedHand));
-                pLevel.addFreshEntity(new ElementProjectileEntity(pLevel, pPlayer.getX(), pPlayer.getEyeY(), pPlayer.getZ(), pPlayer.getLookAngle().x * 1, pPlayer.getLookAngle().y * 1, pPlayer.getLookAngle().z * 1, colors.get(getSlot(pPlayer.getItemInHand(pUsedHand))), elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)))));
+                pLevel.addFreshEntity(new ElementProjectileEntity(pLevel, pPlayer, pPlayer.getX(), pPlayer.getEyeY(), pPlayer.getZ(), pPlayer.getLookAngle().x * 1, pPlayer.getLookAngle().y * 1, pPlayer.getLookAngle().z * 1, colors.get(getSlot(pPlayer.getItemInHand(pUsedHand))), elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)))));
                 if(counts.get(getSlot(pPlayer.getItemInHand(pUsedHand)))<=1){
                     elements.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));
                     colors.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));

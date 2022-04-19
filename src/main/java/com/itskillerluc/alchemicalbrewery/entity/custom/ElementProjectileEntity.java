@@ -1,7 +1,8 @@
 package com.itskillerluc.alchemicalbrewery.entity.custom;
 
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
-import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
+import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
+import com.itskillerluc.alchemicalbrewery.item.custom.elements.elementfunctions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
@@ -18,8 +19,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -123,12 +124,10 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
 
     private void useElement(BlockPos pos, Direction dir) {
         try {
-            if (getElement().matches("Lava")) {
-                Element_UseItem.elementfunctions.Lava(dir,pos, this.level, Owner, InteractionHand.MAIN_HAND);
-            } else if (getElement().matches("Water")) {
-                Element_UseItem.elementfunctions.Water(dir,pos, this.level, Owner, InteractionHand.MAIN_HAND);
-            }else if(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(getElement())) != null){
-                Element_UseItem.elementfunctions.Block(dir,pos, this.level, Owner, ForgeRegistries.BLOCKS.getValue(new ResourceLocation((getElement()))), InteractionHand.MAIN_HAND);
+            if(ElementInit.functions.containsKey(getElement())) {
+                ElementInit.functions.get(getElement()).run(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(getElement()).arg(level, Owner, this));
+            }else {
+                elementfunctions.block(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(("Block")).arg(this.level, Owner, this));
             }
         }
         catch (NullPointerException | ResourceLocationException exception){

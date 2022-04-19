@@ -14,19 +14,15 @@ public class VoidWell extends Block {
     public VoidWell(Properties p_49795_) {
         super(p_49795_);
     }
+
     @Override
     public void stepOn(Level pLevel, BlockPos pPos, BlockState pState, Entity pEntity) {
-        if(!pLevel.isClientSide()){
-            if(pEntity instanceof ItemEntity){
-                if(((ItemEntity) pEntity).getItem().is(ModItems.ELEMENT_BASIC.get())){
-                    Element_Basic.convert(((ItemEntity) pEntity), pLevel);
-                    pEntity.kill();
-                }else{
-                    pEntity.kill();
-                }
-            }else{
-                pEntity.hurt(DamageSource.OUT_OF_WORLD, 4);
+        if (!pLevel.isClientSide()) {
+            if (pEntity instanceof ItemEntity) {
+                pEntity.kill();
             }
+        } else {
+            pEntity.hurt(DamageSource.OUT_OF_WORLD, 4);
         }
     }
 }

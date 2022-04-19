@@ -11,6 +11,7 @@ import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
+import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
