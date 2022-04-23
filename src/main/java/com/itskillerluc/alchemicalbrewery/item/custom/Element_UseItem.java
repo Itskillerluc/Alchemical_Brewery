@@ -24,6 +24,9 @@ public class Element_UseItem extends Element_Basic {
     }
 
 
+    /**
+     * create a dynamic name
+     */
     @Override
     public Component getName(ItemStack pStack) {
         return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + pStack.getTag().getString("Element") + ")") : new TranslatableComponent("item.alchemicalbrewery.element_use");
@@ -42,10 +45,11 @@ public class Element_UseItem extends Element_Basic {
     public InteractionResult useOn(UseOnContext pContext) {
         if(!pContext.getPlayer().isCrouching()) {
             try {
+                //Run the element that is stored in the nbt
                 if(ElementInit.functions.containsKey(pContext.getItemInHand().getTag().getString("Element"))) {
-                    ElementInit.functions.get(pContext.getItemInHand().getTag().getString("Element")).run(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get(pContext.getItemInHand().getTag().getString("Element")).arg(pContext));
+                    ElementInit.functions.get(pContext.getItemInHand().getTag().getString("Element")).run(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get(pContext.getItemInHand().getTag().getString("Element")).apply(pContext));
                 }else {
-                    elementfunctions.block(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get("Block").arg(pContext));
+                    elementfunctions.block(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get("Block").apply(pContext));
                 }
 
             } catch (NullPointerException | ResourceLocationException exception) {
@@ -64,6 +68,7 @@ public class Element_UseItem extends Element_Basic {
         return true;
     }
 
+    //this method is currently not being used, but itll be later.
     @Override
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
         Level plevel = pAttacker.getLevel();
@@ -86,6 +91,9 @@ public class Element_UseItem extends Element_Basic {
         return true;
     }
 
+    /**
+     * Sets the color to the nbt that is provided
+     */
     public static class ColorHandler implements ItemColor {
         @Override
         public int getColor(ItemStack pStack, int pTintIndex) {

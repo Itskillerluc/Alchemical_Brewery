@@ -144,6 +144,7 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
         }
     }
 
+    //create cosmetic particals and sound
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {

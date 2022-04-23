@@ -9,6 +9,9 @@ public class Element_Crafting extends Element_Basic{
         super(pProperties);
     }
 
+    /**
+     * create a dynamic name
+     */
     @Override
     public Component getName(ItemStack pStack) {
         return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7b(" + pStack.getTag().getString("Element") + ")") : new TranslatableComponent("item.alchemicalbrewery.element_crafting");

@@ -41,6 +41,9 @@ public class ElementalCombinerTile extends BlockEntity {
     };
     private LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
+    /**
+     * move the tags to a spot where it actually works when dropping them
+     */
     public SimpleContainer additemtags(){
         List<ItemStack> items = new ArrayList<>();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -58,6 +61,9 @@ public class ElementalCombinerTile extends BlockEntity {
         return tagitems;
     }
 
+    /**
+     * drops that should drop when broken
+     */
     public void drops() {
         SimpleContainer tagitems = additemtags();
         Containers.dropContents(this.level, this.worldPosition, tagitems);
@@ -124,6 +130,10 @@ public class ElementalCombinerTile extends BlockEntity {
         super.handleUpdateTag(tag);
     }
 
+    /**
+     * @param entity tileentity being targeted
+     * @return true if a recipe instance is present
+     */
     public static boolean hasRecipe(ElementalCombinerTile entity) {
         Level level = entity.getLevel();
 
@@ -134,6 +144,10 @@ public class ElementalCombinerTile extends BlockEntity {
         return match.isPresent();
     }
 
+    /**
+     * craft the item
+     * @param entity tileentity thats targeted
+     */
     public static void craftItem(ElementalCombinerTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
@@ -160,6 +174,14 @@ public class ElementalCombinerTile extends BlockEntity {
         }
     }
 
+    /**
+     * inserts the item thats being held into the tileentity
+     * @param item item type that should be inserted
+     * @param count item count that should be inserted
+     * @param tag tags of the item that should be inserted
+     * @param entity tileentity where it should be inserted into
+     * @param player player that is inserting it
+     */
     public void insertItem(Item item, int count, CompoundTag tag, ElementalCombinerTile entity, Player player) {
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
@@ -177,6 +199,11 @@ public class ElementalCombinerTile extends BlockEntity {
         }
     }
 
+    /**
+     * extracts the item from the tileentity and into the players hand
+     * @param pPlayer player thats extracting the item from the tileentity
+     * @param entity tileentity thats being targeted
+     */
     public void extractItem(Player pPlayer, ElementalCombinerTile entity) {
         int slot = (!entity.itemHandler.getStackInSlot(7).isEmpty()) ? 7 : (!entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : (!entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (!entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (!entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (!entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (!entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : 0;
         if(!entity.itemHandler.getStackInSlot(0).isEmpty()||!entity.itemHandler.getStackInSlot(1).isEmpty()||!entity.itemHandler.getStackInSlot(2).isEmpty()||!entity.itemHandler.getStackInSlot(3).isEmpty()||!entity.itemHandler.getStackInSlot(4).isEmpty()||!entity.itemHandler.getStackInSlot(5).isEmpty()||!entity.itemHandler.getStackInSlot(6).isEmpty()||!entity.itemHandler.getStackInSlot(7).isEmpty()){
@@ -189,6 +216,11 @@ public class ElementalCombinerTile extends BlockEntity {
         }
     }
 
+    /**
+     * prints the elements that are in the tileentity
+     * @param player player clicking the tileentity
+     * @param entity tileentity being clicked
+     */
     public void getItems(Player player, ElementalCombinerTile entity) {
         ArrayList<String> items = new ArrayList<String>();
         ArrayList<Integer> counts = new ArrayList<Integer>();

@@ -11,11 +11,13 @@ import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
+import com.itskillerluc.alchemicalbrewery.item.custom.WandItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import com.itskillerluc.alchemicalbrewery.util.LootHandler;
+import com.itskillerluc.alchemicalbrewery.util.ModItemProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -61,6 +63,7 @@ public class AlchemicalBrewery
         LootHandler.registerEventBusListeners(forgeeventbus);
     }
 
+
     private void setup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
@@ -84,6 +87,9 @@ public class AlchemicalBrewery
             Minecraft.getInstance().getItemColors().register(new Element_UseItem.ColorHandler(), ModItems.ELEMENT_USE.get());
             Minecraft.getInstance().getItemColors().register(new Element_Crafting.ColorHandler(), ModItems.ELEMENT_CRAFTING.get());
             Minecraft.getInstance().getItemColors().register(new Element_Basic.ColorHandler(), ModItems.ELEMENT_BASIC.get());
+            Minecraft.getInstance().getItemColors().register(new WandItem.ColorHandler(), ModItems.WAND_ITEM.get());
+
+            ModItemProperties.addCustomItemProperties();
         });
 
         EntityRenderers.register(ModEntityTypes.ELEMENTPROJECTILE.get(), ElementProjectileRenderer::new);

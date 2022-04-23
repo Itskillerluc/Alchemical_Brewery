@@ -51,6 +51,10 @@ public class AcidItem extends Item {
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         pTooltipComponents.add(new TranslatableComponent("tooltip.alchemicalbrewery.acid"));
     }
+
+    /**
+     * kill the player if he drinks it
+     */
     @Override
     public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity entity) {
         if (!(entity instanceof Player player) || pLevel.isClientSide) {

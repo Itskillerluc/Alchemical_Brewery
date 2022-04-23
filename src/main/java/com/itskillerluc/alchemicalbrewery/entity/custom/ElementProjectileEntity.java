@@ -122,12 +122,17 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     }
 
 
+    /**
+     * runs the element that is inside of the nbt.
+     * @param pos position where it should execute
+     * @param dir side of the block that is being hit (itll appear on that side of the block)
+     */
     private void useElement(BlockPos pos, Direction dir) {
         try {
             if(ElementInit.functions.containsKey(getElement())) {
-                ElementInit.functions.get(getElement()).run(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(getElement()).arg(level, Owner, this));
+                ElementInit.functions.get(getElement()).run(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(getElement()).apply(this));
             }else {
-                elementfunctions.block(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(("Block")).arg(this.level, Owner, this));
+                elementfunctions.block(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(("Block")).apply(this));
             }
         }
         catch (NullPointerException | ResourceLocationException exception){

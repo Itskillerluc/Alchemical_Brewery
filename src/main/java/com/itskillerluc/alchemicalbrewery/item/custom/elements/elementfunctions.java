@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * Contains the functions for elements.
+ * Contains the functions that can be ran for element types.
  */
 public class elementfunctions {
     public static void lava(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, String[] args) {
@@ -59,6 +59,9 @@ public class elementfunctions {
         }
     }
 
+    /**
+     * @param args the block that should be placed
+     */
     public static void block(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, String[] args) {
         Block block;
         if (ForgeRegistries.BLOCKS.getValue(new ResourceLocation(args[0])) != null) {

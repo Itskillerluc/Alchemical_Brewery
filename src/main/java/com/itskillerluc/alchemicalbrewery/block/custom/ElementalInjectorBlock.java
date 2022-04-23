@@ -129,6 +129,7 @@ public class ElementalInjectorBlock extends BaseEntityBlock {
         }
     }
 
+    //cosmetic particles and sound
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {

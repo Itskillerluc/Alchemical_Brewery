@@ -55,6 +55,7 @@ public class ElementalCombinerBlock extends BaseEntityBlock {
         double d2 = (double)pPos.getZ();
         if (!pLevel.isClientSide()) {
             BlockEntity tileEntity = pLevel.getBlockEntity(pPos);
+            //test what method should be run
             if(pPlayer.isCrouching()&&((ElementalCombinerTile)tileEntity).hasRecipe((ElementalCombinerTile) tileEntity)){
                 ((ElementalCombinerTile)tileEntity).craftItem((ElementalCombinerTile) tileEntity);
             }else if(pPlayer.isCrouching()&&!((ElementalCombinerTile)tileEntity).hasRecipe((ElementalCombinerTile)tileEntity)) {
@@ -82,6 +83,7 @@ public class ElementalCombinerBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new ElementalCombinerTile(pPos, pState);
     }
+    //drop the items when broken
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {

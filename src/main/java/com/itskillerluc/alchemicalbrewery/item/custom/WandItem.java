@@ -3,10 +3,9 @@ package com.itskillerluc.alchemicalbrewery.item.custom;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
-import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -14,8 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.util.ArrayList;
 
@@ -27,12 +25,20 @@ public class WandItem extends Item {
     private int count;
     private int color;
 
+    /**
+     * resets all the variables to their default values use this after setvar(Itemstack stack)
+     */
     public void resetvar(){
         elements = new ArrayList<>();
         counts = new ArrayList<>();
         colors = new ArrayList<>();
         count = 0;
     }
+
+    /**
+     * Always run resetvar() after having used this
+     * @param stack the stack which the nbt should be read from
+     */
     public void setvar(ItemStack stack){
         if(stack.hasTag()) {
             for (int i = 0; i < stack.getTag().getList("Elements", 10).size(); i++) {
@@ -55,6 +61,11 @@ public class WandItem extends Item {
     public int getUsedelements(ItemStack stack) {
         return stack.getTag().getInt("usedelements");
     }
+
+    /**
+     * @param stack stack that is being targeted
+     * @return the total amount of element slots that are being used
+     */
     public int getAmount(ItemStack stack){
         ArrayList<Integer> amounts = new ArrayList<>();
         int amount = 0;
@@ -71,11 +82,21 @@ public class WandItem extends Item {
     public void setUsedelements(ItemStack stack, int value){
         stack.getOrCreateTag().putInt("usedelements", value);
     }
+
+    /**
+     * handles the upgrades
+     * @param stack itemstack which is targeted
+     */
     private void upgradeHandler(ItemStack stack){
         setMaxelements(stack, 16);
     }
 
 
+    /**
+     * use this if you need to update the changes in the variables to the nbt of the itemstack
+     * @param stack itemstack that is being targeted
+     * @return compoundtag that is put into the itemstack
+     */
     public CompoundTag updateNBT(ItemStack stack)
     {
         ListTag nbtTagList = new ListTag();
@@ -99,6 +120,12 @@ public class WandItem extends Item {
         setUsedelements(stack, getAmount(stack));
         return nbt;
     }
+
+    /**
+     * use this the first time when pushing the variables to the items nbt
+     * @param stack itemstack that is being targeted
+     * @return nbt that is put into the itemstack
+     */
     public CompoundTag serializeNBT(ItemStack stack)
     {
         setvar(stack);
@@ -128,10 +155,13 @@ public class WandItem extends Item {
     public WandItem(Properties pProperties) {
         super(pProperties);
     }
+
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         if(!pLevel.isClientSide()){
             if(pPlayer.getItemInHand(pUsedHand).hasTag()) {
+                //adds the selected tag if not present
                 if (!pPlayer.getItemInHand(pUsedHand).getTag().contains("Selected")) {
                     pPlayer.getItemInHand(pUsedHand).getOrCreateTag().putInt("Selected", 0);
                 }
@@ -139,6 +169,7 @@ public class WandItem extends Item {
             color = 0;
             upgradeHandler(pPlayer.getItemInHand(pUsedHand));
             if(pPlayer.isCrouching()){
+                //add the element in your hand to the wand item
                 if(!pPlayer.getMainHandItem().isEmpty() && !pPlayer.getOffhandItem().isEmpty()) {
                     if(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get())||pPlayer.getMainHandItem().is(ModItems.ELEMENT_USE.get())) {
                         if (pUsedHand.equals(InteractionHand.OFF_HAND)) {
@@ -182,6 +213,7 @@ public class WandItem extends Item {
                         }
                     }
                 }else {
+                    //select a different element
                     setvar(pPlayer.getItemInHand(pUsedHand));
                     if(getSlot(pPlayer.getItemInHand(pUsedHand))+1 <elements.size()){
                         setSlot(pPlayer.getItemInHand(pUsedHand), getSlot(pPlayer.getItemInHand(pUsedHand))+1);
@@ -197,6 +229,7 @@ public class WandItem extends Item {
                     this.resetvar();
                 }
             }else if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) > 0){
+                //summon the projectile with the element
                 int slot = 0;
                 setvar(pPlayer.getItemInHand(pUsedHand));
                 pLevel.addFreshEntity(new ElementProjectileEntity(pLevel, pPlayer, pPlayer.getX(), pPlayer.getEyeY(), pPlayer.getZ(), pPlayer.getLookAngle().x * 1, pPlayer.getLookAngle().y * 1, pPlayer.getLookAngle().z * 1, colors.get(getSlot(pPlayer.getItemInHand(pUsedHand))), elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)))));
@@ -219,4 +252,24 @@ public class WandItem extends Item {
         }
         return super.use(pLevel, pPlayer, pUsedHand);
     }
+
+    /**
+     * @param stack the itemstack that is targeted
+     * @return returns true if the wand is containing atleast 1 element
+     */
+    public static boolean hasElement(ItemStack stack){
+        return stack.hasTag() && stack.getTag().getList("Elements", 10).size() > 0;
+    }
+
+    /**
+     * Sets the color to the nbt that is provided
+     */
+    public static class ColorHandler implements ItemColor {
+        @Override
+        public int getColor(ItemStack pStack, int pTintIndex) {
+            return pStack.hasTag() ? pStack.getTag().getList("Elements", 10).getCompound(pStack.getTag().getInt("Selected")).getInt("color") : -1;
+        }
+    }
+
+
 }

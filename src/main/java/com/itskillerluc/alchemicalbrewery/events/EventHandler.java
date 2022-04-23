@@ -13,6 +13,9 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = AlchemicalBrewery.MOD_ID)
 public class EventHandler {
+    /**
+     * converts the element_basic into element_use when item is thrown into the void
+     */
     @SubscribeEvent
     public static void entityKilled(EntityLeaveWorldEvent event){
         if(!event.getEntity().level.isClientSide()) {

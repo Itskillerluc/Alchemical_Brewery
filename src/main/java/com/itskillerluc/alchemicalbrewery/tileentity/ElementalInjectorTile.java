@@ -50,6 +50,9 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
     private boolean iscrafting = false;
     private boolean finished = false;
 
+    /**
+     * what it should drop
+     */
     public void drops() {
         SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
         for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -112,6 +115,13 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         super.saveAdditional(pTag);
     }
 
+    /**
+     * handles everything that should be done every tick
+     * @param pLevel level the tile entity is in
+     * @param pPos blockpos of the tile entity
+     * @param pState blockstate of the tile entity
+     * @param pBlockEntity tile entity
+     */
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalInjectorTile pBlockEntity){
 
         if(hasRecipe(pBlockEntity)) {
@@ -136,6 +146,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         setChanged(pLevel, pPos, pState);
     }
 
+    /**
+     * @param entity tile entity targeted
+     * @return true if a recipe instance of the type is present
+     */
     private static boolean hasRecipe(ElementalInjectorTile entity) {
 
         Level level = entity.getLevel();
@@ -150,6 +164,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         return match.isPresent();
     }
 
+    /**
+     * adds the charge of a item to the tile entity
+     * @param entity tile entity targeted
+     */
     private static void addCharge(ElementalInjectorTile entity){
 
         Level level = entity.level;
@@ -168,6 +186,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         }
     }
 
+    /**
+     * crafts the item
+     * @param entity tile enitty targeted
+     */
     private static void craftItem(ElementalInjectorTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
@@ -178,8 +200,8 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         Optional<ElementalInjectorRecipe> match = level.getRecipeManager()
                 .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
 
-        if(match.isPresent()&&canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem())&&match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()&&(entity.itemHandler.getStackInSlot(1).hasTag()) ? entity.itemHandler.getStackInSlot(1).getTag().getString("Element").matches(match.get().getElement()) : false) {
+        if(match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
+                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem()) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem() && (entity.itemHandler.getStackInSlot(1).hasTag()) && entity.itemHandler.getStackInSlot(1).getTag().getString("Element").matches(match.get().getElement())) {
             if(match.get().getCharge()<=entity.charge){
                 if(!entity.iscrafting){
                     entity.iscrafting = true;
@@ -246,10 +268,17 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         super.handleUpdateTag(tag);
     }
 
+
+    /**
+     * checks if it fits
+     */
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack output) {
         return inventory.getItem(2).getItem() == output.getItem() || inventory.getItem(2).isEmpty();
     }
 
+    /**
+     * checks if it fits
+     */
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
         return inventory.getItem(2).getMaxStackSize() > inventory.getItem(2).getCount();
     }

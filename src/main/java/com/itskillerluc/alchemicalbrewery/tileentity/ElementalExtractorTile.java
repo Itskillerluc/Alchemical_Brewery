@@ -49,6 +49,9 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
     private boolean iscrafting = false;
     private boolean finished = false;
 
+    /**
+     * handle the drops
+     */
     public void drops() {
         SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
         for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -132,6 +135,13 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         handler = LazyOptional.of(() -> itemHandler);
     }
 
+    /**
+     * handles all the things that should be done every tick
+     * @param pLevel level the tile entity is in
+     * @param pPos blockpos of the tile entity
+     * @param pState blockstate of the tile entity
+     * @param pBlockEntity tile entity
+     */
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
 
         if(hasRecipe(pBlockEntity)) {
@@ -178,6 +188,10 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         super.handleUpdateTag(tag);
     }
 
+    /**
+     * @param entity tile entity being targeted
+     * @return true if the tile entity has a recipe instance
+     */
     private static boolean hasRecipe(ElementalExtractorTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
@@ -192,6 +206,10 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                 && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem());
     }
 
+    /**
+     * craft the item
+     * @param entity tile entity being targeted
+     */
     private static void craftItem(ElementalExtractorTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
@@ -279,10 +297,16 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         this.BurnTime = 0;
     }
 
+    /**
+     * checks if its the same type
+     */
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack output) {
         return inventory.getItem(3).getItem() == output.getItem() || inventory.getItem(3).isEmpty();
     }
 
+    /**
+     * checks if it still fits
+     */
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
         return inventory.getItem(3).getMaxStackSize() > inventory.getItem(3).getCount();
     }

@@ -38,6 +38,10 @@ public class ChemicalLiquidBlock extends LiquidBlock {
         super(pFluid, pProperties);
     }
 
+
+    /**
+     * @return returns if there is a recipe instanciated or not
+     */
     public static boolean hasRecipe(Level level) {
         SimpleContainer inventory = null;
 
@@ -47,6 +51,13 @@ public class ChemicalLiquidBlock extends LiquidBlock {
         return match.isPresent();
     }
 
+    /**
+     * checks what is inside, if its a item it should convert it based on the recipe
+     * @param pState blockstate of this block
+     * @param pLevel level the block is in
+     * @param pPos blockposition
+     * @param pEntity entity that's inside of the block
+     */
     @Override
     public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
         SimpleContainer inventory = null;
