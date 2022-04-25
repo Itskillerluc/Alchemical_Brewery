@@ -3,7 +3,7 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Ground",
+      "element": "Stone-minecraft:stone",
       "count": 1
     },
     {
@@ -16,6 +16,7 @@
   "output": {
     "item": "alchemicalbrewery:element_basic",
     "element": "Coal",
-    "itemcolor": 2171169
+    "itemcolor": 2171169,
+    "secitemcolor": 2171169
   }
 }

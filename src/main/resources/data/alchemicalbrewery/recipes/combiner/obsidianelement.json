@@ -20,7 +20,8 @@
   "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Obsidian",
-    "itemcolor": 2692155
+    "element": "Obsidian-minecraft:obsidian",
+    "itemcolor": 2692155,
+    "secitemcolor": 2692155
   }
 }

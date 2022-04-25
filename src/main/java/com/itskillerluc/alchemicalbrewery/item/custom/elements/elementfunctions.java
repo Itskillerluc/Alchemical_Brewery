@@ -17,6 +17,27 @@ import net.minecraftforge.registries.ForgeRegistries;
  * Contains the functions that can be ran for element types.
  */
 public class elementfunctions {
+    public static void Ender(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, String[] args){
+        BlockPos newpos;
+        newpos = switch (dir) {
+            case UP -> pos.above();
+            case DOWN -> pos.below();
+            case EAST -> pos.east();
+            case WEST -> pos.west();
+            case NORTH -> pos.north();
+            case SOUTH -> pos.south();
+        };
+        if (!level.isClientSide()) {
+            user.teleportToWithTicket(newpos.getX(), newpos.getY(), newpos.getZ());
+            if (user != null && consume) {
+                if (user.getItemInHand(hand).hasTag()) {
+                    if (!user.getItemInHand(hand).getTag().getBoolean("Creative")) {
+                        user.setItemInHand(hand, Utilities.DecodeStackTags(new ItemStack(user.getItemInHand(hand).getItem(), user.getItemInHand(hand).getCount() - 1, user.getItemInHand(hand).getTag())));
+                    }
+                }
+            }
+        }
+    }
     public static void lava(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, String[] args) {
         BlockPos newpos;
         newpos = switch (dir) {
@@ -78,11 +99,22 @@ public class elementfunctions {
             case NORTH -> pos.north();
             case SOUTH -> pos.south();
         };
+        if(block.defaultBlockState().getMaterial().isReplaceable()&&dir.equals(Direction.UP)){
+            if(level.getBlockState(newpos.below()).getMaterial().isReplaceable()){
+                newpos = newpos.below();
+            }
+        }
         if (!level.isClientSide() && level.getBlockState(newpos).getMaterial().isReplaceable()) {
-            level.setBlock(newpos, block.defaultBlockState(), 3);
-            if (user != null && consume) {
-                if (!user.getItemInHand(hand).getTag().getBoolean("Creative")) {
-                    user.setItemInHand(hand, Utilities.DecodeStackTags(new ItemStack(user.getItemInHand(hand).getItem(), user.getItemInHand(hand).getCount() - 1, user.getItemInHand(hand).getTag())));
+            if(block.defaultBlockState().getMaterial().isReplaceable()){
+                if(!level.getBlockState(newpos.below()).isAir()){
+                    level.setBlock(newpos, block.defaultBlockState(), 3);
+                }
+            }else {
+                level.setBlock(newpos, block.defaultBlockState(), 3);
+                if (user != null && consume) {
+                    if (!user.getItemInHand(hand).getTag().getBoolean("Creative")) {
+                        user.setItemInHand(hand, Utilities.DecodeStackTags(new ItemStack(user.getItemInHand(hand).getItem(), user.getItemInHand(hand).getCount() - 1, user.getItemInHand(hand).getTag())));
+                    }
                 }
             }
         }

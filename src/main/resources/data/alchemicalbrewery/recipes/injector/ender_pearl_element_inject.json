@@ -4,10 +4,10 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "output": {
-    "item": "minecraft:dirt"
+    "item": "minecraft:ender_pearl"
   },
-  "element": "Ground-minecraft:dirt",
+  "element": "Ender",
   "count": 1,
   "onlycharge": false,
-  "charge": 1
+  "charge": 32
 }

@@ -6,7 +6,7 @@
   "output": {
     "item": "minecraft:oak_planks"
   },
-  "element": "Wood",
+  "element": "Wood-minecraft:oak_planks",
   "count": 1,
   "onlycharge": false,
   "charge": 2

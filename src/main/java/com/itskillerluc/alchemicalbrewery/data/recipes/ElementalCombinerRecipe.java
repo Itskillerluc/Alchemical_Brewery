@@ -29,8 +29,9 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
     private final List<Integer> counts;
     private final String Element;
     private final int itemcolor;
+    private final int secitemcolor;
 
-    public ElementalCombinerRecipe(ResourceLocation id, ItemStack output, List<ItemStack> ingredientList, List<String> elementslist, boolean haselement, List<Integer> counts, String element, int itemcolor) {
+    public ElementalCombinerRecipe(ResourceLocation id, ItemStack output, List<ItemStack> ingredientList, List<String> elementslist, boolean haselement, List<Integer> counts, String element, int itemcolor, int secitemcolor) {
         this.id = id;
         this.output = output;
         this.ingredientList = ingredientList;
@@ -39,6 +40,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
         this.counts = counts;
         this.Element = element;
         this.itemcolor = itemcolor;
+        this.secitemcolor = secitemcolor;
     }
 
     public int size(){
@@ -55,6 +57,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
     public int getItemcolor() {
         return itemcolor;
     }
+    public int getSecitemcolor(){return secitemcolor;}
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
         if (haselement) {
@@ -64,6 +67,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
                     ele.getOrCreateTag().putString("Element", getElement(iteration.get()));
                     try{
                         ele.getOrCreateTag().putInt("ItemColor", pContainer.getItem(iteration.get()).getTag().getInt("ItemColor"));
+                        ele.getOrCreateTag().putInt("SecItemColor", pContainer.getItem(iteration.get()).getTag().getInt("SecItemColor"));
                     }catch (NullPointerException except){
 
                     }
@@ -133,8 +137,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
             String element = GsonHelper.getAsJsonObject(pSerializedRecipe, "output").get("element").getAsString();
             int itemcolor = GsonHelper.getAsJsonObject(pSerializedRecipe, "output").get("itemcolor").getAsInt();
-            //int outputcount = GsonHelper.getAsInt(pSerializedRecipe, "outputcount");
-            //JsonArray elements = GsonHelper.getAsJsonArray(pSerializedRecipe,"elements");
+            int secitemcolor = GsonHelper.getAsJsonObject(pSerializedRecipe, "output").get("secitemcolor").getAsInt();
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
 
@@ -158,7 +161,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
             });
             boolean haselement = GsonHelper.getAsBoolean(pSerializedRecipe,"haselement");
 
-            return new ElementalCombinerRecipe(pRecipeId, output, ingredientList, elementslist, haselement, counts, element, itemcolor);
+            return new ElementalCombinerRecipe(pRecipeId, output, ingredientList, elementslist, haselement, counts, element, itemcolor, secitemcolor);
         }
 
         @Nullable
@@ -172,7 +175,8 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
             List<Integer> counts = buf.readList(FriendlyByteBuf::readInt);
             String element = buf.readUtf();
             int itemcolor = buf.readInt();
-            return new ElementalCombinerRecipe(pRecipeId, output, ingredientlist, elementslist, haselement, counts,element,itemcolor);
+            int secitemcolor = buf.readInt();
+            return new ElementalCombinerRecipe(pRecipeId, output, ingredientlist, elementslist, haselement, counts,element,itemcolor, secitemcolor);
         }
 
         @Override
@@ -184,6 +188,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
             buf.writeCollection(recipe.counts, FriendlyByteBuf::writeInt);
             buf.writeUtf(recipe.Element);
             buf.writeInt(recipe.itemcolor);
+            buf.writeInt(recipe.secitemcolor);
         }
 
         @Override

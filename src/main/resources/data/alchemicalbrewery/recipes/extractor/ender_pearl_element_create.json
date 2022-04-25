@@ -2,7 +2,7 @@
   "type": "alchemicalbrewery:elemental_extracting",
   "ingredients": [
     {
-      "item": "minecraft:water_bucket"
+      "item": "minecraft:ender_pearl"
     },
     {
       "item": "minecraft:coal"
@@ -14,9 +14,9 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 6525687,
-  "secitemcolor": 6525687,
-  "element": "Water",
+  "itemcolor": 2458227,
+  "secitemcolor": 2458227,
+  "element": "Ender",
   "count": 1,
   "capsule": true
 }

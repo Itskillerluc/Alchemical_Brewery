@@ -15,6 +15,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 0,
+  "secitemcolor": 0,
   "element": "BlackInk",
   "count": 1,
   "capsule": true

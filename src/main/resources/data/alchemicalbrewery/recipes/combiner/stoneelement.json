@@ -15,7 +15,8 @@
   "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "minecraft:stone",
-    "itemcolor": 7500402
+    "element": "Stone-minecraft:stone",
+    "itemcolor": 7500402,
+    "secitemcolor": 7500402
   }
 }

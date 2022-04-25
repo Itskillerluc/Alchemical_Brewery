@@ -6,7 +6,7 @@
   "output": {
     "item": "minecraft:stone"
   },
-  "element": "minecraft:stone",
+  "element": "Stone-minecraft:stone",
   "count": 1,
   "onlycharge": false,
   "charge": 2

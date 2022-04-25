@@ -15,7 +15,8 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 6176544,
-  "element": "Ground",
+  "secitemcolor": 6176544,
+  "element": "Ground-minecraft:dirt",
   "count": 1,
   "capsule": true
 }

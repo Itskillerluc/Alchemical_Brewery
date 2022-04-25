@@ -15,6 +15,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 11138300,
+  "secitemcolor": 11138300,
   "element": "Diamond",
   "count": 1,
   "capsule": true

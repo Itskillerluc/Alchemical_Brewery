@@ -15,6 +15,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 2171169,
+  "secitemcolor": 2171169,
   "element": "Coal",
   "count": 1,
   "capsule": true

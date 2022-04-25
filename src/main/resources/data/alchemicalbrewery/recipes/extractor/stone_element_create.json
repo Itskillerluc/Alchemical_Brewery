@@ -15,7 +15,8 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 7500402,
-  "element": "minecraft:stone",
+  "secitemcolor": 7500402,
+  "element": "Stone-minecraft:stone",
   "count": 1,
   "capsule": true
 }

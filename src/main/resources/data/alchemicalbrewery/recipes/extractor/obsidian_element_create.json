@@ -15,7 +15,8 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 2692155,
-  "element": "Obsidian",
+  "secitemcolor": 2692155,
+  "element": "Obsidian-minecraft:obsidian",
   "count": 1,
   "capsule": true
 }

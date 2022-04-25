@@ -21,7 +21,17 @@ public class Element_Basic extends Item {
      */
     @Override
     public Component getName(ItemStack pStack) {
-        return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + pStack.getTag().getString("Element") + ")") : new TranslatableComponent("item.alchemicalbrewery.element_basic");
+        String Name = null;
+        if(pStack.hasTag()){
+            String Element = pStack.getTag().getString("Element");
+            Name = Element;
+            if (Element != null) {
+                if (Element.contains("-")) {
+                    Name = Element.substring(0, Element.indexOf('-'));
+                }
+            }
+        }
+        return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7a("+Name+")") : new TranslatableComponent("item.alchemicalbrewery.element_basic");
     }
 
 
@@ -41,7 +51,21 @@ public class Element_Basic extends Item {
     public static class ColorHandler implements ItemColor{
         @Override
         public int getColor(ItemStack pStack, int pTintIndex) {
-            return pStack.hasTag() ? pStack.getTag().getInt("ItemColor") : -1;
+            if(pStack.hasTag()){
+                switch (pTintIndex){
+                    case 0 -> {
+                        assert pStack.getTag() != null;
+                        return pStack.getTag().getInt("SecItemColor");}
+                    case 1 -> {
+                        assert pStack.getTag() != null;
+                        return pStack.getTag().getInt("ItemColor");}
+                    default -> {return 15869935;}
+                }
+            }else{
+                if (pTintIndex == 0) {
+                    return 15869935;
+                }else return -1;
+            }
         }
     }
 }

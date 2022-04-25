@@ -15,6 +15,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 16734006,
+  "secitemcolor": 16734006,
   "element": "Lava",
   "count": 1,
   "capsule": true

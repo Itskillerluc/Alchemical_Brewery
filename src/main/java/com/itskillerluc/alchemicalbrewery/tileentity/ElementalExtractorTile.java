@@ -68,20 +68,20 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {
-                switch (pIndex){
-                    case 0: return (ElementalExtractorTile.this.IsBurning) ? 1 : 0;
-                    case 1: return ElementalExtractorTile.this.BurnTime;
-                    case 2: return ElementalExtractorTile.this.TotalBurnTime;
-                    default: return 0;
-                }
+                return switch (pIndex) {
+                    case 0 -> (ElementalExtractorTile.this.IsBurning) ? 1 : 0;
+                    case 1 -> ElementalExtractorTile.this.BurnTime;
+                    case 2 -> ElementalExtractorTile.this.TotalBurnTime;
+                    default -> 0;
+                };
             }
 
             @Override
             public void set(int pIndex, int pValue) {
-                switch (pIndex){
-                    case 0: ElementalExtractorTile.this.IsBurning = pValue != 0; break;
-                    case 1: ElementalExtractorTile.this.BurnTime = pValue; break;
-                    case 2: ElementalExtractorTile.this.TotalBurnTime = pValue; break;
+                switch (pIndex) {
+                    case 0 -> ElementalExtractorTile.this.IsBurning = pValue != 0;
+                    case 1 -> ElementalExtractorTile.this.BurnTime = pValue;
+                    case 2 -> ElementalExtractorTile.this.TotalBurnTime = pValue;
                 }
             }
 

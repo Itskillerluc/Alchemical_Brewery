@@ -29,8 +29,9 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     private final boolean capsule;
     private final int itemColor;
     private final String element;
+    private final int secitemColor;
 
-    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule, int itemColor, String element) {
+    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule, int itemColor, String element, int secitemColor) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
@@ -38,6 +39,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
         this.capsule = hascapsule;
         this.itemColor = itemColor;
         this.element = element;
+        this.secitemColor = secitemColor;
     }
 
 
@@ -57,6 +59,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     public int getItemColor(){
         return itemColor;
     }
+    public int getSecitemColor(){return secitemColor;}
     public String getElement(){
         return element;
     }
@@ -115,6 +118,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             boolean capsule = GsonHelper.getAsBoolean(pSerializedRecipe, "capsule");
             int color = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor");
             String element = GsonHelper.getAsString(pSerializedRecipe, "element");
+            int seccolor = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor");
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(3, Ingredient.EMPTY);
@@ -123,7 +127,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element);
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element, seccolor);
         }
 
         @Nullable
@@ -139,7 +143,8 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             boolean capsule = buf.readBoolean();
             int color = buf.readInt();
             String element = buf.readUtf();
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element);
+            int seccolor = buf.readInt();
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element, seccolor);
         }
 
         @Override
@@ -153,6 +158,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             buf.writeBoolean(recipe.capsule);
             buf.writeInt(recipe.itemColor);
             buf.writeUtf(recipe.element);
+            buf.writeInt(recipe.secitemColor);
         }
 
         @Override

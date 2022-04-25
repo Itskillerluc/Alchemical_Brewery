@@ -15,7 +15,8 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 9530956,
-  "element": "Wood",
+  "secitemcolor": 9530956,
+  "element": "Wood-minecraft:oak_planks",
   "count": 1,
   "capsule": true
 }

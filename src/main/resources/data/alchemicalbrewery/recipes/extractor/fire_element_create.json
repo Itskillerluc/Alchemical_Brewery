@@ -15,7 +15,8 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 16759851,
-  "element": "Fire",
+  "secitemcolor": 16759851,
+  "element": "Fire-minecraft:fire",
   "count": 1,
   "capsule": true
 }

@@ -1,6 +1,8 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "alchemicalbrewery:item/element_basic"
+    "layer0": "alchemicalbrewery:item/element_basicsec",
+    "layer1": "alchemicalbrewery:item/element_basicmain"
+
   }
 }

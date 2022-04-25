@@ -163,6 +163,7 @@ public class ElementalCombinerTile extends BlockEntity {
             CompoundTag nbt = resultItem.getOrCreateTag();
             if(match.get().isHaselement()) {
                 nbt.putInt("ItemColor", match.get().getItemcolor());
+                nbt.putInt("SecItemColor", match.get().getSecitemcolor());
                 nbt.putString("Element", match.get().getelement());
             }
             for (int i = 0; i < match.get().size(); i++) {
@@ -239,10 +240,22 @@ public class ElementalCombinerTile extends BlockEntity {
         TextComponent message = new TextComponent("");
         if (!allEmpty) {
             for (int i = 0; i < items.size(); i++) {
+                String Name = null;
+                if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("ForgeCaps")){
+                    if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").contains("Element")) {
+                        String Element = entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element");
+                        Name = Element;
+                        if (Element != null) {
+                            if (Element.contains("-")) {
+                                Name = Element.substring(0, Element.indexOf('-'));
+                            }
+                        }
+                    }
+                }
                 message.append(counts.get(i).toString());
                 message.append(" x ");
                 if (entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_CRAFTING.get())) {
-                    message.append("Element: " + entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element"));
+                    message.append("Element: " + Name);
                 } else if(entity.itemHandler.getStackInSlot(i).hasTag()){
                     message.append(items.get(i) + " {"+tagItems.getItem(i).getTag().toString()+"}");
                 }else{

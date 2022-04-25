@@ -15,6 +15,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "itemcolor": 14737632,
+  "secitemcolor": 14737632,
   "element": "Iron",
   "count": 1,
   "capsule": true
