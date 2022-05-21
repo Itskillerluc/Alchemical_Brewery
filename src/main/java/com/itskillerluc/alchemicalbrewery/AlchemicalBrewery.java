@@ -13,6 +13,7 @@ import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.WandItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
+import com.itskillerluc.alchemicalbrewery.misc.ModRegistries;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
@@ -51,6 +52,7 @@ public class AlchemicalBrewery
         ModTileEntities.register(eventBus);
         ModRecipeTypes.register(eventBus);
         ModEntityTypes.register(eventBus);
+        ModRegistries.register(eventBus);
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
