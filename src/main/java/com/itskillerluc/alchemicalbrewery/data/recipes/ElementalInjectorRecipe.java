@@ -44,13 +44,23 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        return true;
+        return recipematches(pContainer, pLevel)||chargematches(pContainer, pLevel);
     }
 
     public boolean recipematches(SimpleContainer pContainer, Level pLevel){
         CompoundTag nbt = recipeItems.getOrCreateTag();
         nbt.putString("Element", getElement());
-        return recipeItems.is(pContainer.getItem(1).getItem());
+        try{
+            if(pContainer.getItem(1).getTag().contains("ItemColor")) {
+                nbt.putInt("ItemColor", pContainer.getItem(1).getTag().getInt("ItemColor"));
+            }
+            if(pContainer.getItem(1).getTag().contains("SecItemColor")) {
+                nbt.putInt("SecItemColor", pContainer.getItem(1).getTag().getInt("SecItemColor"));
+            }
+        }catch (NullPointerException except){
+
+        }
+        return ItemStack.isSameItemSameTags(pContainer.getItem(1),recipeItems);
     }
     public boolean chargematches(SimpleContainer pContainer,Level pLevel){
         return output.is(pContainer.getItem(0).getItem());

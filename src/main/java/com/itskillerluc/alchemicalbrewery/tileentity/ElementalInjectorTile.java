@@ -139,6 +139,11 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                     craftItem(pBlockEntity);
                 }
             }
+        }else{
+            pBlockEntity.BurnTime = 0;
+            pBlockEntity.IsBurning = false;
+            pBlockEntity.finished = false;
+            pBlockEntity.iscrafting = false;
         }
 
         pState = pState.setValue(ElementalExtractorBlock.LIT, Boolean.valueOf(pBlockEntity.IsBurning));
@@ -179,7 +184,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                 .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
 
         if(match.isPresent()){
-            if(match.get().getResultItem().is(entity.itemHandler.getStackInSlot(0).getItem())){
+            if(match.get().chargematches(inventory, entity.getLevel())){
                 entity.charge = entity.charge + match.get().getCharge();
                 entity.itemHandler.extractItem(0, 1, false);
             }
@@ -212,7 +217,6 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
 
 
                     entity.itemHandler.extractItem(1, 1, false);
-                    ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(2).getCount() + 1);
                     entity.itemHandler.setStackInSlot(2, new ItemStack(match.get().getResultItem().getItem(),
                             entity.itemHandler.getStackInSlot(2).getCount() + match.get().getOutputcount()));
 
@@ -225,6 +229,9 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
             }
         }else{
             entity.BurnTime = 0;
+            entity.IsBurning = false;
+            entity.finished = false;
+            entity.iscrafting = false;
             setChanged(entity.getLevel(), entity.getBlockPos(), entity.getBlockState());
         }
     }

@@ -56,7 +56,7 @@ public class Element_UseItem extends Element_Basic {
 
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
-        ModElements.TEST.get().SetArgsWrapper(pContext);
+        ModElements.TEST.get().SetArgsWrapper(pContext, true);
         String ElementRaw = pContext.getItemInHand().hasTag() ? pContext.getItemInHand().getTag().getString("Element") : null;
         String Element = pContext.getItemInHand().getTag().getString("Element");
         if (ElementRaw != null) {

@@ -219,8 +219,9 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
 
         Optional<ElementalExtractorRecipe> match = level.getRecipeManager()
                 .getRecipeFor(ElementalExtractorRecipe.Type.INSTANCE, inventory, level);
-
+        boolean present = false;
         if(match.isPresent()) {
+            present = true;
             if(!entity.iscrafting){
                 entity.iscrafting = true;
                 entity.IsBurning = true;
@@ -245,6 +246,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
                             CompoundTag nbt = result.getOrCreateTag();
                             nbt.putInt("ItemColor", match.get().getItemColor());
+                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
                             nbt.putString("Element", match.get().getElement());
                         }
                         entity.itemHandler.extractItem(0, 1, false);
@@ -261,6 +263,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
                             CompoundTag nbt = result.getOrCreateTag();
                             nbt.putInt("ItemColor", match.get().getItemColor());
+                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
                             nbt.putString("Element", match.get().getElement());
                         }
                         entity.itemHandler.extractItem(0, 1, false);
@@ -277,6 +280,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
                             CompoundTag nbt = result.getOrCreateTag();
                             nbt.putInt("ItemColor", match.get().getItemColor());
+                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
                             nbt.putString("Element", match.get().getElement());
                         }
                         entity.itemHandler.extractItem(0, 1, false);
@@ -295,6 +299,9 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
 
     private void resetProgress() {
         this.BurnTime = 0;
+        this.IsBurning = false;
+        this.finished = false;
+        this.iscrafting = false;
     }
 
     /**

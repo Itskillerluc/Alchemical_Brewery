@@ -4,7 +4,7 @@
     "item": "alchemicalbrewery:element_basic"
   },
   "output": {
-    "item": "minecraft:stone"
+    "item": "minecraft:Obsidian"
   },
   "element": "Obsidian-minecraft:obsidian",
   "count": 1,
