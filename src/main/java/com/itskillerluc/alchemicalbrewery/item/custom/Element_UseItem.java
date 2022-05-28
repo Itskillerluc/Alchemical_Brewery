@@ -1,6 +1,7 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
 
 
+import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.elementfunctions;
 import com.mojang.logging.LogUtils;
@@ -55,6 +56,7 @@ public class Element_UseItem extends Element_Basic {
 
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
+        ModElements.TEST.get().SetArgsWrapper(pContext);
         String ElementRaw = pContext.getItemInHand().hasTag() ? pContext.getItemInHand().getTag().getString("Element") : null;
         String Element = pContext.getItemInHand().getTag().getString("Element");
         if (ElementRaw != null) {

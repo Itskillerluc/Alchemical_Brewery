@@ -4,7 +4,9 @@ import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.ModContainers;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
+import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
+import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileRenderer;
 import com.itskillerluc.alchemicalbrewery.fluid.ModFluids;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -12,8 +14,6 @@ import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Crafting;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_UseItem;
 import com.itskillerluc.alchemicalbrewery.item.custom.WandItem;
-import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
-import com.itskillerluc.alchemicalbrewery.misc.ModRegistries;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalExtractorScreen;
 import com.itskillerluc.alchemicalbrewery.screen.ElementalInjectorScreen;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -34,6 +35,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AlchemicalBrewery.MOD_ID)
 public class AlchemicalBrewery
@@ -43,6 +46,7 @@ public class AlchemicalBrewery
     public static final String MOD_ID = "alchemicalbrewery";
 
     public AlchemicalBrewery() {
+
         // Register the setup method for modloading
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModItems.register(eventBus);
@@ -52,7 +56,8 @@ public class AlchemicalBrewery
         ModTileEntities.register(eventBus);
         ModRecipeTypes.register(eventBus);
         ModEntityTypes.register(eventBus);
-        ModRegistries.register(eventBus);
+        ModElements.register(eventBus);
+
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
@@ -96,6 +101,4 @@ public class AlchemicalBrewery
 
         EntityRenderers.register(ModEntityTypes.ELEMENTPROJECTILE.get(), ElementProjectileRenderer::new);
     }
-
-
 }
