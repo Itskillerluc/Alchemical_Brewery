@@ -57,7 +57,7 @@ public class ElementInit {
         return new String[]{Element};
     });
 
-    public static final Function<ElementProjectileEntity, String[]> EBLOCKARG = registereargs("Block", (entity)-> new String[]{entity.getElement()});
+    //public static final Function<ElementProjectileEntity, String[]> EBLOCKARG = registereargs("Block", (entity)-> new String[]{entity.getElement()});
 
 
     public static ElementFunction register(String key, ElementFunction function){

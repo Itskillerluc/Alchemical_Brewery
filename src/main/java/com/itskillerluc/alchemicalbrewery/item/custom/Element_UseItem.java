@@ -1,6 +1,7 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
 
 
+import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.elementfunctions;
@@ -11,6 +12,7 @@ import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 
 public class Element_UseItem extends Element_Basic {
@@ -56,7 +59,7 @@ public class Element_UseItem extends Element_Basic {
 
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
-        ModElements.TEST.get().SetArgsWrapper(pContext, true);
+        //ModElements.TEST.get().SetArgsWrapper(pContext, true);
         String ElementRaw = pContext.getItemInHand().hasTag() ? pContext.getItemInHand().getTag().getString("Element") : null;
         String Element = pContext.getItemInHand().getTag().getString("Element");
         if (ElementRaw != null) {
@@ -75,6 +78,8 @@ public class Element_UseItem extends Element_Basic {
 
         if(!pContext.getPlayer().isCrouching()) {
             try {
+                //ModElements.ELEMENTS.get().getValue(new ResourceLocation(AlchemicalBrewery.MOD_ID, Element)).setArgsWrapper(pContext, true);
+
                 //Run the element that is stored in the nbt
                 if(ElementInit.functions.containsKey(Element)) {
                     ElementInit.functions.get(Element).run(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get(Element).apply(pContext));

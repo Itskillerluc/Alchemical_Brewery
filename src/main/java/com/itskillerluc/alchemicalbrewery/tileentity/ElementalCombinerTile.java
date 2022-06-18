@@ -251,6 +251,16 @@ public class ElementalCombinerTile extends BlockEntity {
                             }
                         }
                     }
+                }else if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("tag")) {
+                    if (entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").contains("Element")) {
+                        String Element = entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").getString("Element");
+                        Name = Element;
+                        if (Element != null) {
+                            if (Element.contains("-")) {
+                                Name = Element.substring(0, Element.indexOf('-'));
+                            }
+                        }
+                    }
                 }
                 message.append(counts.get(i).toString());
                 message.append(" x ");
