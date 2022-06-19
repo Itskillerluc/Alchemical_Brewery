@@ -37,7 +37,7 @@ public class ElementProjectileRenderer extends EntityRenderer<ElementProjectileE
 	public void render(ElementProjectileEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) 
 	{
 
-		if(pEntity.element.itemModel != Items.AIR){
+		if(pEntity.getElement().itemModel != Items.AIR){
 			pMatrixStack.pushPose();
 			float f = Mth.rotlerp(pEntity.yRotO, pEntity.getYRot(), pPartialTicks);
 			float f1 = Mth.lerp(pPartialTicks, pEntity.xRotO, pEntity.getXRot());
@@ -51,8 +51,8 @@ public class ElementProjectileRenderer extends EntityRenderer<ElementProjectileE
 			pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f2  *pEntity.random3) * 360.0F));
 			this.model.setupAnim(pEntity, 0.0F, 0.0F, 0.0F, f, f1);
 			pMatrixStack.scale(0.7f, 0.7f, 0.7f);
-			BakedModel bakedmodel = this.itemRenderer.getModel(new ItemStack(pEntity.element.itemModel), pEntity.level, null, pEntity.getId());
-			this.itemRenderer.renderStatic((LivingEntity)null,new ItemStack(pEntity.element.itemModel), ItemTransforms.TransformType.FIXED, false, pMatrixStack, pBuffer, pEntity.level, pPackedLight, OverlayTexture.NO_OVERLAY, 1);
+			BakedModel bakedmodel = this.itemRenderer.getModel(new ItemStack(pEntity.getElement().itemModel), pEntity.level, null, pEntity.getId());
+			this.itemRenderer.renderStatic((LivingEntity)null,new ItemStack(pEntity.getElement().itemModel), ItemTransforms.TransformType.FIXED, false, pMatrixStack, pBuffer, pEntity.level, pPackedLight, OverlayTexture.NO_OVERLAY, 1);
 
 			pMatrixStack.popPose();
 		}else{
@@ -69,7 +69,7 @@ public class ElementProjectileRenderer extends EntityRenderer<ElementProjectileE
 			pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f2  *pEntity.random3) * 360.0F));
 			this.model.setupAnim(pEntity, 0.0F, 0.0F, 0.0F, f, f1);
 			VertexConsumer vertexConsumer = ItemRenderer.getFoilBufferDirect(pBuffer, RenderType.tripwire(), false, true);
-			this.model.renderToBuffer(pMatrixStack, vertexConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, Integer.decode("0X"+String.format("%06X",pEntity.element.color).substring(0, 2))*0.00392156862f,Integer.decode("0X"+String.format("%06X",pEntity.element.color).substring(2, 4))*0.00392156862f,Integer.decode("0X"+String.format("%06X",pEntity.element.color).substring(4, 6))*0.00392156862f, 0.5F);
+			this.model.renderToBuffer(pMatrixStack, vertexConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, Integer.decode("0X"+String.format("%06X",pEntity.getElement().color).substring(0, 2))*0.00392156862f,Integer.decode("0X"+String.format("%06X",pEntity.getElement().color).substring(2, 4))*0.00392156862f,Integer.decode("0X"+String.format("%06X",pEntity.getElement().color).substring(4, 6))*0.00392156862f, 0.5F);
 			pMatrixStack.popPose();
 		}
 	}

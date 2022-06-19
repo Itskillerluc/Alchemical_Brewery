@@ -24,14 +24,10 @@ import java.util.Objects;
 
 public class LavaElement extends Element{
 
-    @Override
-    public CompoundTag getDataCompound() {
-        return null;
-    }
 
     @Override
-    public void setDataCompound(CompoundTag dataCompound) {
-
+    public LavaElement instanciate() {
+        return new LavaElement(this);
     }
 
     public LavaElement(String Displayname) {
@@ -39,9 +35,8 @@ public class LavaElement extends Element{
         this.color = 16734006;
     }
 
-    @Override
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag ElementTags) {
-
+    public LavaElement(LavaElement element) {
+        super(element);
     }
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {

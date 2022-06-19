@@ -13,15 +13,9 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.Objects;
 
 public class WaterElement extends Element{
-
     @Override
-    public CompoundTag getDataCompound() {
-        return null;
-    }
-
-    @Override
-    public void setDataCompound(CompoundTag dataCompound) {
-
+    public WaterElement instanciate() {
+        return new WaterElement(this);
     }
 
     public WaterElement(String Displayname) {
@@ -29,10 +23,10 @@ public class WaterElement extends Element{
         this.color = 6525687;
     }
 
-    @Override
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag ElementTags) {
-
+    public WaterElement(WaterElement element) {
+        super(element);
     }
+
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
         BlockPos newpos;

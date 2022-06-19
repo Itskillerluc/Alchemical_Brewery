@@ -2,6 +2,7 @@ package com.itskillerluc.alchemicalbrewery.entity.custom;
 
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.EmptyElement;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
 import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
@@ -19,6 +20,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -31,7 +33,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +40,9 @@ import java.util.List;
 import java.util.Random;
 
 public class ElementProjectileEntity extends AbstractHurtingProjectile {
-    private static final EntityDataAccessor<CompoundTag> ELEMENT = SynchedEntityData.defineId(ElementProjectileEntity.class, EntityDataSerializers.COMPOUND_TAG);
-    public Element element = Element.EMPTY;
+    private static final EntityDataAccessor<Element> ELEMENT = SynchedEntityData.defineId(ElementProjectileEntity.class, Element.ELEMENTDATA);
+
+    private final EmptyElement EMPTYINSTANCE = ModElements.EMPTY.get().instanciate();
 
     Random r1 = new Random();
     public float random1 = 0.05f + r1.nextFloat() * (0.1f - 0.05f);
@@ -56,34 +58,33 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     public ElementProjectileEntity(EntityType<? extends ElementProjectileEntity> type, Level level) {
         super(type, level);
     }
+
     public ElementProjectileEntity(Level level, LivingEntity owner, double x, double y, double z, double xpower, double ypower, double zpower, Element element) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
         this.Owner = owner;
-        setElement(element.getRegistryName().toString());
+        setElement(element);
     }
 
     public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
     }
 
-    public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower, String element) {
+    public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower, Element element) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
-        //setElement(element);
+        setElement(element);
     }
 
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
-        if(ModElements.ELEMENTS.get().containsKey(new ResourceLocation(AlchemicalBrewery.MOD_ID, this.entityData.get(ELEMENT).getString("Key")))){
-            element = ModElements.ELEMENTS.get().getValue(new ResourceLocation(AlchemicalBrewery.MOD_ID, this.entityData.get(ELEMENT).getString("Key")));
-        }else{
-            LogManager.getLogger().warn(this.entityData.get(ELEMENT).getString("Key")+" Isn't a valid element");
-        }
+    public void setElement(Element element){
+        this.entityData.set(ELEMENT, element);
+    }
 
+    public Element getElement(){
+        return this.entityData.get(ELEMENT);
     }
 
     @Override
     protected ParticleOptions getTrailParticle() {
-        return new DustParticleOptions(new Vector3f(Vec3.fromRGB24(this.element.color)), 0);
+        return new DustParticleOptions(new Vector3f(Vec3.fromRGB24(getElement().color)), 0);
     }
 
     @Override
@@ -124,14 +125,14 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
             if (this.level.isClientSide) {
                 Vec3 deltaMovement = this.getDeltaMovement();
                 List<Integer> color = new ArrayList<>();
-                int[] intarray = Arrays.stream(Integer.toString(this.element.color).split("(?<=\\G...)")).map((ele) -> "#" + ele).mapToInt(Integer::decode).toArray();
+                int[] intarray = Arrays.stream(Integer.toString(getElement().color).split("(?<=\\G...)")).map((ele) -> "#" + ele).mapToInt(Integer::decode).toArray();
                 for (int i : intarray) {
                     color.add(i);
                 }
                 while (color.size() < 3) {
                     color.add(0);
                 }
-                this.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(this.element.color)), 1), this.getX() - deltaMovement.x, this.getY() + 0.2 - deltaMovement.y, this.getZ() - deltaMovement.z, 0.0D, 0.0D, 0.0D);
+                this.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(getElement().color)), 1), this.getX() - deltaMovement.x, this.getY() + 0.2 - deltaMovement.y, this.getZ() - deltaMovement.z, 0.0D, 0.0D, 0.0D);
             }
         }
     @Override
@@ -139,18 +140,11 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-    public void setElement(CompoundTag elementTag) {
-        this.getEntityData().set(ELEMENT, elementTag);
-    }
-
-    protected CompoundTag getElementRaw() {
-        return this.getEntityData().get(ELEMENT);
-    }
 
 
     @Override
     protected void defineSynchedData() {
-        this.getEntityData().define(ELEMENT, new CompoundTag());
+        this.getEntityData().define(ELEMENT, EMPTYINSTANCE);
     }
 
     protected void onHit(HitResult pResult) {
@@ -210,18 +204,13 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        Element element = this.element;
-        if (element != Element.EMPTY) {
-            pCompound.putString("Key", element.getRegistryName().toString());
-            pCompound.put("Data", element.getDataCompound());
-        }
+        pCompound.put("ElementData", this.getElement().toTag());
+        pCompound.putString("Key", this.getElement().getRegistryName().toString());
     }
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if (pCompound.contains("Data")){
-            this.element.setDataCompound(pCompound);
-        }
+        this.setElement(ModElements.ELEMENTS.get().containsKey(ResourceLocation.tryParse(pCompound.getString("Key"))) ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pCompound.getString("Key"))) : EMPTYINSTANCE);
+        this.setElement(this.getElement().fromTag(pCompound.getCompound("ElementData")));
     }
-
 }

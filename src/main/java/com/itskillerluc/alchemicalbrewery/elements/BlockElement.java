@@ -18,14 +18,29 @@ import java.util.Objects;
 public class BlockElement extends Element{
     public Block block;
 
-    @Override
-    public CompoundTag getDataCompound() {
-        return null;
+    public BlockElement(BlockElement element) {
+        super(element);
+        this.block = element.block;
     }
 
     @Override
-    public void setDataCompound(CompoundTag dataCompound) {
+    public CompoundTag toTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("color", this.color);
+        tag.putString("block", this.block.getRegistryName().toString());
+        return tag;
+    }
 
+    @Override
+    public BlockElement instanciate() {
+        return new BlockElement(this);
+    }
+
+    @Override
+    public Element fromTag(CompoundTag tag) {
+        this.color = tag.getInt("color");
+        this.block = ForgeRegistries.BLOCKS.containsKey(ResourceLocation.tryParse(tag.getString("block"))) ? ForgeRegistries.BLOCKS.getValue(ResourceLocation.tryParse(tag.getString("block"))) : Blocks.AIR;
+        return this;
     }
 
     public BlockElement(String Displayname) {
@@ -34,15 +49,10 @@ public class BlockElement extends Element{
     }
 
     @Override
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag compound) {
+    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
 
 
-        Block block;
-        if (ForgeRegistries.BLOCKS.getValue(new ResourceLocation(compound.getString("Block"))) != null) {
-            block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(compound.getString("Block")));
-        }else{
-            block = Blocks.AIR;
-        }
+        Block block = this.block;
         BlockPos newpos;
         newpos = switch (dir) {
             case UP -> pos.above();

@@ -60,7 +60,7 @@ public class ElementProjectileModel<T extends ElementProjectileEntity> extends E
 
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		bone.setPos(0.0f, 4f, 0.0f);
+		bone.setPos(0.0f, 0f, 0.0f);
 	}
 	private final ModelPart bone;
 

@@ -15,13 +15,8 @@ import java.util.Objects;
 public class EnderElement extends Element{
 
     @Override
-    public CompoundTag getDataCompound() {
-        return null;
-    }
-
-    @Override
-    public void setDataCompound(CompoundTag dataCompound) {
-
+    public EnderElement instanciate() {
+        return new EnderElement(this);
     }
 
     public EnderElement(String Displayname) {
@@ -29,9 +24,8 @@ public class EnderElement extends Element{
         this.color = 2458227;
     }
 
-    @Override
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag ElementTags) {
-
+    public EnderElement(EnderElement element) {
+        super(element);
     }
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
