@@ -24,22 +24,11 @@ import java.util.Objects;
 
 public class LavaElement extends Element{
 
-
-    @Override
-    public LavaElement instanciate() {
-        return new LavaElement(this);
-    }
-
     public LavaElement(String Displayname) {
-        super(Displayname);
-        this.color = 16734006;
+        super(Displayname, null, null, 16734006);
     }
 
-    public LavaElement(LavaElement element) {
-        super(element);
-    }
-
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
+    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {
         BlockPos newpos;
         newpos = switch (dir) {
             case UP -> pos.above();

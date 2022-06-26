@@ -13,22 +13,12 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.Objects;
 
 public class WaterElement extends Element{
-    @Override
-    public WaterElement instanciate() {
-        return new WaterElement(this);
-    }
 
     public WaterElement(String Displayname) {
-        super(Displayname);
-        this.color = 6525687;
+        super(Displayname, null, null, 6525687);
     }
 
-    public WaterElement(WaterElement element) {
-        super(element);
-    }
-
-
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
+    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {
         BlockPos newpos;
         newpos = switch (dir) {
             case UP -> pos.above();

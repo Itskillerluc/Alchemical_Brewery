@@ -1,27 +1,17 @@
 package com.itskillerluc.alchemicalbrewery.entity.custom;
 
-import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
-import com.itskillerluc.alchemicalbrewery.elements.Element;
-import com.itskillerluc.alchemicalbrewery.elements.EmptyElement;
+import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
-import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
-import com.itskillerluc.alchemicalbrewery.item.custom.elements.elementfunctions;
 import com.mojang.logging.LogUtils;
 import com.mojang.math.Vector3f;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -40,9 +30,9 @@ import java.util.List;
 import java.util.Random;
 
 public class ElementProjectileEntity extends AbstractHurtingProjectile {
-    private static final EntityDataAccessor<Element> ELEMENT = SynchedEntityData.defineId(ElementProjectileEntity.class, Element.ELEMENTDATA);
+    private static final EntityDataAccessor<ElementData> ELEMENT_DATA = SynchedEntityData.defineId(ElementProjectileEntity.class, ElementData.ELEMENTDATA);
 
-    private final EmptyElement EMPTYINSTANCE = ModElements.EMPTY.get().instanciate();
+    private final ElementData EMPTY = new ElementData(ModElements.EMPTY.get());
 
     Random r1 = new Random();
     public float random1 = 0.05f + r1.nextFloat() * (0.1f - 0.05f);
@@ -59,7 +49,7 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         super(type, level);
     }
 
-    public ElementProjectileEntity(Level level, LivingEntity owner, double x, double y, double z, double xpower, double ypower, double zpower, Element element) {
+    public ElementProjectileEntity(Level level, LivingEntity owner, double x, double y, double z, double xpower, double ypower, double zpower, ElementData element) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
         this.Owner = owner;
         setElement(element);
@@ -69,17 +59,17 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
     }
 
-    public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower, Element element) {
+    public ElementProjectileEntity(Level level, double x, double y, double z, double xpower, double ypower, double zpower, ElementData element) {
         super(ModEntityTypes.ELEMENTPROJECTILE.get(), x, y, z, xpower, ypower, zpower, level);
         setElement(element);
     }
 
-    public void setElement(Element element){
-        this.entityData.set(ELEMENT, element);
+    public void setElement(ElementData element){
+        this.entityData.set(ELEMENT_DATA, element);
     }
 
-    public Element getElement(){
-        return this.entityData.get(ELEMENT);
+    public ElementData getElement(){
+        return this.entityData.get(ELEMENT_DATA);
     }
 
     @Override
@@ -89,44 +79,12 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
 
     @Override
         public void tick() {
-            Entity entity = this.getOwner();
-            if (this.level.isClientSide || (entity == null || !entity.isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
-                super.tick();
-                if (this.shouldBurn()) {
-                    this.setSecondsOnFire(1);
-                }
-
-                HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-                if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-                    this.onHit(hitresult);
-                }
-
-                this.checkInsideBlocks();
-                Vec3 vec3 = this.getDeltaMovement();
-                double d0 = this.getX() + vec3.x;
-                double d1 = this.getY() + vec3.y;
-                double d2 = this.getZ() + vec3.z;
-                ProjectileUtil.rotateTowardsMovement(this, 0.2F);
-                float f = this.getInertia();
-                if (this.isInWater()) {
-                    for (int i = 0; i < 4; ++i) {
-                        float f1 = 0.25F;
-                        this.level.addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25D, d1 - vec3.y * 0.25D, d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
-                    }
-
-                    f = 0.8F;
-                }
-
-                this.setDeltaMovement(vec3.add(this.xPower, this.yPower, this.zPower).scale((double) f));
-                this.setPos(d0, d1, d2);
-            } else {
-                this.discard();
-            }
+        super.tick();
             if (this.level.isClientSide) {
                 Vec3 deltaMovement = this.getDeltaMovement();
                 List<Integer> color = new ArrayList<>();
-                int[] intarray = Arrays.stream(Integer.toString(getElement().color).split("(?<=\\G...)")).map((ele) -> "#" + ele).mapToInt(Integer::decode).toArray();
-                for (int i : intarray) {
+                int[] intArray = Arrays.stream(Integer.toString(getElement().color).split("(?<=\\G...)")).map((ele) -> "#" + ele).mapToInt(Integer::decode).toArray();
+                for (int i : intArray) {
                     color.add(i);
                 }
                 while (color.size() < 3) {
@@ -144,7 +102,7 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
 
     @Override
     protected void defineSynchedData() {
-        this.getEntityData().define(ELEMENT, EMPTYINSTANCE);
+        this.getEntityData().define(ELEMENT_DATA, EMPTY);
     }
 
     protected void onHit(HitResult pResult) {
@@ -164,53 +122,48 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     @Override
     protected void onHitEntity(EntityHitResult pResult) {
         super.onHitEntity(pResult);
-        if (!this.level.isClientSide && getElement() != null) {
-            BlockPos pos = pResult.getEntity().blockPosition();
-            useElement(pos, Direction.UP);
+        if (!this.level.isClientSide && getElement() != null && getElement().elementType != EMPTY.elementType) {
+            try {
+                getElement().run(pResult);
+            }
+            catch (NullPointerException | ResourceLocationException exception){
+                if(getElement() != null){
+                    LogUtils.getLogger().debug(getElement()+" is not a valid element type");
+                }else{
+                    LogUtils.getLogger().debug("No element type found");
+                }
+            }
         }
     }
 
     @Override
     protected void onHitBlock(BlockHitResult pResult) {
         super.onHitBlock(pResult);
-        if (!this.level.isClientSide && getElement() != null) {
-            BlockPos pos = pResult.getBlockPos();
-            useElement(pos, pResult.getDirection());
-        }
-    }
-
-
-    /**
-     * runs the element that is inside of the nbt.
-     * @param pos position where it should execute
-     * @param dir side of the block that is being hit (itll appear on that side of the block)
-     */
-    private void useElement(BlockPos pos, Direction dir) {
-        try {
-            if(ElementInit.functions.containsKey(getElement())) {
-                ElementInit.functions.get(getElement()).run(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(getElement()).apply(this));
-            }else {
-                elementfunctions.block(dir, pos, this.level, Owner, InteractionHand.MAIN_HAND, false, ElementInit.entityargs.get(("Block")).apply(this));
+        if (!this.level.isClientSide && getElement() != null && getElement().elementType != EMPTY.elementType) {
+            try {
+                getElement().run(pResult, this);
             }
-        }
-        catch (NullPointerException | ResourceLocationException exception){
-            if(getElement() != null){
-                LogUtils.getLogger().debug(getElement()+" is not a valid element type");
-            }else{
-                LogUtils.getLogger().debug("No element type found");
+            catch (NullPointerException | ResourceLocationException exception){
+                if(getElement() != null){
+                    LogUtils.getLogger().debug(getElement()+" is not a valid element type");
+                }else{
+                    LogUtils.getLogger().debug("No element type found");
+                }
             }
         }
     }
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.put("ElementData", this.getElement().toTag());
-        pCompound.putString("Key", this.getElement().getRegistryName().toString());
+        pCompound.put("element", this.getElement().toTag());
     }
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.setElement(ModElements.ELEMENTS.get().containsKey(ResourceLocation.tryParse(pCompound.getString("Key"))) ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pCompound.getString("Key"))) : EMPTYINSTANCE);
-        this.setElement(this.getElement().fromTag(pCompound.getCompound("ElementData")));
+        if ((this.getElement() != null)) {
+            this.setElement(this.getElement().fromTag(pCompound));
+        } else {
+            this.setElement(this.EMPTY);
+        }
     }
 }

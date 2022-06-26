@@ -14,21 +14,11 @@ import java.util.Objects;
 
 public class EnderElement extends Element{
 
-    @Override
-    public EnderElement instanciate() {
-        return new EnderElement(this);
-    }
-
     public EnderElement(String Displayname) {
-        super(Displayname);
-        this.color = 2458227;
+        super(Displayname, null, null, 2458227);
     }
 
-    public EnderElement(EnderElement element) {
-        super(element);
-    }
-
-    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume) {
+    void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {
         BlockPos newpos;
         newpos = switch (dir) {
             case UP -> pos.above();
