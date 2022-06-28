@@ -32,7 +32,8 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
         return tag;
     }
 
-    protected ElementData fromTag(CompoundTag tag, ElementData data) {
+    protected ElementData fromTag(CompoundTag compoundTag, ElementData data) {
+        CompoundTag tag = compoundTag.getCompound("element");
         data.color = tag.getInt("color");
         data.displayName = tag.getString("displayName");
         data.additionalData = tag.getCompound("additionalData");
