@@ -17,11 +17,14 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
 
     protected final String defaultDisplayName;
     protected final ItemStack defualtItemModel;
-    protected final int defaultColor;
+        protected final int defaultColor;
     protected final CompoundTag defaultAdditionalData;
 
 
-    protected CompoundTag toTag(ElementData data) {
+    /**
+     * dont use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
+     */
+    public CompoundTag toTag(ElementData data) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("color", data.color);
         tag.putString("displayName", data.displayName);
@@ -32,14 +35,18 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
         return tag;
     }
 
-    protected ElementData fromTag(CompoundTag compoundTag, ElementData data) {
-        CompoundTag tag = compoundTag.getCompound("element");
-        data.color = tag.getInt("color");
-        data.displayName = tag.getString("displayName");
-        data.additionalData = tag.getCompound("additionalData");
-        data.itemModel = ItemStack.of(tag.getCompound("itemModel"));
-        data.elementType = ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(tag.getString("type")));
-        return data;
+
+    /**
+     * dont use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
+     */
+    public ElementData fromTag(CompoundTag tag) {
+        ElementData toReturn = new ElementData(
+                tag.contains("displayName") ? tag.getString("displayName") : defaultDisplayName,
+                tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : defualtItemModel,
+                tag.contains("color") ? tag.getInt("color") : defaultColor,
+                tag.contains("additionalData") ? tag.getCompound("additionalData") : defaultAdditionalData,
+                tag.contains("type") ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(tag.getString("type"))) : ModElements.EMPTY.get());
+        return toReturn;
     }
 
     public Element(String defaultDisplayName, CompoundTag defaultAdditionalData, ItemStack defaultItemModel, int defaultColor){

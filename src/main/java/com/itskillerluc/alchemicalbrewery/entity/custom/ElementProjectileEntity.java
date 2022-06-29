@@ -1,5 +1,6 @@
 package com.itskillerluc.alchemicalbrewery.entity.custom;
 
+import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
@@ -12,6 +13,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -32,7 +34,7 @@ import java.util.Random;
 public class ElementProjectileEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<ElementData> ELEMENT_DATA = SynchedEntityData.defineId(ElementProjectileEntity.class, ElementData.ELEMENTDATA);
 
-    private final ElementData EMPTY = new ElementData(ModElements.EMPTY.get());
+    static final ElementData EMPTY = new ElementData(ModElements.EMPTY.get());
 
     Random r1 = new Random();
     public float random1 = 0.05f + r1.nextFloat() * (0.1f - 0.05f);
@@ -156,14 +158,18 @@ public class ElementProjectileEntity extends AbstractHurtingProjectile {
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.put("element", this.getElement().toTag());
-    }
+        }
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if ((this.getElement() != null)) {
-            this.setElement(this.getElement().fromTag(pCompound));
-        } else {
-            this.setElement(this.EMPTY);
+        if (this.getElement() == null){
+            if(ModElements.ELEMENTS.get().containsKey(new ResourceLocation(pCompound.getCompound("element").getString("type")))) {
+                this.setElement(ModElements.ELEMENTS.get().getValue(new ResourceLocation(pCompound.getCompound("element").getString("type"))).fromTag(pCompound.getCompound("element")));
+            }else{
+                this.setElement(new ElementData(ModElements.EMPTY.get()).fromTag(pCompound.getCompound("element")));
+            }
+        } else{
+            this.setElement(this.getElement().fromTag(pCompound.getCompound("element")));
         }
     }
 }

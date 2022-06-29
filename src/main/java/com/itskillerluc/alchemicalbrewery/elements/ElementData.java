@@ -8,7 +8,6 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -50,14 +49,20 @@ public class ElementData {
     }
 
     public ElementData fromTag(CompoundTag tag) {
-        return elementType.fromTag(tag, this);
+        ElementData data = elementType.fromTag(tag);
+        this.itemModel = data.itemModel;
+        this.elementType = data.elementType;
+        this.displayName = data.displayName;
+        this.color = data.color;
+        this.additionalData = data.additionalData;
+        return this;
     }
 
     public ElementData(String displayname, ItemStack itemModel, int color, CompoundTag additionalInfo, Element elementType) {
         this.additionalData = additionalInfo != null ? additionalInfo : new CompoundTag();
         this.itemModel = itemModel != null ? itemModel : ItemStack.EMPTY;
         this.displayName = displayname != null ? displayname : "Empty";
-        this.color = elementType.defaultColor;
+        this.color = color;
         this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();;
     }
 
