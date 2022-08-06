@@ -203,7 +203,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                 .getRecipeFor(ElementalExtractorRecipe.Type.INSTANCE, inventory, level);
 
         return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem());
+                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItemAdvanced(inventory));
     }
 
     /**
@@ -232,7 +232,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                     entity.itemHandler.extractItem(2,1, false);
                     entity.itemHandler.extractItem(1, 1, false);
 
-                    entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItem().getItem(),
+                    entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItemAdvanced(inventory).getItem(),
                             entity.itemHandler.getStackInSlot(3).getCount() + match.get().getOutputcount()));
 
                     entity.resetProgress();
@@ -242,16 +242,11 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                     entity.iscrafting = false;
                 }else{
                     if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_SMALL.get())){
-                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 1);
-                        if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
-                            CompoundTag nbt = result.getOrCreateTag();
-                            nbt.putInt("ItemColor", match.get().getItemColor());
-                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
-                            nbt.putString("Element", match.get().getElement());
-                        }
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
+                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        result.setCount(1);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();
                         entity.IsBurning = false;
@@ -259,16 +254,11 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         entity.iscrafting = false;
 
                     }else if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_MEDIUM.get())){
-                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 4);
-                        if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
-                            CompoundTag nbt = result.getOrCreateTag();
-                            nbt.putInt("ItemColor", match.get().getItemColor());
-                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
-                            nbt.putString("Element", match.get().getElement());
-                        }
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
+                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        result.setCount(4);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();
                         entity.IsBurning = false;
@@ -276,16 +266,11 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         entity.iscrafting = false;
 
                     }else if(entity.itemHandler.getStackInSlot(1).is(ModItems.CAPSULE_LARGE.get())){
-                        ItemStack result = new ItemStack(match.get().getResultItem().getItem(), entity.itemHandler.getStackInSlot(3).getCount() + 9);
-                        if(match.get().getResultItem().is(ModItems.ELEMENT_BASIC.get())){
-                            CompoundTag nbt = result.getOrCreateTag();
-                            nbt.putInt("ItemColor", match.get().getItemColor());
-                            nbt.putInt("SecItemColor",match.get().getSecitemColor());
-                            nbt.putString("Element", match.get().getElement());
-                        }
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
+                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        result.setCount(9);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();
                         entity.IsBurning = false;

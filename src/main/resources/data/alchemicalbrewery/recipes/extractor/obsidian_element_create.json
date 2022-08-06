@@ -16,7 +16,9 @@
   },
   "itemcolor": 2692155,
   "secitemcolor": 2692155,
-  "element": "Obsidian-minecraft:obsidian",
+  "displayname": "Obsidian",
+  "element":"alchemicalbrewery:block",
+  "extradata": "{block:{id:'minecraft:obsidian'}}",
   "count": 1,
   "capsule": true
 }

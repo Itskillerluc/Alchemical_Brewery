@@ -14,9 +14,7 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 6525687,
-  "secitemcolor": 6525687,
-  "element": "Water",
+  "element": "alchemicalbrewery:water",
   "count": 1,
   "capsule": true
 }

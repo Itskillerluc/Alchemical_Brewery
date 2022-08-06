@@ -1,64 +1,28 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
 
-import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
+import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.Util;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
-
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class WandItem extends Item {
-    /*
-    protected ArrayList<String> elements = new ArrayList<>();
-    protected ArrayList<Integer> counts = new ArrayList<>();
-    protected ArrayList<Integer> colors = new ArrayList<>();
-    protected ArrayList<Integer> seccolors = new ArrayList<>();
-    String elementinhand = "None";
-    private int count;*/
-
-    /**
-     * resets all the variables to their default values use this after setvar(Itemstack stack)
-     */
-    /*
-    public void resetvar(){
-        elements = new ArrayList<>();
-        counts = new ArrayList<>();
-        colors = new ArrayList<>();
-        seccolors = new ArrayList<>();
-        count = 0;
-    }*/
-
-    /**
-     * Always run resetvar() after having used this
-     * @param stack the stack which the nbt should be read from
-     */
-    /*
-    public void setvar(ItemStack stack){
-        if(stack.hasTag()) {
-            for (int i = 0; i < stack.getTag().getList("Elements", 10).size(); i++) {
-                elements.add(stack.getTag().getList("Elements", 10).getCompound(i).getString("element"));
-                counts.add(stack.getTag().getList("Elements", 10).getCompound(i).getInt("amount"));
-                colors.add(stack.getTag().getList("Elements", 10).getCompound(i).getInt("color"));
-                seccolors.add(stack.getTag().getList("Elements", 10).getCompound(i).getInt("seccolor"));
-            }
-        }
-    }*/
 
     public void setSlot(ItemStack stack, int slot){
         stack.getOrCreateTag().putInt("Selected", slot);
@@ -80,9 +44,9 @@ public class WandItem extends Item {
     public int getAmount(ItemStack stack){
         ArrayList<Integer> amounts = new ArrayList<>();
         int amount = 0;
-        stack.getTag().getList("Elements", 10).forEach((ele)->{
-            amounts.add(((CompoundTag) ele).getInt("amount"));
-        });
+        if(stack.getTag() != null) {
+            stack.getTag().getList("Elements", 10).forEach((ele) -> amounts.add(((CompoundTag) ele).getInt("amount")));
+        }
         for (Integer i : amounts)
             amount += i;
         return amount;
@@ -101,231 +65,150 @@ public class WandItem extends Item {
     private void upgradeHandler(ItemStack stack){
         setMaxelements(stack, 16);
     }
-/*
-
-    /**
-     * use this if you need to update the changes in the variables to the nbt of the itemstack
-     * @param stack itemstack that is being targeted
-     * @return compoundtag that is put into the itemstack
-     */
-
-    /*
-    public CompoundTag updateNBT(ItemStack stack)
-    {
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < elements.size(); i++)
-        {
-            if (!elements.get(i).isEmpty())
-            {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("amount", counts.get(i));
-                itemTag.putString("element", elements.get(i));
-                itemTag.putInt("color", colors.get(i));
-                itemTag.putInt("seccolor", seccolors.get(i));
-                nbtTagList.add(itemTag);
-            }
-        }
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Elements", nbtTagList);
-        nbt.putInt("Size", elements.size());
-        stack.setTag(nbt);
-        resetvar();
-        upgradeHandler(stack);
-        setUsedelements(stack, getAmount(stack));
-        return nbt;
-    }
-    */
-
-    /*
-    /**
-     * use this the first time when pushing the variables to the items nbt
-     * @param stack itemstack that is being targeted
-     * @return nbt that is put into the itemstack
-     */
-    /*
-
-    public CompoundTag serializeNBT(ItemStack stack)
-    {
-        setvar(stack);
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < elements.size(); i++)
-        {
-            if (!elements.get(i).isEmpty())
-            {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("amount", counts.get(i));
-                itemTag.putString("element", elements.get(i));
-                itemTag.putInt("color", colors.get(i));
-                itemTag.putInt("seccolor", seccolors.get(i));
-                nbtTagList.add(itemTag);
-            }
-        }
-
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Elements", nbtTagList);
-        nbt.putInt("Size", elements.size());
-        stack.setTag(nbt);
-        resetvar();
-        upgradeHandler(stack);
-        setUsedelements(stack, getAmount(stack));
-        return nbt;
-    }*/
 
     public WandItem(Properties pProperties) {
         super(pProperties);
     }
 
-/*
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if(!pLevel.isClientSide()){
-            if(pPlayer.getItemInHand(pUsedHand).hasTag()) {
-                //adds the selected tag if not present
-                if (!pPlayer.getItemInHand(pUsedHand).getTag().contains("Selected")) {
-                    pPlayer.getItemInHand(pUsedHand).getOrCreateTag().putInt("Selected", 0);
-                }
+    public @NotNull InteractionResultHolder<ItemStack> use(Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
+        if (pLevel.isClientSide()) {
+            return super.use(pLevel, pPlayer, pUsedHand);
+        }
+        //adds the selected tag if not present
+        final ItemStack itemInHand = pPlayer.getItemInHand(pUsedHand);
+        if(itemInHand.getTag() == null){
+            itemInHand.getOrCreateTag();
+        }
+        if (itemInHand.getTag() != null && !itemInHand.getTag().contains("Selected")) {
+            itemInHand.getOrCreateTag().putInt("Selected", 0);
+        }
+        if (!itemInHand.getTag().contains("Elements")){
+            ListTag tag = new ListTag();
+            itemInHand.getOrCreateTag().put("Elements", tag);
+        }
+
+        upgradeHandler(itemInHand);
+
+        if (pPlayer.isCrouching()) {
+            //add the element in your hand to the wand item
+            if (!pPlayer.getMainHandItem().isEmpty() && !pPlayer.getOffhandItem().isEmpty()) {
+                insertElement(pPlayer);
+            } else {
+                //select a different element
+                cycleElements(pPlayer, itemInHand);
             }
-            int color = 0;
-            int seccolor = 0;
-            upgradeHandler(pPlayer.getItemInHand(pUsedHand));
-            if(pPlayer.isCrouching()){
-                //add the element in your hand to the wand item
-                if(!pPlayer.getMainHandItem().isEmpty() && !pPlayer.getOffhandItem().isEmpty()) {
-                    if(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get())||pPlayer.getMainHandItem().is(ModItems.ELEMENT_USE.get())) {
-                        String elementinhand = null;
-                        int count;
-                        if (pUsedHand.equals(InteractionHand.OFF_HAND)) {
-                            if(pPlayer.getItemInHand(InteractionHand.MAIN_HAND).hasTag()) {
-                                elementinhand = pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getTag().getString("Element");
-                                count = pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getCount();
-                                color = pPlayer.getItemInHand(InteractionHand.MAIN_HAND).hasTag() ? pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getTag().getInt("ItemColor") : -1;
-                                seccolor = pPlayer.getItemInHand(InteractionHand.MAIN_HAND).hasTag() ? pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getTag().getInt("SecItemColor") : -1;
-                                if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) < getMaxelements(pPlayer.getItemInHand(pUsedHand))) {
-                                    pPlayer.setItemInHand(InteractionHand.MAIN_HAND, Utilities.DecodeStackTags(new ItemStack(pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getItem(), pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getCount() - 1, pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getTag())));
-                                }
-                            }
-                        } else {
-                            if(pPlayer.getItemInHand(InteractionHand.OFF_HAND).hasTag()) {
-                                elementinhand = pPlayer.getItemInHand(InteractionHand.OFF_HAND).getTag().getString("Element");
-                                count = pPlayer.getItemInHand(InteractionHand.OFF_HAND).getCount();
-                                color = pPlayer.getItemInHand(InteractionHand.OFF_HAND).hasTag() ? pPlayer.getItemInHand(InteractionHand.OFF_HAND).getTag().getInt("ItemColor") : -1;
-                                seccolor = pPlayer.getItemInHand(InteractionHand.OFF_HAND).hasTag() ? pPlayer.getItemInHand(InteractionHand.OFF_HAND).getTag().getInt("SecItemColor") : -1;
-                                if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) < getMaxelements(pPlayer.getItemInHand(pUsedHand))) {
-                                    pPlayer.setItemInHand(InteractionHand.OFF_HAND, Utilities.DecodeStackTags(new ItemStack(pPlayer.getItemInHand(InteractionHand.OFF_HAND).getItem(), pPlayer.getItemInHand(InteractionHand.OFF_HAND).getCount() - 1, pPlayer.getItemInHand(InteractionHand.OFF_HAND).getTag())));
-                                }
-                            }
-                        }
-                        assert elementinhand != null;
-                        if (!elementinhand.matches("None")){
-                            if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) < getMaxelements(pPlayer.getItemInHand(pUsedHand))) {
-                                boolean inserted = false;
-                                for (int i = 0; i < pPlayer.getItemInHand(pUsedHand).getTag().getList("Elements", 10).size(); i++) {
-                                    if(pPlayer.getItemInHand(pUsedHand).getOrCreateTag().getList("Elements", 10).getCompound(i).getString("element").matches(elementinhand)){
-                                        pPlayer.getItemInHand(pUsedHand).getOrCreateTag().getList("Elements", 10).getCompound(i).putInt("amount", pPlayer.getItemInHand(pUsedHand).getOrCreateTag().getList("Elements", 10).getCompound(i).getInt("amount")+1);
-                                        inserted = true;
-                                        setUsedelements(pPlayer.getItemInHand(pUsedHand), getUsedelements(pPlayer.getItemInHand(pUsedHand))+1);
-                                    }
-                                }if(!inserted){
-                                    elements.add(elementinhand);
-                                    counts.add(1);
-                                    colors.add(color);
-                                    seccolors.add(seccolor);
-                                    color = 0;
-                                    seccolor = 0;
-                                    this.serializeNBT(pPlayer.getItemInHand(pUsedHand));
-                                }
-                                upgradeHandler(pPlayer.getItemInHand(pUsedHand));
-                                this.resetvar();
-                            }
-                        }
-                    }
-                }else {
-                    //select a different element
-                    setvar(pPlayer.getItemInHand(pUsedHand));
-                    if(getSlot(pPlayer.getItemInHand(pUsedHand))+1 <elements.size()){
-                        setSlot(pPlayer.getItemInHand(pUsedHand), getSlot(pPlayer.getItemInHand(pUsedHand))+1);
-                        if(getSlot(pPlayer.getItemInHand(pUsedHand))<elements.size()) {
-                            String ElementRaw = elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                            String Element = ElementRaw;
-                            if (ElementRaw.contains("-")) {
-                                if(ElementRaw.substring(ElementRaw.indexOf('-')).length() < 1){
-                                    try {
-                                        throw new ResourceLocationException("found - sign without Element value behind it. Correct syntax should be: Displayname-RealElement or Realelement. Found in:" + ElementRaw);
 
-                                    }catch (ResourceLocationException exception){
-                                        exception.printStackTrace();
-                                    }
-                                }
-                                Element = ElementRaw.substring(0, ElementRaw.indexOf('-'));
-                            }
-                            pPlayer.displayClientMessage(new TextComponent("Selected " + Element), true);
-                        }
-                    }else{
-                        setSlot(pPlayer.getItemInHand(pUsedHand), 0);
-                        if(getSlot(pPlayer.getItemInHand(pUsedHand))<elements.size()) {
-                            String ElementRaw = elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                            String Element = ElementRaw;
-                            if (ElementRaw.contains("-")) {
-                                if(ElementRaw.substring(ElementRaw.indexOf('-')).length() < 1){
-                                    try {
-                                        throw new ResourceLocationException("found - sign without Element value behind it. Correct syntax should be: Displayname-RealElement or Realelement. Found in:" + ElementRaw);
-
-                                    }catch (ResourceLocationException exception){
-                                        exception.printStackTrace();
-                                    }
-                                }
-                                Element = ElementRaw.substring(0, ElementRaw.indexOf('-'));
-                            }
-                            pPlayer.displayClientMessage(new TextComponent("Selected " + Element), true);
-                        }
-                    }
-                    this.resetvar();
-                }
-            }else if(getUsedelements(pPlayer.getItemInHand(pUsedHand)) > 0){
-                setvar(pPlayer.getItemInHand(pUsedHand));
-                String ElementRaw = elements.get(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                String Element = ElementRaw;
-                if (ElementRaw.contains("-")) {
-                    if(ElementRaw.substring(ElementRaw.indexOf('-')).length() < 1){
-                        try {
-                            throw new ResourceLocationException("found - sign without Element value behind it. Correct syntax should be: Displayname-RealElement or Realelement. Found in:" + ElementRaw);
-
-                        }catch (ResourceLocationException exception){
-                            exception.printStackTrace();
-                        }
-                    }
-                    Element = ElementRaw.substring(ElementRaw.indexOf('-')).substring(1);
-                }
-                //summon the projectile with the element
-                int slot = 0;
-                pLevel.addFreshEntity(new ElementProjectileEntity(pLevel, pPlayer, pPlayer.getX(), pPlayer.getEyeY(), pPlayer.getZ(), pPlayer.getLookAngle().x * 0, pPlayer.getLookAngle().y * 0, pPlayer.getLookAngle().z * 0, colors.get(getSlot(pPlayer.getItemInHand(pUsedHand))),  ModElements.ELEMENTS.get().getValue(new ResourceLocation(AlchemicalBrewery.MOD_ID, Element))));
-                if(counts.get(getSlot(pPlayer.getItemInHand(pUsedHand)))<=1){
-                    elements.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                    colors.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                    seccolors.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                    counts.remove(getSlot(pPlayer.getItemInHand(pUsedHand)));
-                    if(getSlot(pPlayer.getItemInHand(pUsedHand)) >= elements.size()){
-                        slot = elements.size()-1;
-                    }
-                }else{
-                    counts.set(getSlot(pPlayer.getItemInHand(pUsedHand)), counts.get(getSlot(pPlayer.getItemInHand(pUsedHand)))-1);
-                    slot = getSlot(pPlayer.getItemInHand(pUsedHand));
-                }
-                setUsedelements(pPlayer.getItemInHand(pUsedHand), getUsedelements(pPlayer.getItemInHand(pUsedHand))-1);
-                updateNBT(pPlayer.getItemInHand(pUsedHand));
-                resetvar();
-                setSlot(pPlayer.getItemInHand(pUsedHand), slot);
-            }
+        } else if (getUsedelements(itemInHand) > 0) {
+            useElement(pLevel, pPlayer, itemInHand);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
     }
-*/
+
+    private void useElement(Level pLevel, Player pPlayer, ItemStack itemInHand) {
+        if (itemInHand.getTag() == null){
+            return;
+        }
+        ElementData element = ElementData.of(itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getCompound("element"));
+        //summon the projectile with the element
+        int slot = 0;
+        pLevel.addFreshEntity(new ElementProjectileEntity(pLevel, pPlayer, pPlayer.getX(), pPlayer.getEyeY(), pPlayer.getZ(), pPlayer.getLookAngle().x * 0.1, pPlayer.getLookAngle().y * 0.1, pPlayer.getLookAngle().z * 0.1, element));
+         if (itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getInt("amount") == 1) {
+            itemInHand.getTag().getList("Elements", 10).remove(getSlot(itemInHand));
+            if (getSlot(itemInHand) >= itemInHand.getTag().getList("Elements", 10).size()) {
+                slot = itemInHand.getTag().getList("Elements", 10).size() - 1;
+            }
+        } else {
+            itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).putInt("amount", itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getInt("amount")-1);
+            slot = getSlot(itemInHand);
+        }
+        setUsedelements(itemInHand, getUsedelements(itemInHand)-1);
+        setSlot(itemInHand, slot);
+        if(getSlot(itemInHand) == -1){
+            setSlot(itemInHand, 0);
+        }
+    }
+
+    private void cycleElements(Player pPlayer, ItemStack itemInHand) {
+        if(itemInHand.getTag() == null){
+            return;
+        }
+        if (getSlot(itemInHand) + 1 < itemInHand.getTag().getList("Elements", 10).size()) {
+
+            setSlot(itemInHand, getSlot(itemInHand) + 1);
+
+            ElementData element = ElementData.of(itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getCompound("element"));
+
+            pPlayer.displayClientMessage(new TextComponent("Selected " + element.displayName), true);
+
+        } else {
+            setSlot(itemInHand, 0);
+            if (getSlot(itemInHand) < itemInHand.getTag().getList("Elements", 10).size()) {
+                ElementData element = ElementData.of(itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getCompound("element"));
+                pPlayer.displayClientMessage(new TextComponent("Selected " + element.displayName), true);
+            }
+        }
+    }
+
+    private void insertElement(Player pPlayer) {
+        if (pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) || pPlayer.getMainHandItem().is(ModItems.ELEMENT_USE.get())) {
+
+            ElementData elementinhand = null;
+
+            final ItemStack itemInHand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+            final ItemStack wand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.WAND_ITEM.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+
+            if (itemInHand.getTag() != null) {
+                elementinhand = new ElementData(Element_UseItem.getElement(itemInHand));
+                if (getUsedelements(wand) < getMaxelements(wand)) {
+                    pPlayer.setItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, Utilities.DecodeStackTags(new ItemStack(itemInHand.getItem(), itemInHand.getCount() - 1, itemInHand.getTag())));
+                }
+            }
+
+            if (elementinhand == null || elementinhand.isEmpty() || wand.getTag() == null) {
+                return;
+            }
+
+            if (getUsedelements(wand) < getMaxelements(wand)) {
+
+                boolean inserted = false;
+
+                //if it already exists add one
+                for (int i = 0; i < wand.getTag().getList("Elements", 10).size(); i++) {
+                    if (wand.getTag().getList("Elements", 10).getCompound(i).getCompound("element").getString("type").matches("alchemicalbrewery:"+ Objects.requireNonNull(elementinhand.elementType.getRegistryName()).getPath())) {
+                        wand.getTag().getList("Elements", 10).getCompound(i).putInt("amount", wand.getTag().getList("Elements", 10).getCompound(i).getInt("amount") + 1);
+                        inserted = true;
+                        setUsedelements(wand, getUsedelements(wand) + 1);
+                    }
+                }
+
+                if (!inserted) {
+                    ElementData finalElementinhand = elementinhand;
+                    wand.getTag().getList("Elements", 10).add(Util.make(
+                            () -> {
+                                var tag = new CompoundTag();
+                                tag.put("element", finalElementinhand.toTag());
+                                return tag;
+                            }
+                    ));
+                    wand.getTag().getList("Elements", 10).getCompound(wand.getTag().getList("Elements", 10).size() - 1).putInt("amount", 1);
+                    setUsedelements(wand, getUsedelements(wand)+1);
+                }
+            }
+        }
+    }
+
+    public static int getColorForSelected(ItemStack stack) {
+        return stack.getTag() != null ? ElementData.of(stack.getTag().getList("Elements", 10).getCompound(stack.getTag().getInt("Selected")).getCompound("element")).color : -1;
+    }
+
     /**
      * @param stack the itemstack that is targeted
      * @return returns true if the wand is containing atleast 1 element
      */
-    public static boolean hasElement(ItemStack stack){
-        return stack.hasTag() && stack.getTag().getList("Elements", 10).size() > 0;
+    public static boolean hasElement(ItemStack stack) {
+        return stack.getTag() != null && stack.getTag().getList("Elements", 10).size() > 0;
     }
 
     /**
@@ -333,8 +216,8 @@ public class WandItem extends Item {
      */
     public static class ColorHandler implements ItemColor {
         @Override
-        public int getColor(ItemStack pStack, int pTintIndex) {
-            return pStack.hasTag() ? pStack.getTag().getList("Elements", 10).getCompound(pStack.getTag().getInt("Selected")).getInt("color") : -1;
+        public int getColor(@NotNull ItemStack pStack, int pTintIndex) {
+            return getColorForSelected(pStack);
         }
     }
 

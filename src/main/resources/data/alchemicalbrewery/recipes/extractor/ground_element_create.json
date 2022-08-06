@@ -16,7 +16,9 @@
   },
   "itemcolor": 6176544,
   "secitemcolor": 6176544,
-  "element": "Ground-minecraft:dirt",
+  "displayname": "Ground",
+  "element": "alchemicalbrewery:block",
+  "extradata": "{block:{id:'minecraft:dirt'}}",
   "count": 1,
   "capsule": true
 }

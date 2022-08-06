@@ -16,7 +16,8 @@
   },
   "itemcolor": 11138300,
   "secitemcolor": 11138300,
-  "element": "Diamond",
+  "displayname": "Diamond",
+  "element": "alchemicalbrewery:empty",
   "count": 1,
   "capsule": true
 }

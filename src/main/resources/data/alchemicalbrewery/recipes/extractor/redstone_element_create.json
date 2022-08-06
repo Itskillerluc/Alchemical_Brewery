@@ -2,7 +2,7 @@
   "type": "alchemicalbrewery:elemental_extracting",
   "ingredients": [
     {
-      "item": "minecraft:flint_and_steel"
+      "item": "minecraft:redstone"
     },
     {
       "item": "minecraft:coal"
@@ -14,11 +14,10 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 16759851,
-  "secitemcolor": 16759851,
-  "displayname": "Fire",
-  "element": "alchemicalbrewery:block",
-  "extradata": "{block:{Name:'minecraft:fire'}}",
+  "itemcolor": 15445164,
+  "secitemcolor": 9109504,
+  "displayname": "Redstone",
+  "element": "alchemicalbrewery:item",
   "count": 1,
   "capsule": true
 }

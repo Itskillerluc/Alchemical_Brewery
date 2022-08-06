@@ -17,13 +17,14 @@ public class ModElements {
 
     public static final Supplier<IForgeRegistry<Element>> ELEMENTS = REGISTER.makeRegistry(Element.class, RegistryBuilder::new);
 
-    public static final RegistryObject<Element> LAVA = REGISTER.register("lava", ()->new LavaElement("Lava"));
-    public static final RegistryObject<Element> WATER = REGISTER.register("water", ()->new WaterElement("Water"));
-    public static final RegistryObject<Element> ENDER = REGISTER.register("ender",()->new EnderElement("Ender"));
-    public static final RegistryObject<Element> BLOCK = REGISTER.register("block",()->new BlockElement("Block"));
-    public static final RegistryObject<Element> EMPTY = REGISTER.register("empty",()->new EmptyElement("Empty"));
+    public static final RegistryObject<Element> LAVA = REGISTER.register("lava", () -> new LavaElement("Lava"));
+    public static final RegistryObject<Element> WATER = REGISTER.register("water", () -> new WaterElement("Water"));
+    public static final RegistryObject<Element> ENDER = REGISTER.register("ender", () -> new EnderElement("Ender"));
+    public static final RegistryObject<Element> BLOCK = REGISTER.register("block", () -> new BlockElement("Block"));
+    public static final RegistryObject<Element> EMPTY = REGISTER.register("empty", () -> new EmptyElement("Empty"));
+    public static final RegistryObject<Element> ITEM = REGISTER.register("item", () -> new ItemElement("Item"));
 
-    public static void register(IEventBus eventBus){
+    public static void register(IEventBus eventBus) {
         REGISTER.register(eventBus);
     }
 }

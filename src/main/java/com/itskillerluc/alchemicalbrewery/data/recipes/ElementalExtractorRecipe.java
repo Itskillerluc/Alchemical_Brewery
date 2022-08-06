@@ -1,10 +1,17 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
+import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.ElementData;
+import com.itskillerluc.alchemicalbrewery.elements.ItemElement;
+import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -12,13 +19,10 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.NBTIngredient;
-import net.minecraftforge.common.util.JsonUtils;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
+import java.awt.*;
 
 public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
 
@@ -27,24 +31,25 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<Ingredient> recipeItems;
     private final int outputcount;
     private final boolean capsule;
-    private final int itemColor;
-    private final String element;
-    private final int secitemColor;
+    private final ElementData element;
 
-    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule, int itemColor, String element, int secitemColor) {
+    public ElementalExtractorRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int outputcount, boolean hascapsule, ElementData element) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.outputcount = outputcount;
         this.capsule = hascapsule;
-        this.itemColor = itemColor;
         this.element = element;
-        this.secitemColor = secitemColor;
     }
 
 
     @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
+    public boolean matches(SimpleContainer pContainer, @NotNull Level pLevel) {
+        for (Element elementType : ModElements.ELEMENTS.get().getValues()) {
+            if(elementType.extractorRecipeHelper(pContainer.getItem(0)) != null){
+                return true;
+            }
+        }
         if(recipeItems.get(0).test(pContainer.getItem(0))&&recipeItems.get(2).test(pContainer.getItem(2))){
             return (capsule) ? pContainer.getItem(1).is(ModItems.CAPSULE_MEDIUM.get())||pContainer.getItem(1).is(ModItems.CAPSULE_LARGE.get())||pContainer.getItem(1).is(ModItems.CAPSULE_SMALL.get()) : recipeItems.get(1).test(pContainer.getItem(1));
         }
@@ -52,15 +57,11 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer pContainer) {
+    public @NotNull ItemStack assemble(@NotNull SimpleContainer pContainer) {
         return output;
     }
 
-    public int getItemColor(){
-        return itemColor;
-    }
-    public int getSecitemColor(){return secitemColor;}
-    public String getElement(){
+    public ElementData getElement(){
         return element;
     }
 
@@ -71,8 +72,18 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
-        return output.copy();
+    public @NotNull ItemStack getResultItem() {
+        return output.is(ModItems.ELEMENT_BASIC.get()) ? Element_Basic.fromData(element) : output;
+
+    }
+    public ItemStack getResultItemAdvanced(SimpleContainer container){
+        for (Element elementType : ModElements.ELEMENTS.get().getValues()) {
+            if(elementType.extractorRecipeHelper(container.getItem(0)) != null){
+                String subName = container.getItem(0).getDisplayName().getString();
+                return Element_Basic.fromData(new ElementData(subName.substring(1, subName.length()-1), null, elementType.getDynamicColor().apply(container.getItem(0)).intValue(), (new Color(elementType.getDynamicColor().apply(container.getItem(0)))).darker().getRGB(), elementType.extractorRecipeHelper(container.getItem(0)), elementType));
+            }
+        }
+        return getResultItem();
     }
 
     public int getOutputcount(){
@@ -82,17 +93,17 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     public boolean getIfCapsule(){return capsule;}
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return Type.INSTANCE;
     }
 
@@ -110,41 +121,76 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
     public static class Serializer implements RecipeSerializer<ElementalExtractorRecipe>{
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(AlchemicalBrewery.MOD_ID,"elemental_extracting");
+        private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
         @Override
-        public ElementalExtractorRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+        public @NotNull ElementalExtractorRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
-            int count = GsonHelper.getAsInt(pSerializedRecipe, "count");
+
+            ResourceLocation elementRescourceLocation = ResourceLocation.tryParse(GsonHelper.getAsString(pSerializedRecipe, "element"));
+
+            Element element = ModElements.ELEMENTS.get().getValue(elementRescourceLocation);
+
+            int count = GsonHelper.getAsInt(pSerializedRecipe, "count", 1);
+
             boolean capsule = GsonHelper.getAsBoolean(pSerializedRecipe, "capsule");
-            int color = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor");
-            String element = GsonHelper.getAsString(pSerializedRecipe, "element");
-            int seccolor = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor");
+
+            int color = GsonHelper.getAsInt(pSerializedRecipe, "itemcolor", element.defaultColor);
+
+            int seccolor = GsonHelper.getAsInt(pSerializedRecipe, "secitemcolor", element.defaultSecColor);
+
+            String displayName = GsonHelper.getAsString(pSerializedRecipe, "displayname", element.defaultDisplayName);
+
+            CompoundTag extraData = element.defaultAdditionalData;
+
+            if(pSerializedRecipe.has("extradata")) {
+                try {
+                    JsonElement jsonElement = pSerializedRecipe.get("extradata");
+                    CompoundTag nbt;
+                    if (jsonElement.isJsonObject())
+                        nbt = TagParser.parseTag(GSON.toJson(jsonElement));
+                    else
+                        nbt = TagParser.parseTag(GsonHelper.convertToString(jsonElement, "extradata"));
+
+                    extraData = nbt;
+                } catch (CommandSyntaxException e) {
+                    throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
+                }
+            }
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
+
+            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null) != null ? ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null)) : element.defualtItemModel;
+
             NonNullList<Ingredient> inputs = NonNullList.withSize(3, Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element, seccolor);
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, new ElementData(displayName, displayItem, color, seccolor, extraData, element));
         }
 
         @Nullable
         @Override
-        public ElementalExtractorRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf buf) {
+        public ElementalExtractorRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf buf) {
             NonNullList<Ingredient> inputs = NonNullList.withSize(buf.readInt(), Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromNetwork(buf));
             }
-            int count = buf.readInt();
             ItemStack output = buf.readItem();
+            ResourceLocation elementRescourceLocation = buf.readResourceLocation();
+            Element element = ModElements.ELEMENTS.get().getValue(elementRescourceLocation);
+            int count = buf.readInt();
             boolean capsule = buf.readBoolean();
             int color = buf.readInt();
-            String element = buf.readUtf();
             int seccolor = buf.readInt();
-            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, color, element, seccolor);
+            String displayName = buf.readUtf();
+            CompoundTag extraData = buf.readNbt();
+            ItemStack displayItem = buf.readItem();
+
+            return new ElementalExtractorRecipe(pRecipeId, output, inputs, count, capsule, new ElementData(displayName, displayItem, color, seccolor, extraData, element));
         }
 
         @Override
@@ -153,12 +199,15 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
             for (Ingredient ing : recipe.getIngredients()) {
                 ing.toNetwork(buf);
             }
+            buf.writeItemStack(recipe.output, false);
+            buf.writeResourceLocation(recipe.element.elementType.getRegistryName());
             buf.writeInt(recipe.outputcount);
-            buf.writeItemStack(recipe.getResultItem(), false);
             buf.writeBoolean(recipe.capsule);
-            buf.writeInt(recipe.itemColor);
-            buf.writeUtf(recipe.element);
-            buf.writeInt(recipe.secitemColor);
+            buf.writeInt(recipe.element.color);
+            buf.writeInt(recipe.element.secColor);
+            buf.writeUtf(recipe.element.displayName);
+            buf.writeNbt(recipe.element.additionalData);
+            buf.writeItemStack(recipe.element.itemModel, false);
         }
 
         @Override

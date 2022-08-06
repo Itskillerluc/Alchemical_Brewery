@@ -1,10 +1,14 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
 
-import net.minecraft.client.Minecraft;
+import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class Element_Crafting extends Element_Basic{
     public Element_Crafting(Properties pProperties) {
@@ -15,40 +19,53 @@ public class Element_Crafting extends Element_Basic{
      * create a dynamic name
      */
     @Override
-    public Component getName(ItemStack pStack) {
-        String Name = null;
-        if(pStack.hasTag()){
-            String Element = pStack.getTag().getString("Element");
-            Name = Element;
-            if (Element != null) {
-                if (Element.contains("-")) {
-                    Name = Element.substring(0, Element.indexOf('-'));
-                }
+    public @NotNull Component getName(ItemStack pStack) {
+        String name = null;
+        if (pStack.getTag() != null) {
+            name = pStack.getTag().getCompound("element").getString("displayName");
+            Element elementType = ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pStack.getTag().getCompound("element").getString("type")));
+            if (name.equals("") && elementType != null) {
+                name = elementType.defaultDisplayName;
             }
         }
-        return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + Name + ")") : new TranslatableComponent("item.alchemicalbrewery.element_crafting");
+        return name != null ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + name + ")") : new TranslatableComponent("item.alchemicalbrewery.element_crafting");
     }
 
     public static class ColorHandler implements ItemColor {
         @Override
         public int getColor(ItemStack pStack, int pTintIndex) {
-            if(pStack.hasTag()){
-                switch (pTintIndex){
+            if (pStack.getTag() != null) {
+                final CompoundTag element = pStack.getTag().getCompound("element");
+                final Element elementType = ModElements.ELEMENTS.get().getValue(new ResourceLocation(element.getString("type")));
+                switch (pTintIndex) {
                     case 0 -> {
-                        assert pStack.getTag() != null;
-                        return pStack.getTag().getInt("SecItemColor");}
-                    case 1 -> {
-                        assert pStack.getTag() != null;
-                        return pStack.getTag().getInt("ItemColor");}
-                    case 2 ->{
-                        return -1;
+                        if (!element.contains("secColor")) {
+                            if (elementType != null) {
+                                return elementType.defaultSecColor;
+                            } else {
+                                return 15869935;
+                            }
+                        } else {
+                            return element.getInt("secColor");
+                        }
                     }
-                    default -> {return 15869935;}
+                    case 1 -> {
+                        if (!element.contains("color")) {
+                            if (elementType != null) {
+                                return elementType.defaultColor;
+                            } else {
+                                return -1;
+                            }
+                        } else {
+                            return element.getInt("color");
+                        }
+                    }
+                    default -> {
+                        return 15869935;
+                    }
                 }
-            }else{
-                if (pTintIndex == 0) {
-                    return 15869935;
-                }else return -1;
+            } else {
+                return pTintIndex == 0 ? 15869935 : -1;
             }
         }
     }

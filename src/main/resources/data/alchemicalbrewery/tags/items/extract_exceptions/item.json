@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:flint_and_steel",
+    "minecraft:ender_pearl",
+    "minecraft:water_bucket",
+    "minecraft:lava_bucket",
+    "minecraft:air",
+    "minecraft:redstone"
+  ]
+}

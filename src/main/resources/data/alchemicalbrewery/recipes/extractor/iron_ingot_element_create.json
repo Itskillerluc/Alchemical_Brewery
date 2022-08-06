@@ -16,7 +16,8 @@
   },
   "itemcolor": 14737632,
   "secitemcolor": 14737632,
-  "element": "Iron",
+  "displayname": "Iron",
+  "element": "alchemicalbrewery:empty",
   "count": 1,
   "capsule": true
 }

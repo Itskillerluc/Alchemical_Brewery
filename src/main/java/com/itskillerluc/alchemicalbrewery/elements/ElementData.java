@@ -1,12 +1,15 @@
 package com.itskillerluc.alchemicalbrewery.elements;
 
+import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -20,6 +23,7 @@ public class ElementData {
     public String displayName;
     public ItemStack itemModel;
     public int color;
+    public int secColor;
     public CompoundTag additionalData;
     public static EntityDataSerializer<ElementData> ELEMENTDATA = new EntityDataSerializer<>() {
         @Override
@@ -27,13 +31,14 @@ public class ElementData {
             pBuffer.writeUtf(pValue.displayName);
             pBuffer.writeItem(pValue.itemModel);
             pBuffer.writeInt(pValue.color);
+            pBuffer.writeInt(pValue.secColor);
             pBuffer.writeNbt(pValue.additionalData);
             pBuffer.writeResourceLocation(Objects.requireNonNull(pValue.elementType.getRegistryName()));
         }
 
         @Override
         public @NotNull ElementData read(@NotNull FriendlyByteBuf pBuffer) {
-            return new ElementData(pBuffer.readUtf(), pBuffer.readItem(), pBuffer.readInt(), pBuffer.readNbt(), ModElements.ELEMENTS.get().getValue(pBuffer.readResourceLocation()));
+            return new ElementData(pBuffer.readUtf(), pBuffer.readItem(), pBuffer.readInt(), pBuffer.readInt(), pBuffer.readNbt(), ModElements.ELEMENTS.get().getValue(pBuffer.readResourceLocation()));
         }
 
         @Override
@@ -44,26 +49,45 @@ public class ElementData {
 
     public Element elementType;
 
+    public boolean isEmpty(){
+        return elementType.getRegistryName() == null || elementType.getRegistryName().equals(new ResourceLocation(AlchemicalBrewery.MOD_ID, "empty"));
+    }
+
     public CompoundTag toTag() {
         return elementType.toTag(this);
     }
 
-    public ElementData fromTag(CompoundTag tag) {
+    public ElementData changeFromTag(CompoundTag tag) {
         ElementData data = elementType.fromTag(tag);
-        this.itemModel = data.itemModel;
-        this.elementType = data.elementType;
-        this.displayName = data.displayName;
-        this.color = data.color;
-        this.additionalData = data.additionalData;
+        itemModel = data.itemModel;
+        elementType = data.elementType;
+        displayName = data.displayName;
+        color = data.color;
+        secColor = data.secColor;
+        additionalData = data.additionalData;
         return this;
     }
 
-    public ElementData(String displayname, ItemStack itemModel, int color, CompoundTag additionalInfo, Element elementType) {
+    public ElementData decodeFromTag(CompoundTag tag) {
+        return elementType.fromTag(tag);
+    }
+
+    public ElementData(String displayname, ItemStack itemModel, int color, int secColor, CompoundTag additionalInfo, Element elementType) {
         this.additionalData = additionalInfo != null ? additionalInfo : new CompoundTag();
         this.itemModel = itemModel != null ? itemModel : ItemStack.EMPTY;
         this.displayName = displayname != null ? displayname : "Empty";
         this.color = color;
+        this.secColor = secColor;
         this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();;
+    }
+
+    public ElementData(String displayname, ItemStack itemModel, Integer color, Integer secColor, CompoundTag additionalInfo, Element elementType) {
+        this.additionalData = additionalInfo != null ? additionalInfo : elementType.defaultAdditionalData;
+        this.itemModel = itemModel != null ? itemModel : elementType.defualtItemModel;
+        this.displayName = displayname != null ? displayname : elementType.defaultDisplayName;
+        this.color = color != null ? color : elementType.defaultColor;
+        this.secColor = secColor != null ? secColor : elementType.defaultSecColor;
+        this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
     }
 
     public ElementData(Element elementType) {
@@ -71,7 +95,13 @@ public class ElementData {
         this.itemModel = elementType.defualtItemModel != null ? elementType.defualtItemModel : ItemStack.EMPTY;
         this.displayName = elementType.defaultDisplayName != null ? elementType.defaultDisplayName : "Empty";
         this.color = elementType.defaultColor;
+        this.secColor = elementType.defaultSecColor;
         this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
+    }
+
+    public static ElementData of(CompoundTag tag){
+        Element type = tag.contains("type") ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(tag.getString("type"))) : ModElements.EMPTY.get();
+        return type != null ? type.fromTag(tag) : ModElements.EMPTY.get().fromTag(tag);
     }
 
 
@@ -107,12 +137,12 @@ public class ElementData {
      * @param result The EntityHitResult of the ElementProjectileEntity
      * @throws NullPointerException when result is null
      */
-    public final void run (EntityHitResult result){
+    public final void run (EntityHitResult result, ElementProjectileEntity projectile){
         if(result == null){
             throw new NullPointerException("result is not allowed to be null.");
         }
-        ElementProjectileEntity entity = ((ElementProjectileEntity) result.getEntity());
-        this.elementType.elementFunction(Direction.UP, entity.blockPosition(), entity.getLevel(), (LivingEntity)entity.getOwner(), InteractionHand.MAIN_HAND, false, this.additionalData);
+        Entity entity = result.getEntity();
+        this.elementType.elementFunction(Direction.UP, entity.blockPosition(), entity.getLevel(), (LivingEntity)projectile.getOwner(), InteractionHand.MAIN_HAND, false, this.additionalData);
     }
 
     static{

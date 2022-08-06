@@ -1,29 +1,31 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
 
 
-import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
+import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
-import com.itskillerluc.alchemicalbrewery.item.custom.elements.ElementInit;
-import com.itskillerluc.alchemicalbrewery.item.custom.elements.elementfunctions;
-import com.mojang.logging.LogUtils;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 
 public class Element_UseItem extends Element_Basic {
+
+    public static final Logger LOGGER = LogManager.getLogger();
+
     public Element_UseItem(Properties pProperties) {
         super(pProperties);
     }
@@ -32,122 +34,118 @@ public class Element_UseItem extends Element_Basic {
     /**
      * create a dynamic name
      */
-
     @Override
-    public Component getName(ItemStack pStack) {
-        String Name = null;
-        if(pStack.hasTag()){
-            String Element = pStack.getTag().getString("Element");
-            Name = Element;
-            if (Element != null) {
-                if (Element.contains("-")) {
-                    Name = Element.substring(0, Element.indexOf('-'));
-                }
+    public @NotNull Component getName(ItemStack pStack) {
+        String name = null;
+        if (pStack.getTag() != null) {
+            name = pStack.getTag().getCompound("element").getString("displayName");
+            Element elementType = ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pStack.getTag().getCompound("element").getString("type")));
+            if (name.equals("") && elementType != null) {
+                name = elementType.defaultDisplayName;
             }
         }
-        return pStack.hasTag() ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + Name + ")") : new TranslatableComponent("item.alchemicalbrewery.element_use");
+        return name != null ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + name + ")") : new TranslatableComponent("item.alchemicalbrewery.element_use");
     }
 
     @Override
-    public Rarity getRarity(ItemStack pStack) {
-        try{
-            return (pStack.getTag().getBoolean("Creative")) ? Rarity.EPIC : Rarity.COMMON;
-        }catch (NullPointerException error){
+    public @NotNull Rarity getRarity(@NotNull ItemStack pStack) {
+        if (pStack.getTag() != null) {
+            return pStack.getTag().getBoolean("Creative") ? Rarity.EPIC : Rarity.COMMON;
+        } else {
             return Rarity.COMMON;
         }
     }
-
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        //ModElements.TEST.get().SetArgsWrapper(pContext, true);
-        String ElementRaw = pContext.getItemInHand().hasTag() ? pContext.getItemInHand().getTag().getString("Element") : null;
-        String Element = pContext.getItemInHand().getTag().getString("Element");
-        if (ElementRaw != null) {
-            if (ElementRaw.contains("-")) {
-                if (ElementRaw.substring(ElementRaw.indexOf('-')).length() < 1) {
-                    try {
-                        throw new ResourceLocationException("found - sign without Element value behind it. Correct syntax should be: Displayname-RealElement or Realelement. Found in:" + ElementRaw);
+    public @NotNull InteractionResult useOn(UseOnContext pContext) {
+        ElementData element;
+        CompoundTag itemTag = pContext.getItemInHand().getTag();
+        Element empty = ModElements.EMPTY.get();
 
-                    }catch (ResourceLocationException exception){
-                        exception.printStackTrace();
-                    }
-                }
-                Element = ElementRaw.substring(ElementRaw.indexOf('-') + 1);
-            }
-        }
-
-        if(!pContext.getPlayer().isCrouching()) {
+        if (itemTag != null) {
+            IForgeRegistry<Element> elementsRegistry = ModElements.ELEMENTS.get();
+            CompoundTag elementCompound = itemTag.getCompound("element");
+            Element value = null;
             try {
-                //ModElements.ELEMENTS.get().getValue(new ResourceLocation(AlchemicalBrewery.MOD_ID, Element)).setArgsWrapper(pContext, true);
+                 value = elementsRegistry.getValue(ResourceLocation.tryParse(elementCompound.getString("type")));
+            }catch (ResourceLocationException exception){
+                LOGGER.error(exception.getMessage());
+            }
 
-                //Run the element that is stored in the nbt
-                if(ElementInit.functions.containsKey(Element)) {
-                    ElementInit.functions.get(Element).run(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get(Element).apply(pContext));
-                }else {
-                    elementfunctions.block(pContext.getClickedFace(), pContext.getClickedPos(), pContext.getLevel(), pContext.getPlayer(), pContext.getHand(), true, ElementInit.arguments.get("Block").apply(pContext));
-                }
+            if (value != null) {
+                element = value.fromTag(elementCompound);
 
-            } catch (NullPointerException | ResourceLocationException exception) {
-                if (pContext.getItemInHand().hasTag()) {
-                    LogUtils.getLogger().debug(ElementRaw + " is not a valid element type");
-                } else {
-                    LogUtils.getLogger().debug("No element type found");
-                }
+            } else {
+                LOGGER.error(elementCompound.getString("type") + " is not a valid Element type");
+                element = empty.fromTag(elementCompound);
+            }
+
+        } else {
+            LOGGER.error("No Element type was found.");
+            element = new ElementData(empty);
+        }
+
+        Player player = pContext.getPlayer();
+        if (player != null && !player.isCrouching()) {
+            if (element != null && element.elementType != empty) {
+                element.run(pContext, (itemTag != null && itemTag.contains("Creative") && !itemTag.getBoolean("Creative")) || !pContext.getPlayer().isCreative());
+                return InteractionResult.SUCCESS;
+            } else {
+                LOGGER.error("there is no valid Element that can be used");
+                return InteractionResult.FAIL;
             }
         }
-        return super.useOn(pContext);
+        return InteractionResult.FAIL;
     }
 
     @Override
-    public boolean isFoil(ItemStack pStack) {
-        return true;
-    }
-
-    //this method is currently not being used, but itll be later.
-    @Override
-    public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-        Level plevel = pAttacker.getLevel();
-        if(pTarget.isDeadOrDying()){
-            //TODO: add config setting (default is this).
-            if(plevel.getServer().isDedicatedServer()){
-                if (pTarget instanceof Player){
-                    if(pAttacker instanceof Player){
-                        pAttacker.sendMessage(new TextComponent("TEST"), pAttacker.getUUID());
-                    }
-                }
-            }else{
-                if (pTarget instanceof LivingEntity){
-                    if(pAttacker instanceof Player){
-                        pAttacker.sendMessage(new TextComponent("TEST"), pAttacker.getUUID());
-                    }
-                }
-            }
-        }
+    public boolean isFoil(@NotNull ItemStack pStack) {
         return true;
     }
 
     /**
      * Sets the color to the nbt that is provided
      */
-    public static class ColorHandler implements ItemColor{
+    public static class ColorHandler implements ItemColor {
         @Override
         public int getColor(ItemStack pStack, int pTintIndex) {
-            if(pStack.hasTag()){
-                switch (pTintIndex){
-                    case 0 -> {
-                        assert pStack.getTag() != null;
-                        return pStack.getTag().getInt("SecItemColor");}
-                    case 1 -> {
-                        assert pStack.getTag() != null;
-                        return pStack.getTag().getInt("ItemColor");}
-                    default -> {return 15869935;}
+            if (pStack.getTag() != null) {
+                final CompoundTag element = pStack.getTag().getCompound("element");
+                Element elementType = null;
+                try{
+                    elementType = ModElements.ELEMENTS.get().getValue(new ResourceLocation(element.getString("type")));
+                }catch (ResourceLocationException exception){
+                    LOGGER.error(exception.getMessage());
                 }
-            }else{
-                if (pTintIndex == 0) {
-                    return 15869935;
-                }else return -1;
+                switch (pTintIndex) {
+                    case 0 -> {
+                        if (!element.contains("secColor")) {
+                            if (elementType != null) {
+                                return elementType.defaultSecColor;
+                            } else {
+                                return 15869935;
+                            }
+                        } else {
+                            return element.getInt("secColor");
+                        }
+                    }
+                    case 1 -> {
+                        if (!element.contains("color")) {
+                            if (elementType != null) {
+                                return elementType.defaultColor;
+                            } else {
+                                return -1;
+                            }
+                        } else {
+                            return element.getInt("color");
+                        }
+                    }
+                    default -> {
+                        return 15869935;
+                    }
+                }
+            } else {
+                return pTintIndex == 0 ? 15869935 : -1;
             }
         }
     }
-
 }

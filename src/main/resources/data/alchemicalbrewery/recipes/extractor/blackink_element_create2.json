@@ -16,7 +16,8 @@
   },
   "itemcolor": 0,
   "secitemcolor": 0,
-  "element": "BlackInk",
+  "element": "alchemicalbrewery:empty",
+  "displayname": "BlackInk",
   "count": 1,
   "capsule": true
 }

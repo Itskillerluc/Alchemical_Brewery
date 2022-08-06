@@ -15,7 +15,7 @@ import java.util.Objects;
 public class WaterElement extends Element{
 
     public WaterElement(String Displayname) {
-        super(Displayname, null, null, 6525687);
+        super(Displayname, null, null, 6525687, 6525687);
     }
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {

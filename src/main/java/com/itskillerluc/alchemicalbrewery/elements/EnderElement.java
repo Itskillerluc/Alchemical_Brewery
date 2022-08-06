@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class EnderElement extends Element{
 
     public EnderElement(String Displayname) {
-        super(Displayname, null, null, 2458227);
+        super(Displayname, null, new ItemStack(Items.ENDER_PEARL), 2458227, 2458227);
     }
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {

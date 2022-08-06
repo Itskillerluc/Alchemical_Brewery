@@ -14,9 +14,7 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 2458227,
-  "secitemcolor": 2458227,
-  "element": "Ender",
+  "element": "alchemicalbrewery:ender",
   "count": 1,
   "capsule": true
 }

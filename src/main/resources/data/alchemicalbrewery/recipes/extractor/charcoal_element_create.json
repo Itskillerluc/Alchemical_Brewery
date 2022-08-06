@@ -16,7 +16,8 @@
   },
   "itemcolor": 3949122,
   "secitemcolor": 3949122,
-  "element": "Charcoal",
+  "element": "alchemicalbrewery:empty",
+  "displayname": "Charcoal",
   "count": 1,
   "capsule": true
 }

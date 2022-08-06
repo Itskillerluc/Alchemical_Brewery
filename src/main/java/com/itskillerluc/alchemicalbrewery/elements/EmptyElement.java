@@ -12,7 +12,7 @@ public class EmptyElement extends Element{
 
 
     public EmptyElement(String Displayname) {
-        super(Displayname, null, null, 0);
+        super(Displayname, null, null, 0, 0);
     }
 
     @Override

@@ -16,7 +16,8 @@
   },
   "itemcolor": 7500402,
   "secitemcolor": 7500402,
-  "element": "Stone-minecraft:stone",
+  "displayname": "Stone",
+  "element": "alchemicalbrewery:block",
   "count": 1,
   "capsule": true
 }
