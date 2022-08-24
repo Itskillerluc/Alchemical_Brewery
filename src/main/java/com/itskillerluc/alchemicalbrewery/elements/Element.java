@@ -1,13 +1,15 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-
+//TODO
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -15,11 +17,13 @@ import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 public abstract class Element extends ForgeRegistryEntry<Element> {
 
     public final String defaultDisplayName;
     public final ItemStack defualtItemModel;
+
     public final int defaultColor;
     public final int defaultSecColor;
     public final CompoundTag defaultAdditionalData;
@@ -48,9 +52,30 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
     }
 
     /**
+     *Override this if you need any dynamic name
+     */
+    public Function<CompoundTag, String> getName(){
+        return tag -> defaultDisplayName;
+    }
+
+    /**
+     *Override this if you need any dynamic color
+     */
+    public ToIntFunction<CompoundTag> getColor(){
+        return tag -> defaultColor;
+    }
+
+    /**
      *Override this if you have any additionalData
      */
     public @Nullable CompoundTag extractorRecipeHelper(ItemStack itemStack){
+        return null;
+    }
+
+    /**
+     *Override this if you have any additionalData
+     */
+    public @Nullable Item injectorRecipeHelper(CompoundTag extraData){
         return null;
     }
 
@@ -99,4 +124,8 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
      * Override this to define what the element does.
      */
     abstract void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData);
+
+    public int getDefaultColor() {
+        return defaultColor;
+    }
 }

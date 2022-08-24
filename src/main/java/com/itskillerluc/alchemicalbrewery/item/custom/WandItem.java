@@ -1,8 +1,6 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
-
-import com.itskillerluc.alchemicalbrewery.elements.Element;
+//TODO
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
-import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
@@ -160,7 +158,7 @@ public class WandItem extends Item {
             final ItemStack wand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.WAND_ITEM.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
             if (itemInHand.getTag() != null) {
-                elementinhand = new ElementData(Element_UseItem.getElement(itemInHand));
+                elementinhand = ElementData.of(itemInHand.getOrCreateTag().getCompound("element"));
                 if (getUsedelements(wand) < getMaxelements(wand)) {
                     pPlayer.setItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, Utilities.DecodeStackTags(new ItemStack(itemInHand.getItem(), itemInHand.getCount() - 1, itemInHand.getTag())));
                 }
@@ -176,7 +174,7 @@ public class WandItem extends Item {
 
                 //if it already exists add one
                 for (int i = 0; i < wand.getTag().getList("Elements", 10).size(); i++) {
-                    if (wand.getTag().getList("Elements", 10).getCompound(i).getCompound("element").getString("type").matches("alchemicalbrewery:"+ Objects.requireNonNull(elementinhand.elementType.getRegistryName()).getPath())) {
+                    if (ElementData.of(wand.getTag().getList("Elements", 10).getCompound(i).getCompound("element")).matches(elementinhand)) {
                         wand.getTag().getList("Elements", 10).getCompound(i).putInt("amount", wand.getTag().getList("Elements", 10).getCompound(i).getInt("amount") + 1);
                         inserted = true;
                         setUsedelements(wand, getUsedelements(wand) + 1);
@@ -194,6 +192,7 @@ public class WandItem extends Item {
                     ));
                     wand.getTag().getList("Elements", 10).getCompound(wand.getTag().getList("Elements", 10).size() - 1).putInt("amount", 1);
                     setUsedelements(wand, getUsedelements(wand)+1);
+                    cycleElements(pPlayer, wand);
                 }
             }
         }

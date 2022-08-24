@@ -6,7 +6,7 @@
   "output": {
     "item": "minecraft:water_bucket"
   },
-  "element": "Water",
+  "element": "alchemicalbrewery:water",
   "count": 1,
   "onlycharge": false,
   "charge": 5

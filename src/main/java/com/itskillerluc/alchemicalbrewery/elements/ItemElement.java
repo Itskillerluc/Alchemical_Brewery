@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.util.ModTags;
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
 import net.minecraft.Util;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 public class ItemElement extends Element{
     public ItemElement(String Displayname) {
@@ -58,7 +59,7 @@ public class ItemElement extends Element{
 
     @Override
     public Function<ItemStack, Integer> getDynamicColor() {
-        return stack -> ItemElement.getColorOfImage(new ResourceLocation(Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace(),"textures/item/"+stack.getItem().getRegistryName().getPath()+".png"));
+        return stack -> !stack.isEmpty() ? ItemElement.getColorOfImage(new ResourceLocation(Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace(),"textures/item/"+stack.getItem().getRegistryName().getPath()+".png")) : 0;
     }
 
     public static Color darker(Color color, float modifier) {
@@ -80,6 +81,27 @@ public class ItemElement extends Element{
     }
 
     @Override
+    public @Nullable Item injectorRecipeHelper(CompoundTag extraData) {
+        if (extraData == null){
+            return null;
+        } else {
+            extraData.getCompound("element").getCompound("additionalData").getCompound("item");
+        }
+        return NbtUtils.readBlockState(extraData.getCompound("element").getCompound("additionalData").getCompound("item")).getBlock().asItem();
+    }
+
+    @Override
+    public Function<CompoundTag, String> getName(){
+        return tag -> !ItemStack.of(tag.getCompound("item")).isEmpty() ? ItemStack.of(tag.getCompound("item")).getDisplayName().getString().substring(1, ItemStack.of(tag.getCompound("item")).getDisplayName().getString().length()-1) : "Empty";
+    }
+
+    @Override
+    public ToIntFunction<CompoundTag> getColor(){
+        return tag -> getDynamicColor().apply(ItemStack.of(tag.getCompound("item")));
+    }
+
+
+    @Override
     public boolean matches(ElementData element, ElementData other) {
         return super.matches(element, other) && element.additionalData.getCompound("item").equals(other.additionalData.getCompound("item"));
     }
@@ -91,10 +113,10 @@ public class ItemElement extends Element{
             tag.getCompound("additionalData").getCompound("item");
             if(type != null){
                 return new ElementData(
-                        tag.contains("displayName") ? tag.getString("displayName") : type.defaultDisplayName,
+                        tag.contains("displayName") ? tag.getString("displayName") : ItemStack.of(tag.getCompound("additionalData").getCompound("item")).getDisplayName().getString(),
                         tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : type.defualtItemModel,
-                        Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("item")).getItem()).defaultMaterialColor().col,
-                        Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("item")).getItem()).defaultMaterialColor().col,
+                        tag.contains("color") ? tag.getInt("color") : getDynamicColor().apply(ItemStack.of(tag.getCompound("additionalData").getCompound("item"))),
+                        tag.contains("secColor") ? tag.getInt("secColor") :  new Color(getDynamicColor().apply(ItemStack.of(tag.getCompound("additionalData").getCompound("item")))).darker().getRGB(),
                         tag.contains("additionalData") ? tag.getCompound("additionalData") : type.defaultAdditionalData,
                         type);
             }else{

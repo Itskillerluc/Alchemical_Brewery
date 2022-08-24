@@ -3,24 +3,27 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Wood-minecraft:oak_planks",
+      "extradata": "{block:{Name:'minecraft:oak_planks'}}",
+      "element": "alchemicalbrewery:block",
       "count": 2
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Wood-minecraft:oak_planks",
+      "extradata": "{block:{Name:'minecraft:oak_planks'}}",
+      "element": "alchemicalbrewery:block",
       "count": 2
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Fire-minecraft:fire",
+      "extradata": "{block:{Name:'minecraft:fire'}}",
+      "element": "alchemicalbrewery:block",
       "count": 1
     }
   ],
-  "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Charcoal",
+    "element": "alchemicalbrewery:item",
+    "extradata": "{item:{id:'minecraft:charcoal', Count:1b}}",
     "itemcolor": 3949122,
     "secitemcolor": 3949122
   }

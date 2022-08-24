@@ -1,6 +1,7 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.data.recipes.ElementalCombinerRecipe;
+import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -159,28 +160,22 @@ public class ElementalCombinerTile extends BlockEntity {
                 .getRecipeFor(ElementalCombinerRecipe.Type.INSTANCE, inventory, level);
 
         if(match.isPresent()) {
-            ItemStack resultItem = match.get().getResultItem();
-            CompoundTag nbt = resultItem.getOrCreateTag();
-            if(match.get().isHaselement()) {
-                nbt.putInt("ItemColor", match.get().getItemcolor());
-                nbt.putInt("SecItemColor", match.get().getSecitemcolor());
-                nbt.putString("Element", match.get().getelement());
-            }
+            ItemStack resultItem = match.get().assemble(inventory);
+
             for (int i = 0; i < match.get().size(); i++) {
                 entity.itemHandler.extractItem(i, match.get().getCount(i), false);
             }
+
             level.addFreshEntity(new ItemEntity(level, entity.getBlockPos().getX(), entity.getBlockPos().getY(),entity.getBlockPos().getZ(), resultItem));
-
-
         }
     }
 
     /**
-     * inserts the item thats being held into the tileentity
+     * inserts the item that's being held into the tileentity
      * @param item item type that should be inserted
      * @param count item count that should be inserted
      * @param tag tags of the item that should be inserted
-     * @param entity tileentity where it should be inserted into
+     * @param entity tile entity where it should be inserted into
      * @param player player that is inserting it
      */
     public void insertItem(Item item, int count, CompoundTag tag, ElementalCombinerTile entity, Player player) {
@@ -188,7 +183,6 @@ public class ElementalCombinerTile extends BlockEntity {
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
-        int slot = (!entity.itemHandler.getStackInSlot(7).isEmpty()) ? 7 : (!entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : (!entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (!entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (!entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (!entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (!entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : 0;
         ItemStack itemtoinsert = new ItemStack(item, count, tag);
         if(entity.itemHandler.getStackInSlot(0).isEmpty()||entity.itemHandler.getStackInSlot(1).isEmpty()||entity.itemHandler.getStackInSlot(2).isEmpty()||entity.itemHandler.getStackInSlot(3).isEmpty()||entity.itemHandler.getStackInSlot(4).isEmpty()||entity.itemHandler.getStackInSlot(5).isEmpty()||entity.itemHandler.getStackInSlot(6).isEmpty()||entity.itemHandler.getStackInSlot(7).isEmpty()) {
             entity.itemHandler.insertItem(
@@ -242,24 +236,14 @@ public class ElementalCombinerTile extends BlockEntity {
             for (int i = 0; i < items.size(); i++) {
                 String Name = null;
                 if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("ForgeCaps")){
-                    if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").contains("Element")) {
-                        String Element = entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getString("Element");
-                        Name = Element;
-                        if (Element != null) {
-                            if (Element.contains("-")) {
-                                Name = Element.substring(0, Element.indexOf('-'));
-                            }
-                        }
+                    if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").contains("element")) {
+                        ElementData Element = ElementData.of(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getCompound("element"));
+                        Name = Element.displayName;
                     }
                 }else if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("tag")) {
-                    if (entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").contains("Element")) {
-                        String Element = entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").getString("Element");
-                        Name = Element;
-                        if (Element != null) {
-                            if (Element.contains("-")) {
-                                Name = Element.substring(0, Element.indexOf('-'));
-                            }
-                        }
+                    if (entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").contains("element")) {
+                        ElementData Element = ElementData.of(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").getCompound("element"));
+                        Name = Element.displayName;
                     }
                 }
                 message.append(counts.get(i).toString());

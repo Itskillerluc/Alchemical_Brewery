@@ -1,0 +1,8 @@
+{
+  "entries": {
+    "minecraft:dirt": 1,
+    "minecraft:stone": 1,
+    "minecraft:diamond": 100,
+    "#minecraft:logs": 2
+  }
+}

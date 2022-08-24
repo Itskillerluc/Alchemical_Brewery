@@ -3,19 +3,22 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Stone-minecraft:stone",
-      "count": 1
+      "element": "alchemicalbrewery:block",
+      "extradata": "{block:{Name:'minecraft:stone'}}",
+      "count": 10
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Charcoal",
-      "count": 1
+      "element": "alchemicalbrewery:item",
+      "extradata": "{item:{id:'minecraft:charcoal', Count:1b}}",
+      "count": 5
     }
   ],
-  "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Coal",
+    "count": 5,
+    "element": "alchemicalbrewery:item",
+    "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
     "itemcolor": 2171169,
     "secitemcolor": 2171169
   }

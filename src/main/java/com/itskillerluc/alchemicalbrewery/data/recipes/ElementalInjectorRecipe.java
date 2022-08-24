@@ -1,22 +1,25 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
-
-import com.google.gson.JsonArray;
+//TODO
 import com.google.gson.JsonObject;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
-import com.itskillerluc.alchemicalbrewery.item.ModItems;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
+import com.itskillerluc.alchemicalbrewery.data.ChargeLoader;
+import com.itskillerluc.alchemicalbrewery.elements.Element;
+import com.itskillerluc.alchemicalbrewery.elements.ModElements;
+import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
 
@@ -24,18 +27,13 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final ItemStack recipeItems;
     private final int outputcount;
-    private final String element;
-    private final int charge;
-    private final boolean onlyCharge;
-
-    public ElementalInjectorRecipe(ResourceLocation id, ItemStack output, ItemStack recipeItems, int outputcount, String element, int charge, boolean onlyCharge) {
+    private final Element element;
+    public ElementalInjectorRecipe(ResourceLocation id, ItemStack output, ItemStack recipeItems, int outputcount, Element element) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.outputcount = outputcount;
         this.element = element;
-        this.charge = charge;
-        this.onlyCharge = onlyCharge;
     }
 
     public ItemStack getRecipeItems() {
@@ -43,41 +41,26 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        return recipematches(pContainer, pLevel)||chargematches(pContainer, pLevel);
+    public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
+        return pContainer.getItem(1).getItem() instanceof Element_Basic && Objects.equals(Element_Basic.getElement(pContainer.getItem(1)).getRegistryName(), element.getRegistryName()) || chargematches(pContainer);
     }
 
-    public boolean recipematches(SimpleContainer pContainer, Level pLevel){
-        CompoundTag nbt = recipeItems.getOrCreateTag();
-        nbt.putString("Element", getElement());
-        try{
-            if(pContainer.getItem(1).getTag().contains("ItemColor")) {
-                nbt.putInt("ItemColor", pContainer.getItem(1).getTag().getInt("ItemColor"));
-            }
-            if(pContainer.getItem(1).getTag().contains("SecItemColor")) {
-                nbt.putInt("SecItemColor", pContainer.getItem(1).getTag().getInt("SecItemColor"));
-            }
-        }catch (NullPointerException except){
-
-        }
-        return ItemStack.isSameItemSameTags(pContainer.getItem(1),recipeItems);
-    }
-    public boolean chargematches(SimpleContainer pContainer,Level pLevel){
-        return output.is(pContainer.getItem(0).getItem());
-    }
-    public boolean isOnlyCharge(){
-        return onlyCharge;
+    public static boolean chargematches(SimpleContainer pContainer){
+        return ChargeLoader.contains(pContainer.getItem(0));
     }
 
-    public int getCharge(){
-        return charge;
+    public int getCharge(SimpleContainer container){
+        return ChargeLoader.getCharge(container.getItem(0));
     }
     @Override
-    public ItemStack assemble(SimpleContainer pContainer) {
+    public @NotNull ItemStack assemble(@NotNull SimpleContainer pContainer) {
+        if (element.injectorRecipeHelper(pContainer.getItem(1).getTag()) != null){
+            return new ItemStack(element.injectorRecipeHelper(pContainer.getItem(1).getTag()));
+        }
         return output;
     }
 
-    public String getElement(){
+    public Element getElement(){
         return element;
     }
 
@@ -88,8 +71,15 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public @NotNull ItemStack getResultItem() {
         return output.copy();
+    }
+
+    public ItemStack getResult(SimpleContainer container){
+        if (element.injectorRecipeHelper(container.getItem(1).getTag()) != null){
+            return new ItemStack(element.injectorRecipeHelper(container.getItem(1).getTag()));
+        }
+        return output;
     }
 
     public int getOutputcount(){
@@ -97,17 +87,17 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return Type.INSTANCE;
     }
 
@@ -117,40 +107,38 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "elemental_injecting";
     }
 
-    public static ItemStack itemStackFromJson(JsonObject pStackObject) {
-        return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(pStackObject, true, true);
-    }
-
-
     public static class Serializer implements RecipeSerializer<ElementalInjectorRecipe>{
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(AlchemicalBrewery.MOD_ID,"elemental_injecting");
 
         @Override
-        public ElementalInjectorRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+        public @NotNull ElementalInjectorRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
+            ResourceLocation elementResourceLocation = ResourceLocation.tryParse(GsonHelper.getAsString(pSerializedRecipe, "element"));
+
+
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
+
+            Element element = ModElements.ELEMENTS.get().getValue(elementResourceLocation);
+
             int count = GsonHelper.getAsInt(pSerializedRecipe, "count");
-            String element = GsonHelper.getAsString(pSerializedRecipe, "element");
-            int charge = GsonHelper.getAsInt(pSerializedRecipe, "charge");
-            boolean onlyCharge = GsonHelper.getAsBoolean(pSerializedRecipe, "onlycharge");
 
             ItemStack input = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "input"));
 
-            return new ElementalInjectorRecipe(pRecipeId, output, input, count, element,charge,onlyCharge);
+
+            return new ElementalInjectorRecipe(pRecipeId, output, input, count, element);
         }
 
         @Nullable
         @Override
-        public ElementalInjectorRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf buf) {
+        public ElementalInjectorRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf buf) {
 
             int count = buf.readInt();
             ItemStack output = buf.readItem();
             ItemStack input = buf.readItem();
-            String element = buf.readCharSequence(buf.readInt(), StandardCharsets.UTF_8).toString();
-            int charge = buf.readInt();
-            boolean onlyCharge = buf.readBoolean();
+            ResourceLocation elementRescourceLocation = buf.readResourceLocation();
+            Element element = ModElements.ELEMENTS.get().getValue(elementRescourceLocation);
 
-            return new ElementalInjectorRecipe(pRecipeId, output, input, count, element,charge,onlyCharge);
+            return new ElementalInjectorRecipe(pRecipeId, output, input, count, element);
         }
 
         @Override
@@ -158,10 +146,7 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
             buf.writeInt(recipe.getOutputcount());
             buf.writeItemStack(recipe.getResultItem(), false);
             buf.writeItemStack(recipe.recipeItems, false);
-            buf.writeCharSequence(recipe.element, StandardCharsets.UTF_8);
-            buf.writeInt(recipe.element.length());
-            buf.writeInt(recipe.charge);
-            buf.writeBoolean(recipe.onlyCharge);
+            buf.writeResourceLocation(Objects.requireNonNull(recipe.element.getRegistryName()));
         }
 
         @Override
@@ -177,12 +162,12 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public Class<RecipeSerializer<?>> getRegistryType() {
-            return Serializer.castClass(RecipeSerializer.class);
+            return Serializer.castClass();
         }
 
         @SuppressWarnings("unchecked") // Need this wrapper, because generics
-        private static <G> Class<G> castClass(Class<?> cls) {
-            return (Class<G>)cls;
+        private static <G> Class<G> castClass() {
+            return (Class<G>) RecipeSerializer.class;
         }
     }
 }

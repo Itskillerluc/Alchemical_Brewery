@@ -3,19 +3,19 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Water",
+      "element": "alchemicalbrewery:water",
       "count": 1
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Lava",
+      "element": "alchemicalbrewery:lava",
       "count": 1
     }
   ],
-  "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Stone-minecraft:stone",
+    "element": "alchemicalbrewery:block",
+    "extradata": "{block:{Name:'minecraft:stone'}}",
     "itemcolor": 7500402,
     "secitemcolor": 7500402
   }

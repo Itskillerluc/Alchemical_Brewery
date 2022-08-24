@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.block.custom;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalCombinerTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,9 +56,9 @@ public class ElementalCombinerBlock extends BaseEntityBlock {
         if (!pLevel.isClientSide()) {
             BlockEntity tileEntity = pLevel.getBlockEntity(pPos);
             //test what method should be run
-            if(pPlayer.isCrouching()&&((ElementalCombinerTile)tileEntity).hasRecipe((ElementalCombinerTile) tileEntity)){
-                ((ElementalCombinerTile)tileEntity).craftItem((ElementalCombinerTile) tileEntity);
-            }else if(pPlayer.isCrouching()&&!((ElementalCombinerTile)tileEntity).hasRecipe((ElementalCombinerTile)tileEntity)) {
+            if(pPlayer.isCrouching()&& ElementalCombinerTile.hasRecipe((ElementalCombinerTile) tileEntity)){
+                ElementalCombinerTile.craftItem((ElementalCombinerTile) tileEntity);
+            }else if(pPlayer.isCrouching()&&!ElementalCombinerTile.hasRecipe((ElementalCombinerTile)tileEntity)) {
                 pPlayer.sendMessage(new TextComponent("Invalid Recipe"), pPlayer.getUUID());
             }else if(!pPlayer.getOffhandItem().isEmpty()) {
                 ((ElementalCombinerTile) tileEntity).getItems(pPlayer, ((ElementalCombinerTile) tileEntity));

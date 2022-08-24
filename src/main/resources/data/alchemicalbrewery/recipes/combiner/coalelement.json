@@ -3,19 +3,22 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Stone-minecraft:stone",
-      "count": 64
+      "element": "alchemicalbrewery:block",
+      "extradata": "{block:{Name:'minecraft:stone'}}",
+      "count": 10
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "BlackInk",
+      "element": "alchemicalbrewery:item",
+      "extradata": "{item:{id:'minecraft:black_dye', Count:1b}}",
       "count": 5
     }
   ],
-  "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Coal",
+    "element": "alchemicalbrewery:item",
+    "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
+    "count": 5,
     "itemcolor": 2171169,
     "secitemcolor": 2171169
   }

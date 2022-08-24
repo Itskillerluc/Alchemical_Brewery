@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 
-@SuppressWarnings({"SpellCheckingInspection", "unused"})
+@SuppressWarnings({"unused"})
 public class ModElements {
     public static final DeferredRegister<Element> REGISTER = DeferredRegister.create(new ResourceLocation(AlchemicalBrewery.MOD_ID, "elements"), AlchemicalBrewery.MOD_ID);
 

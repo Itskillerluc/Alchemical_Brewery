@@ -6,7 +6,7 @@
   "output": {
     "item": "minecraft:lava_bucket"
   },
-  "element": "Lava",
+  "element": "alchemicalbrewery:lava",
   "count": 1,
   "onlycharge": false,
   "charge": 5

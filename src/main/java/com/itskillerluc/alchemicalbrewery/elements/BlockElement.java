@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.util.ModTags;
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
 import net.minecraft.Util;
@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -23,8 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class BlockElement extends Element {
@@ -43,6 +46,16 @@ public class BlockElement extends Element {
     }
 
     @Override
+    public Function<CompoundTag, String> getName(){
+        return tag -> NbtUtils.readBlockState(tag.getCompound("block")).getBlock().getName().getString();
+    }
+
+    @Override
+    public ToIntFunction<CompoundTag> getColor(){
+        return tag -> NbtUtils.readBlockState(tag.getCompound("block")).getBlock().defaultMaterialColor().col;
+    }
+
+    @Override
     public @Nullable CompoundTag extractorRecipeHelper(ItemStack itemStack) {
         if (!(itemStack.getItem() instanceof BlockItem) || itemStack.is(ModTags.Items.EXTRACTION_BLOCK_EXCEPTIONS)) {
             return null;
@@ -50,6 +63,18 @@ public class BlockElement extends Element {
         CompoundTag tag = new CompoundTag();
         tag.put("block", NbtUtils.writeBlockState(((BlockItem) itemStack.getItem()).getBlock().defaultBlockState()));
         return tag;
+    }
+
+    @Override
+    public @Nullable Item injectorRecipeHelper(CompoundTag extraData) {
+        if (extraData == null){
+            return null;
+        }
+        var toReturn = NbtUtils.readBlockState(extraData.getCompound("element").getCompound("additionalData").getCompound("block")).getBlock().asItem();
+        if (new ItemStack(toReturn).is(ModTags.Items.INJECTION_BLOCK_EXCEPTIONS)){
+            return null;
+        }
+        return toReturn;
     }
 
     @Override
@@ -65,10 +90,10 @@ public class BlockElement extends Element {
             tag.getCompound("additionalData").getCompound("block");
             if(type != null){
                 return new ElementData(
-                        tag.contains("displayName") ? tag.getString("displayName") : type.defaultDisplayName,
+                        tag.contains("displayName") ? tag.getString("displayName") : NbtUtils.readBlockState(tag.getCompound("additionalData").getCompound("block")).getBlock().getName().getString(),
                         tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : type.defualtItemModel,
-                        Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("block")).getItem()).defaultMaterialColor().col,
-                        Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("block")).getItem()).defaultMaterialColor().col,
+                        tag.contains("color") ? tag.getInt("color") : Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("block")).getItem()).defaultMaterialColor().col,
+                        tag.contains("secColor") ? tag.getInt("secColor") : new Color(Block.byItem(ItemStack.of(tag.getCompound("additionalData").getCompound("block")).getItem()).defaultMaterialColor().col).darker().getRGB(),
                         tag.contains("additionalData") ? tag.getCompound("additionalData") : type.defaultAdditionalData,
                         type);
             }else{

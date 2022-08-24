@@ -6,7 +6,7 @@
   "output": {
     "item": "minecraft:ender_pearl"
   },
-  "element": "Ender",
+  "element": "alchemicalbrewery:ender",
   "count": 1,
   "onlycharge": false,
   "charge": 32

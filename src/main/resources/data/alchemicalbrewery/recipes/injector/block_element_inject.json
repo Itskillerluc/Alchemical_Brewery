@@ -6,8 +6,7 @@
   "output": {
     "item": "minecraft:dirt"
   },
-  "element": "Ground-minecraft:dirt",
+  "element": "alchemicalbrewery:block",
   "count": 1,
-  "onlycharge": false,
-  "charge": 1
+  "onlycharge": false
 }

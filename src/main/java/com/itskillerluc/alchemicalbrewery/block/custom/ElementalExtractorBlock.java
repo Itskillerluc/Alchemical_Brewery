@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.block.custom;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.container.ElementalExtractorContainer;
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalExtractorTile;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.stream.Stream;
-
 public class ElementalExtractorBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;

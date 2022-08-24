@@ -3,24 +3,24 @@
   "ingredients": [
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Lava",
+      "element": "alchemicalbrewery:lava",
       "count": 1
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Lava",
+      "element": "alchemicalbrewery:lava",
       "count": 1
     },
     {
       "item": "alchemicalbrewery:element_crafting",
-      "element": "Water",
+      "element": "alchemicalbrewery:water",
       "count": 1
     }
   ],
-  "haselement": true,
   "output": {
     "item": "alchemicalbrewery:element_basic",
-    "element": "Obsidian-minecraft:obsidian",
+    "element": "alchemicalbrewery:block",
+    "extradata": "{block:{Name:'minecraft:obsidian'}}",
     "itemcolor": 2692155,
     "secitemcolor": 2692155
   }

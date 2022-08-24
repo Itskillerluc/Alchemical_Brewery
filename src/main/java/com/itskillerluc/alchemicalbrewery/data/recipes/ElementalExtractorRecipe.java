@@ -1,10 +1,9 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
-
+//TODO
 import com.google.gson.*;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.elements.Element;
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
-import com.itskillerluc.alchemicalbrewery.elements.ItemElement;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
@@ -23,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
 
@@ -44,10 +44,10 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
 
 
     @Override
-    public boolean matches(SimpleContainer pContainer, @NotNull Level pLevel) {
+    public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
         for (Element elementType : ModElements.ELEMENTS.get().getValues()) {
-            if(elementType.extractorRecipeHelper(pContainer.getItem(0)) != null){
-                return true;
+            if(elementType.extractorRecipeHelper(pContainer.getItem(0)) != null && recipeItems.get(2).test(pContainer.getItem(2))){
+                return (capsule) ? pContainer.getItem(1).is(ModItems.CAPSULE_MEDIUM.get())||pContainer.getItem(1).is(ModItems.CAPSULE_LARGE.get())||pContainer.getItem(1).is(ModItems.CAPSULE_SMALL.get()) : recipeItems.get(1).test(pContainer.getItem(1));
             }
         }
         if(recipeItems.get(0).test(pContainer.getItem(0))&&recipeItems.get(2).test(pContainer.getItem(2))){
@@ -113,10 +113,6 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "elemental_extracting";
     }
 
-    public static ItemStack itemStackFromJson(JsonObject pStackObject) {
-        return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(pStackObject, true, true);
-    }
-
 
     public static class Serializer implements RecipeSerializer<ElementalExtractorRecipe>{
         public static final Serializer INSTANCE = new Serializer();
@@ -154,13 +150,13 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
 
                     extraData = nbt;
                 } catch (CommandSyntaxException e) {
-                    throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
+                    throw new JsonSyntaxException("Invalid NBT Entry: " + e);
                 }
             }
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
 
-            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null) != null ? ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null)) : element.defualtItemModel;
+            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null) != null ? ShapedRecipe.itemStackFromJson(Objects.requireNonNull(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null))) : element.defualtItemModel;
 
             NonNullList<Ingredient> inputs = NonNullList.withSize(3, Ingredient.EMPTY);
 
@@ -200,7 +196,7 @@ public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
                 ing.toNetwork(buf);
             }
             buf.writeItemStack(recipe.output, false);
-            buf.writeResourceLocation(recipe.element.elementType.getRegistryName());
+            buf.writeResourceLocation(Objects.requireNonNull(recipe.element.elementType.getRegistryName()));
             buf.writeInt(recipe.outputcount);
             buf.writeBoolean(recipe.capsule);
             buf.writeInt(recipe.element.color);

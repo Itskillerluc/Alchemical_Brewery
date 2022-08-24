@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.block.custom;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.tileentity.ElementalInjectorTile;
 import com.itskillerluc.alchemicalbrewery.tileentity.ModTileEntities;
 import net.minecraft.core.BlockPos;
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.stream.Stream;
-
 public class ElementalInjectorBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -138,21 +137,14 @@ public class ElementalInjectorBlock extends BaseEntityBlock {
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, Random pRand) {
         if (pState.getValue(LIT)) {
             double d0 = (double)pPos.getX() + 0.5D;
-            double d1 = (double)pPos.getY();
+            double d1 = pPos.getY();
             double d2 = (double)pPos.getZ() + 0.5D;
-            if (pRand.nextDouble() < 0.1D) {
-                pLevel.playLocalSound(d0, d1, d2, SoundEvents.SLIME_HURT_SMALL, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            if (!(pRand.nextDouble() < 0.1D)) {
+                return;
             }
-
-            Direction direction = pState.getValue(FACING);
-            Direction.Axis direction$axis = direction.getAxis();
-            double d3 = 0.52D;
-            double d4 = pRand.nextDouble() * 0.6D - 0.3D;
-            double d5 = direction$axis == Direction.Axis.X ? (double)direction.getStepX() * 0.52D : d4;
-            double d6 = pRand.nextDouble() * 6.0D / 16.0D;
-            double d7 = direction$axis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52D : d4;
-            pLevel.addParticle(ParticleTypes.DRIPPING_HONEY, d0+0.3, d1, d2, 0.0D, -0.01D, 0.0D);
-            pLevel.addParticle(ParticleTypes.DRIPPING_OBSIDIAN_TEAR, d0+0.3, d1, d2, 0.0D, -0.01D, 0.0D);
+            pLevel.playLocalSound(d0, d1, d2, SoundEvents.SLIME_HURT_SMALL, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            pLevel.addParticle(ParticleTypes.DRIPPING_HONEY, d0, d1, d2, 0.0D, -0.01D, 0.0D);
+            pLevel.addParticle(ParticleTypes.DRIPPING_OBSIDIAN_TEAR, d0, d1, d2, 0.0D, -0.01D, 0.0D);
         }
     }
 }

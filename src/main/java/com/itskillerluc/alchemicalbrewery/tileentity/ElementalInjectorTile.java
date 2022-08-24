@@ -1,6 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
-
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.block.custom.ElementalExtractorBlock;
 import com.itskillerluc.alchemicalbrewery.container.ElementalInjectorContainer;
 
@@ -67,22 +66,22 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {
-                switch (pIndex){
-                    case 0: return (ElementalInjectorTile.this.IsBurning) ? 1 : 0;
-                    case 1: return ElementalInjectorTile.this.BurnTime;
-                    case 2: return ElementalInjectorTile.this.TotalBurnTime;
-                    case 3: return ElementalInjectorTile.this.charge;
-                    default: return 0;
-                }
+                return switch (pIndex) {
+                    case 0 -> (ElementalInjectorTile.this.IsBurning) ? 1 : 0;
+                    case 1 -> ElementalInjectorTile.this.BurnTime;
+                    case 2 -> ElementalInjectorTile.this.TotalBurnTime;
+                    case 3 -> ElementalInjectorTile.this.charge;
+                    default -> 0;
+                };
             }
 
             @Override
             public void set(int pIndex, int pValue) {
-                switch (pIndex){
-                    case 0: ElementalInjectorTile.this.IsBurning = pValue != 0; break;
-                    case 1: ElementalInjectorTile.this.BurnTime = pValue; break;
-                    case 2: ElementalInjectorTile.this.TotalBurnTime = pValue; break;
-                    case 3: ElementalInjectorTile.this.charge = pValue; break;
+                switch (pIndex) {
+                    case 0 -> ElementalInjectorTile.this.IsBurning = pValue != 0;
+                    case 1 -> ElementalInjectorTile.this.BurnTime = pValue;
+                    case 2 -> ElementalInjectorTile.this.TotalBurnTime = pValue;
+                    case 3 -> ElementalInjectorTile.this.charge = pValue;
                 }
             }
 
@@ -146,7 +145,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
             pBlockEntity.iscrafting = false;
         }
 
-        pState = pState.setValue(ElementalExtractorBlock.LIT, Boolean.valueOf(pBlockEntity.IsBurning));
+        pState = pState.setValue(ElementalExtractorBlock.LIT, pBlockEntity.IsBurning);
         pLevel.setBlock(pPos, pState, 3);
         setChanged(pLevel, pPos, pState);
     }
@@ -180,12 +179,15 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
-        Optional<ElementalInjectorRecipe> match = level.getRecipeManager()
-                .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
+        Optional<ElementalInjectorRecipe> match = Optional.empty();
+        if (level != null) {
+            match = level.getRecipeManager()
+                    .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
+        }
 
         if(match.isPresent()){
-            if(match.get().chargematches(inventory, entity.getLevel())){
-                entity.charge = entity.charge + match.get().getCharge();
+            if(match.get().chargematches(inventory)){
+                entity.charge = entity.charge + match.get().getCharge(inventory);
                 entity.itemHandler.extractItem(0, 1, false);
             }
         }
@@ -206,18 +208,18 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                 .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
 
         if(match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItem()) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem() && (entity.itemHandler.getStackInSlot(1).hasTag()) && entity.itemHandler.getStackInSlot(1).getTag().getString("Element").matches(match.get().getElement())) {
-            if(match.get().getCharge()<=entity.charge){
+                && canInsertItemIntoOutputSlot(inventory, match.get().getResult(inventory)) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()) {
+            if(match.get().getCharge(inventory)<=entity.charge){
                 if(!entity.iscrafting){
                     entity.iscrafting = true;
                     entity.IsBurning = true;
                 }
                 if(entity.finished){
-                    entity.charge = entity.charge - match.get().getCharge();
+                    entity.charge = entity.charge - match.get().getCharge(inventory);
 
 
                     entity.itemHandler.extractItem(1, 1, false);
-                    entity.itemHandler.setStackInSlot(2, new ItemStack(match.get().getResultItem().getItem(),
+                    entity.itemHandler.setStackInSlot(2, new ItemStack(match.get().getResult(inventory).getItem(),
                             entity.itemHandler.getStackInSlot(2).getCount() + match.get().getOutputcount()));
 
                     entity.BurnTime = 0;

@@ -1,9 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.entity.custom;
-// Made with Blockbench 4.1.5
-// Exported for Minecraft version 1.17 with Mojang mappings (I hope it works for 1.18.2)
-// Paste this class into your mod and generate all required imports
-
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

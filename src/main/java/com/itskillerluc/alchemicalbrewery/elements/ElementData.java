@@ -1,5 +1,8 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-
+//TODO
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import net.minecraft.core.Direction;
@@ -8,6 +11,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceProvider;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,7 +22,16 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 
 public class ElementData {
@@ -72,6 +87,9 @@ public class ElementData {
         return elementType.fromTag(tag);
     }
 
+    public boolean matches(ElementData elementData){
+        return elementType.matches(this, elementData);
+    }
     public ElementData(String displayname, ItemStack itemModel, int color, int secColor, CompoundTag additionalInfo, Element elementType) {
         this.additionalData = additionalInfo != null ? additionalInfo : new CompoundTag();
         this.itemModel = itemModel != null ? itemModel : ItemStack.EMPTY;
@@ -84,19 +102,19 @@ public class ElementData {
     public ElementData(String displayname, ItemStack itemModel, Integer color, Integer secColor, CompoundTag additionalInfo, Element elementType) {
         this.additionalData = additionalInfo != null ? additionalInfo : elementType.defaultAdditionalData;
         this.itemModel = itemModel != null ? itemModel : elementType.defualtItemModel;
-        this.displayName = displayname != null ? displayname : elementType.defaultDisplayName;
-        this.color = color != null ? color : elementType.defaultColor;
-        this.secColor = secColor != null ? secColor : elementType.defaultSecColor;
+        this.displayName = displayname != null ? displayname : elementType.getName().apply(additionalData);
+        this.color = color != null ? color : elementType.getColor().applyAsInt(additionalData);
+        this.secColor = secColor != null ? secColor : new Color(elementType.getColor().applyAsInt(additionalData)).darker().getRGB();
         this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
     }
 
     public ElementData(Element elementType) {
+        this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
         this.additionalData = elementType.defaultAdditionalData != null ? elementType.defaultAdditionalData : new CompoundTag();
         this.itemModel = elementType.defualtItemModel != null ? elementType.defualtItemModel : ItemStack.EMPTY;
         this.displayName = elementType.defaultDisplayName != null ? elementType.defaultDisplayName : "Empty";
         this.color = elementType.defaultColor;
         this.secColor = elementType.defaultSecColor;
-        this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
     }
 
     public static ElementData of(CompoundTag tag){

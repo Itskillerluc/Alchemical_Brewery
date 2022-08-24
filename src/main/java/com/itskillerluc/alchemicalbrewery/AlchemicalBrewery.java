@@ -1,7 +1,8 @@
 package com.itskillerluc.alchemicalbrewery;
-
+//TODO
 import com.itskillerluc.alchemicalbrewery.block.ModBlocks;
 import com.itskillerluc.alchemicalbrewery.container.ModContainers;
+import com.itskillerluc.alchemicalbrewery.data.ChargeLoader;
 import com.itskillerluc.alchemicalbrewery.data.recipes.ModRecipeTypes;
 import com.itskillerluc.alchemicalbrewery.data.recipes.brewRecipes;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -62,7 +64,7 @@ public class AlchemicalBrewery
         eventBus.addListener(this::setup);
         eventBus.addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(this);
-
+        MinecraftForge.EVENT_BUS.addListener(this::addReloadListenerEvent);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -83,6 +85,12 @@ public class AlchemicalBrewery
 
     public void registerRecipes() {
         new brewRecipes().registerRecipes();
+    }
+
+
+    public void addReloadListenerEvent(AddReloadListenerEvent event)
+    {
+        event.addListener(new ChargeLoader());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event){
