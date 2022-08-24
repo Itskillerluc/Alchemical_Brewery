@@ -18,11 +18,14 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class ElementalExtractorRecipe implements Recipe<SimpleContainer> {
 

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class ItemElement extends Element{
         }), null, 0, 0);
     }
 
-    public static int getColorOfImage(ResourceLocation image){
+    public static int getColorOfImage(ResourceLocation image) throws FileNotFoundException{
         InputStream is;
         BufferedImage img;
         int res = 0;
@@ -59,7 +60,12 @@ public class ItemElement extends Element{
 
     @Override
     public Function<ItemStack, Integer> getDynamicColor() {
-        return stack -> !stack.isEmpty() ? ItemElement.getColorOfImage(new ResourceLocation(Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace(),"textures/item/"+stack.getItem().getRegistryName().getPath()+".png")) : 0;
+        return stack -> {
+            try {
+                return !stack.isEmpty() ? ItemElement.getColorOfImage(new ResourceLocation(Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace(),"textures/item/"+stack.getItem().getRegistryName().getPath()+".png")) : 0;
+            } catch (FileNotFoundException ignored) {}
+            return 0;
+        };
     }
 
     public static Color darker(Color color, float modifier) {

@@ -190,7 +190,9 @@ public class ElementalCombinerTile extends BlockEntity {
                     itemtoinsert, false);
             player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }else{
-            player.sendMessage(new TextComponent("There is no empty space left"), player.getUUID());
+            if (player.getLevel().isClientSide) {
+                player.sendMessage(new TextComponent("There is no empty space left"), player.getUUID());
+            }
         }
     }
 
@@ -206,7 +208,7 @@ public class ElementalCombinerTile extends BlockEntity {
             pPlayer.setItemInHand(InteractionHand.MAIN_HAND, item);
 
             entity.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
-        }else{
+        }else if (pPlayer.getLevel().isClientSide){
             pPlayer.sendMessage(new TextComponent("There are no items inside"), pPlayer.getUUID());
         }
     }

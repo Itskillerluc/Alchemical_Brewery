@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
@@ -47,7 +48,7 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
     /**
      *Override this if you need any dynamic color
      */
-    public Function<ItemStack, Integer> getDynamicColor(){
+    public Function<ItemStack, Integer> getDynamicColor() {
         return stack -> defaultColor;
     }
 
