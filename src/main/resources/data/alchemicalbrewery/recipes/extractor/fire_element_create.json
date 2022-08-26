@@ -14,11 +14,11 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 16759851,
-  "secitemcolor": 16759851,
-  "displayname": "Fire",
+  "itemColor": 16759851,
+  "secItemColor": 16759851,
+  "displayName": "Fire",
   "element": "alchemicalbrewery:block",
-  "extradata": "{block:{Name:'minecraft:fire'}}",
+  "extraData": "{block:{Name:'minecraft:fire'}}",
   "count": 1,
   "capsule": true
 }

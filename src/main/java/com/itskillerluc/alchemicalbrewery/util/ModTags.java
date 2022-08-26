@@ -12,8 +12,9 @@ public class ModTags {
         public static final TagKey<Item> EXTRACTION_ITEM_EXCEPTIONS = tag("extract_exceptions/item");
 
         public static final TagKey<Item> INJECTION_BLOCK_EXCEPTIONS = tag("inject_exceptions/block");
-
         public static final TagKey<Item> INJECTION_ITEM_EXCEPTIONS = tag("inject_exceptions/item");
+
+        public static final TagKey<Item> CAPSULES = tag("capsules");
 
         private static TagKey<Item> tag(String name) {
             return ItemTags.create(new ResourceLocation(AlchemicalBrewery.MOD_ID, name));

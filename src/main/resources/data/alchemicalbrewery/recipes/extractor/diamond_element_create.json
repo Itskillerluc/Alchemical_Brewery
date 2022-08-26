@@ -14,9 +14,9 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 11138300,
-  "secitemcolor": 11138300,
-  "displayname": "Diamond",
+  "itemColor": 11138300,
+  "secItemColor": 11138300,
+  "displayName": "Diamond",
   "element": "alchemicalbrewery:empty",
   "count": 1,
   "capsule": true

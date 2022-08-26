@@ -14,11 +14,11 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 2692155,
-  "secitemcolor": 2692155,
-  "displayname": "Obsidian",
+  "itemColor": 2692155,
+  "secItemColor": 2692155,
+  "displayName": "Obsidian",
   "element":"alchemicalbrewery:block",
-  "extradata": "{block:{id:'minecraft:obsidian'}}",
+  "extraData": "{block:{id:'minecraft:obsidian'}}",
   "count": 1,
   "capsule": true
 }

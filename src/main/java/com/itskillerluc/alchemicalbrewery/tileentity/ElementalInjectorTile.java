@@ -186,7 +186,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         }
 
         if(match.isPresent()){
-            if(match.get().chargematches(inventory)){
+            if(match.get().chargeMatches(inventory)){
                 entity.charge = entity.charge + match.get().getCharge(inventory);
                 entity.itemHandler.extractItem(0, 1, false);
             }
@@ -208,7 +208,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                 .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
 
         if(match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getResult(inventory)) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()) {
+                && canInsertItemIntoOutputSlot(inventory, match.get().assemble(inventory)) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()) {
             if(match.get().getCharge(inventory)<=entity.charge){
                 if(!entity.iscrafting){
                     entity.iscrafting = true;
@@ -219,8 +219,8 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
 
 
                     entity.itemHandler.extractItem(1, 1, false);
-                    entity.itemHandler.setStackInSlot(2, new ItemStack(match.get().getResult(inventory).getItem(),
-                            entity.itemHandler.getStackInSlot(2).getCount() + match.get().getOutputcount()));
+                    entity.itemHandler.setStackInSlot(2, new ItemStack(match.get().assemble(inventory).getItem(),
+                            entity.itemHandler.getStackInSlot(2).getCount() + match.get().getOutputCount()));
 
                     entity.BurnTime = 0;
 

@@ -41,7 +41,7 @@ public class BlockElement extends Element {
     }
 
     @Override
-    public Function<ItemStack, Integer> getDynamicColor() {
+    public ToIntFunction<ItemStack> getDynamicColor() {
         return stack -> ((BlockItem) stack.getItem()).getBlock().defaultMaterialColor().col;
     }
 

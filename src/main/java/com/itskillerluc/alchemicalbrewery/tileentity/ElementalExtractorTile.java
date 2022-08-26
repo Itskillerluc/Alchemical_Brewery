@@ -203,7 +203,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                 .getRecipeFor(ElementalExtractorRecipe.Type.INSTANCE, inventory, level);
 
         return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getResultItemAdvanced(inventory));
+                && canInsertItemIntoOutputSlot(inventory, match.get().assemble(inventory));
     }
 
     /**
@@ -232,8 +232,8 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                     entity.itemHandler.extractItem(2,1, false);
                     entity.itemHandler.extractItem(1, 1, false);
 
-                    entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().getResultItemAdvanced(inventory).getItem(),
-                            entity.itemHandler.getStackInSlot(3).getCount() + match.get().getOutputcount()));
+                    entity.itemHandler.setStackInSlot(3, new ItemStack(match.get().assemble(inventory).getItem(),
+                            entity.itemHandler.getStackInSlot(3).getCount() + match.get().getOutputCount()));
 
                     entity.resetProgress();
 
@@ -245,7 +245,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
-                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        ItemStack result = match.get().assemble(inventory);
                         result.setCount(1);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();
@@ -257,7 +257,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
-                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        ItemStack result = match.get().assemble(inventory);
                         result.setCount(4);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();
@@ -269,7 +269,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
                         entity.itemHandler.extractItem(0, 1, false);
                         entity.itemHandler.extractItem(1, 1, false);
                         entity.itemHandler.extractItem(2,1, false);
-                        ItemStack result = match.get().getResultItemAdvanced(inventory);
+                        ItemStack result = match.get().assemble(inventory);
                         result.setCount(9);
                         entity.itemHandler.setStackInSlot(3, result);
                         entity.resetProgress();

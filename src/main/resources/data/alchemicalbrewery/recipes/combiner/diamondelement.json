@@ -4,45 +4,43 @@
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:block",
-      "extradata": "{block:{Name:'minecraft:stone'}}",
+      "extraData": "{block:{Name:'minecraft:stone'}}",
       "count": 16
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:block",
-      "extradata": "{block:{Name:'minecraft:stone'}}",
+      "extraData": "{block:{Name:'minecraft:stone'}}",
       "count": 8
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:item",
-      "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
+      "extraData": "{item:{id:'minecraft:coal', Count:1b}}",
       "count": 16
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:item",
-      "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
+      "extraData": "{item:{id:'minecraft:coal', Count:1b}}",
       "count": 16
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:item",
-      "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
+      "extraData": "{item:{id:'minecraft:coal', Count:1b}}",
       "count": 16
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:item",
-      "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
+      "extraData": "{item:{id:'minecraft:coal', Count:1b}}",
       "count": 16
     }
   ],
   "output": {
     "item": "alchemicalbrewery:element_basic",
     "element": "alchemicalbrewery:item",
-    "extradata": "{item:{id:'minecraft:diamond', Count:1b}}",
-    "itemcolor": 11138300,
-    "secitemcolor": 11138300
+    "extraData": "{item:{id:'minecraft:diamond', Count:1b}}"
   }
 }

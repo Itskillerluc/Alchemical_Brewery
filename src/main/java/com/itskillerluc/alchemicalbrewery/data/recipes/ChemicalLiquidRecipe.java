@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
-//TODO
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
@@ -7,12 +7,11 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
@@ -27,7 +26,7 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public boolean matches(SimpleContainer container, Level pLevel) {
+    public boolean matches(@NotNull SimpleContainer container, @NotNull Level pLevel) {
         return true;
     }
 
@@ -36,7 +35,7 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer container) {
+    public @NotNull ItemStack assemble(@NotNull SimpleContainer container) {
         return output;
     }
 
@@ -46,22 +45,22 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public @NotNull ItemStack getResultItem() {
         return output.copy();
     }
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return ChemicalLiquidRecipe.Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return ChemicalLiquidRecipe.Type.INSTANCE;
     }
 
@@ -71,18 +70,16 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "chemical_bathing";
     }
 
-
     public static class Serializer implements RecipeSerializer<ChemicalLiquidRecipe>{
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(AlchemicalBrewery.MOD_ID,"chemical_bathing");
 
         @Override
-        public ChemicalLiquidRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+        public @NotNull ChemicalLiquidRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(1, Ingredient.EMPTY);
-
             for (int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
@@ -92,12 +89,9 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
 
         @Nullable
         @Override
-        public ChemicalLiquidRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf buf) {
+        public ChemicalLiquidRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf buf) {
             NonNullList<Ingredient> inputs = NonNullList.withSize(buf.readInt(), Ingredient.EMPTY);
-
-            for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromNetwork(buf));
-            }
+            inputs.replaceAll(ignored -> Ingredient.fromNetwork(buf));
             ItemStack output = buf.readItem();
             return new ChemicalLiquidRecipe(pRecipeId, output, inputs);
         }
@@ -105,9 +99,7 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
         @Override
         public void toNetwork(FriendlyByteBuf buf, ChemicalLiquidRecipe recipe) {
             buf.writeInt(recipe.getIngredients().size());
-            for (Ingredient ing : recipe.getIngredients()) {
-                ing.toNetwork(buf);
-            }
+            recipe.getIngredients().forEach(ingredient -> ingredient.toNetwork(buf));
             buf.writeItemStack(recipe.getResultItem(), false);
         }
 
@@ -124,12 +116,12 @@ public class ChemicalLiquidRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public Class<RecipeSerializer<?>> getRegistryType() {
-            return ChemicalLiquidRecipe.Serializer.castClass(RecipeSerializer.class);
+            return ChemicalLiquidRecipe.Serializer.castClass();
         }
 
-        @SuppressWarnings("unchecked") // Need this wrapper, because generics
-        private static <G> Class<G> castClass(Class<?> cls) {
-            return (Class<G>)cls;
+        @SuppressWarnings("unchecked")
+        private static <G> Class<G> castClass() {
+            return (Class<G>) RecipeSerializer.class;
         }
     }
 }

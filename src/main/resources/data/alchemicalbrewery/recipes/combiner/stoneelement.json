@@ -15,8 +15,6 @@
   "output": {
     "item": "alchemicalbrewery:element_basic",
     "element": "alchemicalbrewery:block",
-    "extradata": "{block:{Name:'minecraft:stone'}}",
-    "itemcolor": 7500402,
-    "secitemcolor": 7500402
+    "extraData": "{block:{Name:'minecraft:stone'}}"
   }
 }

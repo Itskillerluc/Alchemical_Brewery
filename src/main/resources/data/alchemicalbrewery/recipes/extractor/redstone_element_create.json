@@ -14,9 +14,9 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 13371914,
-  "secitemcolor": 9109504,
-  "displayname": "Redstone",
+  "itemColor": 13371914,
+  "secItemColor": 9109504,
+  "displayName": "Redstone",
   "element": "alchemicalbrewery:item",
   "count": 1,
   "capsule": true

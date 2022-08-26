@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
-//TODO
+
 import com.google.gson.JsonObject;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.data.ChargeLoader;
@@ -22,17 +22,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
-
     private final ResourceLocation id;
     private final ItemStack output;
     private final ItemStack recipeItems;
-    private final int outputcount;
+    private final int outputCount;
     private final Element element;
-    public ElementalInjectorRecipe(ResourceLocation id, ItemStack output, ItemStack recipeItems, int outputcount, Element element) {
+    public ElementalInjectorRecipe(ResourceLocation id, ItemStack output, ItemStack recipeItems, int outputCount, Element element) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
-        this.outputcount = outputcount;
+        this.outputCount = outputCount;
         this.element = element;
     }
 
@@ -42,16 +41,17 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
-        return pContainer.getItem(1).getItem() instanceof Element_Basic && Objects.equals(Element_Basic.getElement(pContainer.getItem(1)).getRegistryName(), element.getRegistryName()) || chargematches(pContainer);
+        return pContainer.getItem(1).getItem() instanceof Element_Basic && Objects.equals(Element_Basic.getElement(pContainer.getItem(1)).getRegistryName(), element.getRegistryName()) || chargeMatches(pContainer);
     }
 
-    public static boolean chargematches(SimpleContainer pContainer){
+    public static boolean chargeMatches(SimpleContainer pContainer){
         return ChargeLoader.contains(pContainer.getItem(0));
     }
 
     public int getCharge(SimpleContainer container){
         return ChargeLoader.getCharge(container.getItem(0));
     }
+
     @Override
     public @NotNull ItemStack assemble(@NotNull SimpleContainer pContainer) {
         if (element.injectorRecipeHelper(pContainer.getItem(1).getTag()) != null){
@@ -64,7 +64,6 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
         return element;
     }
 
-
     @Override
     public boolean canCraftInDimensions(int pWidth, int pHeight) {
         return true;
@@ -75,15 +74,8 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
         return output.copy();
     }
 
-    public ItemStack getResult(SimpleContainer container){
-        if (element.injectorRecipeHelper(container.getItem(1).getTag()) != null){
-            return new ItemStack(element.injectorRecipeHelper(container.getItem(1).getTag()));
-        }
-        return output;
-    }
-
-    public int getOutputcount(){
-        return outputcount;
+    public int getOutputCount(){
+        return outputCount;
     }
 
     @Override
@@ -115,7 +107,6 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
         public @NotNull ElementalInjectorRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
             ResourceLocation elementResourceLocation = ResourceLocation.tryParse(GsonHelper.getAsString(pSerializedRecipe, "element"));
 
-
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
 
             Element element = ModElements.ELEMENTS.get().getValue(elementResourceLocation);
@@ -131,19 +122,18 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
         @Nullable
         @Override
         public ElementalInjectorRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf buf) {
-
             int count = buf.readInt();
             ItemStack output = buf.readItem();
             ItemStack input = buf.readItem();
-            ResourceLocation elementRescourceLocation = buf.readResourceLocation();
-            Element element = ModElements.ELEMENTS.get().getValue(elementRescourceLocation);
+            ResourceLocation elementResourceLocation = buf.readResourceLocation();
+            Element element = ModElements.ELEMENTS.get().getValue(elementResourceLocation);
 
             return new ElementalInjectorRecipe(pRecipeId, output, input, count, element);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, ElementalInjectorRecipe recipe) {
-            buf.writeInt(recipe.getOutputcount());
+            buf.writeInt(recipe.getOutputCount());
             buf.writeItemStack(recipe.getResultItem(), false);
             buf.writeItemStack(recipe.recipeItems, false);
             buf.writeResourceLocation(Objects.requireNonNull(recipe.element.getRegistryName()));
@@ -165,7 +155,7 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
             return Serializer.castClass();
         }
 
-        @SuppressWarnings("unchecked") // Need this wrapper, because generics
+        @SuppressWarnings("unchecked")
         private static <G> Class<G> castClass() {
             return (Class<G>) RecipeSerializer.class;
         }

@@ -4,13 +4,13 @@
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:block",
-      "extradata": "{block:{Name:'minecraft:stone'}}",
+      "extraData": "{block:{Name:'minecraft:stone'}}",
       "count": 10
     },
     {
       "item": "alchemicalbrewery:element_crafting",
       "element": "alchemicalbrewery:item",
-      "extradata": "{item:{id:'minecraft:charcoal', Count:1b}}",
+      "extraData": "{item:{id:'minecraft:charcoal', Count:1b}}",
       "count": 5
     }
   ],
@@ -18,8 +18,6 @@
     "item": "alchemicalbrewery:element_basic",
     "count": 5,
     "element": "alchemicalbrewery:item",
-    "extradata": "{item:{id:'minecraft:coal', Count:1b}}",
-    "itemcolor": 2171169,
-    "secitemcolor": 2171169
+    "extraData": "{item:{id:'minecraft:coal', Count:1b}}"
   }
 }

@@ -48,7 +48,7 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
     /**
      *Override this if you need any dynamic color
      */
-    public Function<ItemStack, Integer> getDynamicColor() {
+    public ToIntFunction<ItemStack> getDynamicColor() {
         return stack -> defaultColor;
     }
 

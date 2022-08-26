@@ -91,10 +91,12 @@ public class ElementalCombinerBlock extends BaseEntityBlock {
 
     @Override
     public void onRemove(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pNewState, boolean pIsMoving) {
-        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
-        if (blockEntity instanceof ElementalCombinerTile combinerTile) {
-            combinerTile.drops();
+        if (pState.getBlock() != pNewState.getBlock()) {
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof ElementalCombinerTile combinerTile) {
+                combinerTile.drops();
+            }
+            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
         }
     }
 }

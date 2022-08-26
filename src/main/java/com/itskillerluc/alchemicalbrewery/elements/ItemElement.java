@@ -59,7 +59,7 @@ public class ItemElement extends Element{
     }
 
     @Override
-    public Function<ItemStack, Integer> getDynamicColor() {
+    public ToIntFunction<ItemStack> getDynamicColor() {
         return stack -> {
             try {
                 return !stack.isEmpty() ? ItemElement.getColorOfImage(new ResourceLocation(Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace(),"textures/item/"+stack.getItem().getRegistryName().getPath()+".png")) : 0;
@@ -103,7 +103,7 @@ public class ItemElement extends Element{
 
     @Override
     public ToIntFunction<CompoundTag> getColor(){
-        return tag -> getDynamicColor().apply(ItemStack.of(tag.getCompound("item")));
+        return tag -> getDynamicColor().applyAsInt(ItemStack.of(tag.getCompound("item")));
     }
 
 
@@ -121,8 +121,8 @@ public class ItemElement extends Element{
                 return new ElementData(
                         tag.contains("displayName") ? tag.getString("displayName") : ItemStack.of(tag.getCompound("additionalData").getCompound("item")).getDisplayName().getString(),
                         tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : type.defualtItemModel,
-                        tag.contains("color") ? tag.getInt("color") : getDynamicColor().apply(ItemStack.of(tag.getCompound("additionalData").getCompound("item"))),
-                        tag.contains("secColor") ? tag.getInt("secColor") :  new Color(getDynamicColor().apply(ItemStack.of(tag.getCompound("additionalData").getCompound("item")))).darker().getRGB(),
+                        tag.contains("color") ? tag.getInt("color") : getDynamicColor().applyAsInt(ItemStack.of(tag.getCompound("additionalData").getCompound("item"))),
+                        tag.contains("secColor") ? tag.getInt("secColor") :  new Color(getDynamicColor().applyAsInt(ItemStack.of(tag.getCompound("additionalData").getCompound("item")))).darker().getRGB(),
                         tag.contains("additionalData") ? tag.getCompound("additionalData") : type.defaultAdditionalData,
                         type);
             }else{

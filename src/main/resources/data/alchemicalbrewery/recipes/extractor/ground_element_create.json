@@ -14,11 +14,11 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 6176544,
-  "secitemcolor": 6176544,
-  "displayname": "Ground",
+  "itemColor": 6176544,
+  "secItemColor": 6176544,
+  "displayName": "Ground",
   "element": "alchemicalbrewery:block",
-  "extradata": "{block:{id:'minecraft:dirt'}}",
+  "extraData": "{block:{id:'minecraft:dirt'}}",
   "count": 1,
   "capsule": true
 }

@@ -14,10 +14,10 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 3949122,
-  "secitemcolor": 3949122,
+  "itemColor": 3949122,
+  "secItemColor": 3949122,
   "element": "alchemicalbrewery:empty",
-  "displayname": "Charcoal",
+  "displayName": "Charcoal",
   "count": 1,
   "capsule": true
 }

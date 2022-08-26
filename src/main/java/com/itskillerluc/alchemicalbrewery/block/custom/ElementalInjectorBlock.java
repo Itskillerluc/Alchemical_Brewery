@@ -101,11 +101,13 @@ public class ElementalInjectorBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pNewState, boolean pIsMoving) {
-        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
-        if (blockEntity instanceof ElementalInjectorTile injectorTile) {
-            injectorTile.drops();
+    public void onRemove(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pNewState, boolean pIsMoving) {
+        if (pState.getBlock() != pNewState.getBlock()) {
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof ElementalInjectorTile injectorTile) {
+                injectorTile.drops();
+            }
+            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
         }
     }
 

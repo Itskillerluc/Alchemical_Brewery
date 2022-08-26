@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "alchemicalbrewery:capsule_small",
+    "alchemicalbrewery:capsule_medium",
+    "alchemicalbrewery:capsule_large"
+  ]
+}

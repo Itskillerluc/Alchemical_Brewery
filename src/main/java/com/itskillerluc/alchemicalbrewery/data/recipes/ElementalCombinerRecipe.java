@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.data.recipes;
-//TODO
+
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
@@ -9,6 +9,7 @@ import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
 import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,6 +22,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,59 +32,50 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
-
     private final ResourceLocation id;
     private final ItemStack output;
     private final List<ItemStack> ingredientList;
-    private final List<ElementData> elementslist;
-    private final List<Integer> counts;
-    private final ElementData Element;
-    private final int itemcolor;
-    private final int secitemcolor;
-
-    public ElementalCombinerRecipe(ResourceLocation id, ItemStack output, List<ItemStack> ingredientList, List<ElementData> elementslist, List<Integer> counts, ElementData element, int itemcolor, int secitemcolor) {
+    private final List<ElementData> elementList;
+    private final List<Integer> countList;
+    private final ElementData element;
+    public ElementalCombinerRecipe(ResourceLocation id, ItemStack output, List<ItemStack> ingredientList, List<ElementData> elementList, List<Integer> countList, ElementData element) {
         this.id = id;
         this.output = output;
         this.ingredientList = ingredientList;
-        this.elementslist = elementslist;
-        this.counts = counts;
-        this.Element = element;
-        this.itemcolor = itemcolor;
-        this.secitemcolor = secitemcolor;
+        this.elementList = elementList;
+        this.countList = countList;
+        this.element = element;
     }
 
     public int size(){
-        return elementslist.size();
+        return elementList.size();
     }
 
-    public ElementData getelement() {
-        return Element;
+    public ElementData getElement() {
+        return element;
     }
 
-    public int getItemcolor() {
-        return itemcolor;
-    }
-    public int getSecitemcolor(){return secitemcolor;}
     @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
+    public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
         if (ingredientList.stream().anyMatch(itemStack -> itemStack.is(ModItems.ELEMENT_CRAFTING.get()))) {
             AtomicInteger iteration = new AtomicInteger(0);
-            return elementslist.stream().allMatch(element -> pContainer.getItem(iteration.get()).is(ModItems.ELEMENT_CRAFTING.get()) ? element.matches(ElementData.of(Objects.requireNonNull(pContainer.getItem(iteration.getAndIncrement()).getTag()).getCompound("element"))) : ItemStack.isSameItemSameTags(ingredientList.get(iteration.get()), pContainer.getItem(ingredientList.indexOf(iteration.get()))));
+            return elementList.stream().allMatch(element -> pContainer.getItem(iteration.get()).is(ModItems.ELEMENT_CRAFTING.get()) ? element.matches(ElementData.of(Objects.requireNonNull(pContainer.getItem(iteration.getAndIncrement()).getTag()).getCompound("element"))) : ItemStack.isSameItemSameTags(ingredientList.get(iteration.get()), pContainer.getItem(iteration.get())));
         }
         return ingredientList.stream().allMatch(ingredient -> ItemStack.isSameItemSameTags(ingredient, pContainer.getItem(ingredientList.indexOf(ingredient))));
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer pContainer) {
-        return output.is(ModItems.ELEMENT_BASIC.get()) ? Element_Basic.fromData(Element) : output;
+    public @NotNull ItemStack assemble(@NotNull SimpleContainer pContainer) {
+        return output.is(ModItems.ELEMENT_BASIC.get()) ? Element_Basic.fromData(element) : output;
     }
 
+    @SuppressWarnings("unused")
     public ElementData getElement(int index){
-        return elementslist.get(index);
+        return elementList.get(index);
     }
 
     public int getCount(int index){
-        return counts.get(index);
+        return countList.get(index);
     }
 
     @Override
@@ -90,22 +84,22 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem() {
-        return output.copy();
+    public @NotNull ItemStack getResultItem() {
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return Type.INSTANCE;
     }
 
@@ -115,51 +109,51 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
         public static final String ID = "elemental_combining";
     }
 
-    public static ItemStack itemStackFromJson(JsonObject pStackObject) {
-        return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(pStackObject, true, true);
-    }
-
-
     public static class Serializer implements RecipeSerializer<ElementalCombinerRecipe>{
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(AlchemicalBrewery.MOD_ID,"elemental_combining");
         private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
         @Override
-        public ElementalCombinerRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+        public @NotNull ElementalCombinerRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
 
-            ResourceLocation elementRescourceLocation = ResourceLocation.tryParse(GsonHelper.getAsString(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"), "element"));
+            ResourceLocation elementResourceLocation = ResourceLocation.tryParse(GsonHelper.getAsString(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"), "element"));
 
-            Element element = ModElements.ELEMENTS.get().getValue(elementRescourceLocation);
+            Element element = ModElements.ELEMENTS.get().getValue(elementResourceLocation);
 
-
-            Integer itemcolor = GsonHelper.getAsInt(GsonHelper.getAsJsonObject(pSerializedRecipe, "output") , "itemcolor", -1);
-            Integer secitemcolor = GsonHelper.getAsInt(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"), "secitemcolor", -1);
-
-            if(itemcolor == -1){
-                itemcolor = null;
-            }
-            if(secitemcolor == -1){
-                secitemcolor = null;
+            if (element == null){
+                LogManager.getLogger().warn(pRecipeId + ": Element with resource location " + elementResourceLocation + " doesn't exist.");
+                throw new ResourceLocationException(pRecipeId + ": Element with resource location " + elementResourceLocation + " doesn't exist.");
             }
 
-            String displayName = GsonHelper.getAsString(pSerializedRecipe, "displayname", null);
+            Integer itemColor = GsonHelper.getAsInt(GsonHelper.getAsJsonObject(pSerializedRecipe, "output") , "itemColor", -1);
+            Integer secItemColor = GsonHelper.getAsInt(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"), "secItemColor", -1);
 
-            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null) != null ? ShapedRecipe.itemStackFromJson(Objects.requireNonNull(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayitem", null))) : element.defualtItemModel;
+            if (itemColor == -1){
+                itemColor = null;
+            }
+
+            if (secItemColor == -1){
+                secItemColor = null;
+            }
+
+            String displayName = GsonHelper.getAsString(pSerializedRecipe, "displayName", null);
+
+            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null) != null ? ShapedRecipe.itemStackFromJson(Objects.requireNonNull(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null))) : element.defualtItemModel;
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
 
             List<ItemStack> ingredientList = new ArrayList<>();
-            List<Element> elementslist = Lists.newArrayList();
+            List<Element> elementList = Lists.newArrayList();
             List<CompoundTag> extraDataList = new ArrayList<>();
             List<Integer> counts = Lists.newArrayList();
             List<ItemStack> ingredientListTemp = new ArrayList<>();
 
             ingredients.forEach((ele)->{
-                ingredientList.add(itemStackFromJson(ele.getAsJsonObject()));
+                ingredientList.add(ShapedRecipe.itemStackFromJson(ele.getAsJsonObject()));
                 ResourceLocation location = ResourceLocation.tryParse(ele.getAsJsonObject().get("element").getAsString());
-                elementslist.add(ModElements.ELEMENTS.get().getValue(location));
+                elementList.add(ModElements.ELEMENTS.get().getValue(location));
                 extraDataList.add(generateAdditionalData(ele.getAsJsonObject(), element));
                 counts.add(ele.getAsJsonObject().get("count").getAsInt());
             });
@@ -174,25 +168,28 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
 
             List<ElementData> dataList = new ArrayList<>();
 
-            for (int i = 0, elementslistSize = elementslist.size(); i < elementslistSize; i++) {
-                com.itskillerluc.alchemicalbrewery.elements.Element element1 = elementslist.get(i);
+            for (int i = 0, elementsListSize = elementList.size(); i < elementsListSize; i++) {
+                com.itskillerluc.alchemicalbrewery.elements.Element element1 = elementList.get(i);
                 dataList.add(new ElementData(null, null, null, null, extraDataList.get(i), element1));
             }
 
-            return new ElementalCombinerRecipe(pRecipeId, output, ingredientList, dataList, counts, new ElementData(displayName, displayItem, itemcolor, secitemcolor, extraData, element) , itemcolor, secitemcolor);
+            return new ElementalCombinerRecipe(pRecipeId, output, ingredientList, dataList, counts, new ElementData(displayName, displayItem, itemColor, secItemColor, extraData, element));
         }
 
         private static CompoundTag generateAdditionalData(JsonObject parent, com.itskillerluc.alchemicalbrewery.elements.Element element) {
+            return getAdditionalData(parent, element, GSON);
+        }
+
+        static CompoundTag getAdditionalData(JsonObject parent, Element element, Gson gson) {
             CompoundTag extraData = element.defaultAdditionalData;
-            if(parent.has("extradata")) {
+            if(parent.has("extraData")) {
                 try {
-                    JsonElement jsonElement = parent.get("extradata");
+                    JsonElement jsonElement = parent.get("extraData");
                     CompoundTag nbt;
                     if (jsonElement.isJsonObject())
-                        nbt = TagParser.parseTag(GSON.toJson(jsonElement));
+                        nbt = TagParser.parseTag(gson.toJson(jsonElement));
                     else
-                        nbt = TagParser.parseTag(GsonHelper.convertToString(jsonElement, "extradata"));
-
+                        nbt = TagParser.parseTag(GsonHelper.convertToString(jsonElement, "extraData"));
                     extraData = nbt;
                 } catch (CommandSyntaxException e) {
                     throw new JsonSyntaxException("Invalid NBT Entry: " + e);
@@ -203,27 +200,23 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
 
         @Nullable
         @Override
-        public ElementalCombinerRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf buf) {
+        public ElementalCombinerRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf buf) {
             ItemStack output = buf.readItem();
-            List<ItemStack> ingredientlist = buf.readList(FriendlyByteBuf::readItem);
-            List<ElementData> elementslist = buf.readList(FriendlyByteBuf::readNbt).stream().map(ElementData::of).toList();
+            List<ItemStack> ingredientList = buf.readList(FriendlyByteBuf::readItem);
+            List<ElementData> elementList = buf.readList(FriendlyByteBuf::readNbt).stream().map(ElementData::of).toList();
             List<Integer> counts = buf.readList(FriendlyByteBuf::readInt);
             ElementData element = ElementData.of(Objects.requireNonNull(buf.readNbt()));
-            int itemcolor = buf.readInt();
-            int secitemcolor = buf.readInt();
 
-            return new ElementalCombinerRecipe(pRecipeId, output, ingredientlist, elementslist, counts,element,itemcolor, secitemcolor);
+            return new ElementalCombinerRecipe(pRecipeId, output, ingredientList, elementList, counts, element);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, ElementalCombinerRecipe recipe) {
             buf.writeItemStack(recipe.getResultItem(), false);
             buf.writeCollection(recipe.ingredientList, FriendlyByteBuf::writeItem);
-            buf.writeCollection(recipe.elementslist, (friendlyByteBuf, elementData) -> friendlyByteBuf.writeNbt(elementData.toTag()));
-            buf.writeCollection(recipe.counts, FriendlyByteBuf::writeInt);
-            buf.writeNbt(recipe.Element.toTag());
-            buf.writeInt(recipe.itemcolor);
-            buf.writeInt(recipe.secitemcolor);
+            buf.writeCollection(recipe.elementList, (friendlyByteBuf, elementData) -> friendlyByteBuf.writeNbt(elementData.toTag()));
+            buf.writeCollection(recipe.countList, FriendlyByteBuf::writeInt);
+            buf.writeNbt(recipe.element.toTag());
         }
 
         @Override
@@ -239,12 +232,12 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
 
         @Override
         public Class<RecipeSerializer<?>> getRegistryType() {
-            return Serializer.castClass(RecipeSerializer.class);
+            return Serializer.castClass();
         }
 
-        @SuppressWarnings("unchecked") // Need this wrapper, because generics
-        private static <G> Class<G> castClass(Class<?> cls) {
-            return (Class<G>)cls;
+        @SuppressWarnings("unchecked")
+        private static <G> Class<G> castClass() {
+            return (Class<G>) RecipeSerializer.class;
         }
     }
 }

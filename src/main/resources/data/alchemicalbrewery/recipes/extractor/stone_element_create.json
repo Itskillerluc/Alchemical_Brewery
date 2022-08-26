@@ -14,9 +14,9 @@
   "output": {
     "item": "alchemicalbrewery:element_basic"
   },
-  "itemcolor": 7500402,
-  "secitemcolor": 7500402,
-  "displayname": "Stone",
+  "itemColor": 7500402,
+  "secItemColor": 7500402,
+  "displayName": "Stone",
   "element": "alchemicalbrewery:block",
   "count": 1,
   "capsule": true
