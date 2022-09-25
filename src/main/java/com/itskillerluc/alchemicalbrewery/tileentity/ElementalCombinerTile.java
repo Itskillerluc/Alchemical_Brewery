@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.data.recipes.ElementalCombinerRecipe;
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -30,54 +30,53 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class ElementalCombinerTile extends BlockEntity {
-
     private final ItemStackHandler itemHandler = new ItemStackHandler(9) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
     };
+
     private LazyOptional<IItemHandler> handler = LazyOptional.of(()->itemHandler);
 
     /**
      * move the tags to a spot where it actually works when dropping them
      */
-    public SimpleContainer additemtags(){
+    public SimpleContainer addItemTags(){
         List<ItemStack> items = new ArrayList<>();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             items.add(itemHandler.getStackInSlot(i));
         }
-        items.forEach((ele)->{
-            ele.serializeNBT().getCompound("ForgeCaps").getAllKeys().forEach((element)->{
-                ele.getOrCreateTag().put(element, ele.serializeNBT().getCompound("ForgeCaps").get(element));
-            });
-        });
-        SimpleContainer tagitems = new SimpleContainer(9);
+
+        items.forEach((ele)-> ele.serializeNBT().getCompound("ForgeCaps").getAllKeys().forEach((element)-> ele.getOrCreateTag().put(element, Objects.requireNonNull(ele.serializeNBT().getCompound("ForgeCaps").get(element)))));
+
+        SimpleContainer tagItems = new SimpleContainer(9);
         for(int i=0;i<items.size();i++){
-            tagitems.setItem(i, items.get(i));
+            tagItems.setItem(i, items.get(i));
         }
-        return tagitems;
+        return tagItems;
     }
 
     /**
      * drops that should drop when broken
      */
     public void drops() {
-        SimpleContainer tagitems = additemtags();
-        Containers.dropContents(this.level, this.worldPosition, tagitems);
+        Containers.dropContents(Objects.requireNonNull(this.level), this.worldPosition, addItemTags());
     }
 
 
 
     public ElementalCombinerTile(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(ModTileEntities.ELEMENTALCOMBINER.get(), pWorldPosition, pBlockState);
+        super(ModTileEntities.ELEMENTAL_COMBINER.get(), pWorldPosition, pBlockState);
     }
 
     @Override
-    public void load(CompoundTag pTag) {
+    public void load(@NotNull CompoundTag pTag) {
         super.load(pTag);
         itemHandler.deserializeNBT(pTag.getCompound("inv"));
     }
@@ -88,14 +87,12 @@ public class ElementalCombinerTile extends BlockEntity {
         super.saveAdditional(pTag);
     }
 
-
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
             return handler.cast();
         }
-
         return super.getCapability(cap, side);
     }
 
@@ -132,14 +129,13 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     /**
-     * @param entity tileentity being targeted
+     * @param entity tileEntity being targeted
      * @return true if a recipe instance is present
      */
     public static boolean hasRecipe(ElementalCombinerTile entity) {
         Level level = entity.getLevel();
-
-        SimpleContainer tagItems = entity.additemtags();
-        Optional<ElementalCombinerRecipe> match = level.getRecipeManager()
+        SimpleContainer tagItems = entity.addItemTags();
+        Optional<ElementalCombinerRecipe> match = Objects.requireNonNull(level).getRecipeManager()
                 .getRecipeFor(ElementalCombinerRecipe.Type.INSTANCE, tagItems, level);
 
         return match.isPresent();
@@ -147,7 +143,7 @@ public class ElementalCombinerTile extends BlockEntity {
 
     /**
      * craft the item
-     * @param entity tileentity thats targeted
+     * @param entity tileEntity that's targeted
      */
     public static void craftItem(ElementalCombinerTile entity) {
         Level level = entity.level;
@@ -156,7 +152,7 @@ public class ElementalCombinerTile extends BlockEntity {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        Optional<ElementalCombinerRecipe> match = level.getRecipeManager()
+        Optional<ElementalCombinerRecipe> match = Objects.requireNonNull(level).getRecipeManager()
                 .getRecipeFor(ElementalCombinerRecipe.Type.INSTANCE, inventory, level);
 
         if(match.isPresent()) {
@@ -171,7 +167,7 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     /**
-     * inserts the item that's being held into the tileentity
+     * inserts the item that's being held into the tileEntity
      * @param item item type that should be inserted
      * @param count item count that should be inserted
      * @param tag tags of the item that should be inserted
@@ -183,11 +179,13 @@ public class ElementalCombinerTile extends BlockEntity {
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
-        ItemStack itemtoinsert = new ItemStack(item, count, tag);
-        if(entity.itemHandler.getStackInSlot(0).isEmpty()||entity.itemHandler.getStackInSlot(1).isEmpty()||entity.itemHandler.getStackInSlot(2).isEmpty()||entity.itemHandler.getStackInSlot(3).isEmpty()||entity.itemHandler.getStackInSlot(4).isEmpty()||entity.itemHandler.getStackInSlot(5).isEmpty()||entity.itemHandler.getStackInSlot(6).isEmpty()||entity.itemHandler.getStackInSlot(7).isEmpty()) {
+        ItemStack itemToInsert = new ItemStack(item, count, tag);
+        if(IntStream.of(entity.itemHandler.getSlots()).anyMatch(slot -> entity.itemHandler.getStackInSlot(slot).isEmpty())) {
             entity.itemHandler.insertItem(
-                    (entity.itemHandler.getStackInSlot(0).isEmpty()) ? 0 : (entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : (entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : 7,
-                    itemtoinsert, false);
+                    IntStream.of(entity.itemHandler.getSlots())
+                            .filter(slot -> entity.itemHandler.getStackInSlot(slot).isEmpty())
+                            .findFirst()
+                            .orElse(-1), itemToInsert, false);
             player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }else{
             if (player.getLevel().isClientSide) {
@@ -197,16 +195,18 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     /**
-     * extracts the item from the tileentity and into the players hand
-     * @param pPlayer player thats extracting the item from the tileentity
-     * @param entity tileentity thats being targeted
+     * extracts the item from the tileEntity and into the players hand
+     * @param pPlayer player that's extracting the item from the tileEntity
+     * @param entity tileEntity that's being targeted
      */
     public void extractItem(Player pPlayer, ElementalCombinerTile entity) {
-        int slot = (!entity.itemHandler.getStackInSlot(7).isEmpty()) ? 7 : (!entity.itemHandler.getStackInSlot(6).isEmpty()) ? 6 : (!entity.itemHandler.getStackInSlot(5).isEmpty()) ? 5 : (!entity.itemHandler.getStackInSlot(4).isEmpty()) ? 4 : (!entity.itemHandler.getStackInSlot(3).isEmpty()) ? 3 : (!entity.itemHandler.getStackInSlot(2).isEmpty()) ? 2 : (!entity.itemHandler.getStackInSlot(1).isEmpty()) ? 1 : 0;
-        if(!entity.itemHandler.getStackInSlot(0).isEmpty()||!entity.itemHandler.getStackInSlot(1).isEmpty()||!entity.itemHandler.getStackInSlot(2).isEmpty()||!entity.itemHandler.getStackInSlot(3).isEmpty()||!entity.itemHandler.getStackInSlot(4).isEmpty()||!entity.itemHandler.getStackInSlot(5).isEmpty()||!entity.itemHandler.getStackInSlot(6).isEmpty()||!entity.itemHandler.getStackInSlot(7).isEmpty()){
-            ItemStack item = entity.additemtags().getItem(slot);
+        int slot = IntStream.of(entity.itemHandler.getSlots())
+                .filter(slotNumber -> !entity.itemHandler.getStackInSlot(slotNumber).isEmpty())
+                .max()
+                .orElse(-1);
+        if(IntStream.of(entity.itemHandler.getSlots()).anyMatch(slotNumber -> !entity.itemHandler.getStackInSlot(slotNumber).isEmpty())){
+            ItemStack item = entity.addItemTags().getItem(slot);
             pPlayer.setItemInHand(InteractionHand.MAIN_HAND, item);
-
             entity.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
         }else if (pPlayer.getLevel().isClientSide){
             pPlayer.sendMessage(new TextComponent("There are no items inside"), pPlayer.getUUID());
@@ -214,24 +214,25 @@ public class ElementalCombinerTile extends BlockEntity {
     }
 
     /**
-     * prints the elements that are in the tileentity
-     * @param player player clicking the tileentity
-     * @param entity tileentity being clicked
+     * prints the elements that are in the tileEntity
+     * @param player player clicking the tileEntity
+     * @param entity tileEntity being clicked
      */
     public void getItems(Player player, ElementalCombinerTile entity) {
-        ArrayList<String> items = new ArrayList<String>();
-        ArrayList<Integer> counts = new ArrayList<Integer>();
+        ArrayList<String> items = new ArrayList<>();
+        ArrayList<Integer> counts = new ArrayList<>();
         boolean allEmpty = true;
 
         for (int i=0; i<=7;i++){
-            if(!entity.itemHandler.getStackInSlot(i).isEmpty()&&entity.itemHandler.getStackInSlot(i) != null){
+            if(!entity.itemHandler.getStackInSlot(i).isEmpty()) {
+                entity.itemHandler.getStackInSlot(i);
                 items.add(entity.itemHandler.getStackInSlot(i).getItem().toString());
                 counts.add(entity.itemHandler.getStackInSlot(i).getCount());
                 allEmpty = false;
             }
         }
 
-        SimpleContainer tagItems = entity.additemtags();
+        SimpleContainer tagItems = entity.addItemTags();
 
         TextComponent message = new TextComponent("");
         if (!allEmpty) {
@@ -242,19 +243,17 @@ public class ElementalCombinerTile extends BlockEntity {
                         ElementData Element = ElementData.of(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("ForgeCaps").getCompound("element"));
                         Name = Element.displayName;
                     }
-                }else if(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("tag")) {
-                    if (entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").contains("element")) {
-                        ElementData Element = ElementData.of(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").getCompound("element"));
-                        Name = Element.displayName;
-                    }
+                }else if (entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).contains("tag") && entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").contains("element")) {
+                    ElementData Element = ElementData.of(entity.serializeNBT().getCompound("inv").getList("Items", 10).getCompound(i).getCompound("tag").getCompound("element"));
+                    Name = Element.displayName;
                 }
                 message.append(counts.get(i).toString());
                 message.append(" x ");
                 if (entity.itemHandler.getStackInSlot(i).is(ModItems.ELEMENT_CRAFTING.get())) {
                     message.append("Element: " + Name);
                 } else if(entity.itemHandler.getStackInSlot(i).hasTag()){
-                    message.append(items.get(i) + " {"+tagItems.getItem(i).getTag().toString()+"}");
-                }else{
+                    message.append(items.get(i) + " {"+ Objects.requireNonNull(tagItems.getItem(i).getTag()) +"}");
+                } else{
                     message.append(items.get(i));
                 }
                 if(i+1<items.size()) {

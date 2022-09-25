@@ -147,7 +147,7 @@ public class ElementalExtractorBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModTileEntities.ELEMENTALEXTRACTORTILE.get(), ElementalExtractorTile::tick);
+        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModTileEntities.ELEMENTAL_EXTRACTOR_TILE.get(), ElementalExtractorTile::tick);
     }
 
     public void animateTick(BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Random pRand) {

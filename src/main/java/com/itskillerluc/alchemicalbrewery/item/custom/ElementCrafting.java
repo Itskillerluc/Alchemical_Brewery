@@ -10,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class Element_Crafting extends Element_Basic{
-    public Element_Crafting(Properties pProperties) {
+public class ElementCrafting extends ElementBasic {
+    public ElementCrafting(Properties pProperties) {
         super(pProperties);
     }
 
@@ -19,21 +19,31 @@ public class Element_Crafting extends Element_Basic{
      * create a dynamic name
      */
     @Override
-    public @NotNull Component getName(ItemStack pStack) {
-        String name = null;
-        if (pStack.getTag() != null) {
-            name = pStack.getTag().getCompound("element").getString("displayName");
-            Element elementType = ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pStack.getTag().getCompound("element").getString("type")));
-            if (name.equals("") && elementType != null) {
-                name = elementType.defaultDisplayName;
-            }
-        }
+    public @NotNull Component getName(@NotNull ItemStack pStack) {
+        String name = getDynamicName(pStack);
         return name != null ? new TranslatableComponent(getDescriptionId(), "\u00A7a(" + name + ")") : new TranslatableComponent("item.alchemicalbrewery.element_crafting");
+    }
+
+    static String getDynamicName(ItemStack pStack) {
+        String name;
+        if (pStack.getTag() == null) {
+            return null;
+        }
+        name = pStack.getTag().getCompound("element").getString("displayName");
+        Element elementType = ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(pStack.getTag().getCompound("element").getString("type")));
+        if (name.equals("") && elementType != null) {
+            name = elementType.defaultDisplayName;
+        }
+        return name;
     }
 
     public static class ColorHandler implements ItemColor {
         @Override
-        public int getColor(ItemStack pStack, int pTintIndex) {
+        public int getColor(@NotNull ItemStack pStack, int pTintIndex) {
+            return getDynamicColor(pStack, pTintIndex);
+        }
+
+        static int getDynamicColor(ItemStack pStack, int pTintIndex) {
             if (pStack.getTag() != null) {
                 final CompoundTag element = pStack.getTag().getCompound("element");
                 final Element elementType = ModElements.ELEMENTS.get().getValue(new ResourceLocation(element.getString("type")));

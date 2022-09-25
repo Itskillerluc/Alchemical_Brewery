@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.events;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.entity.ModEntityTypes;
 
@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = AlchemicalBrewery.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class EntityRendererHandler 
 {
@@ -23,6 +24,6 @@ public class EntityRendererHandler
 	@SubscribeEvent
 	public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
 	{
-        event.registerEntityRenderer(ModEntityTypes.ELEMENTPROJECTILE.get(), ElementProjectileRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.ELEMENT_PROJECTILE.get(), ElementProjectileRenderer::new);
 	}
 }

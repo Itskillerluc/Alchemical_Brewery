@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.item.custom;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
@@ -18,62 +18,71 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class WandItem extends Item {
-
     public void setSlot(ItemStack stack, int slot){
         stack.getOrCreateTag().putInt("Selected", slot);
     }
     public int getSlot(ItemStack stack){
+        if (stack.getTag() == null){
+            return 0;
+        }
         return stack.getTag().getInt("Selected");
     }
-    public int getMaxelements(ItemStack stack) {
-        return stack.getTag().getInt("maxelements");
+    public int getMaxElements(ItemStack stack) {
+        if (stack.getTag() == null){
+            return 0;
+        }
+        return stack.getTag().getInt("maxElements");
     }
-    public int getUsedelements(ItemStack stack) {
-        return stack.getTag().getInt("usedelements");
+    public int getUsedElements(ItemStack stack) {
+        if (stack.getTag() == null){
+            return 0;
+        }
+        return stack.getTag().getInt("usedElements");
     }
 
     /**
      * @param stack stack that is being targeted
      * @return the total amount of element slots that are being used
      */
+    @SuppressWarnings("unused")
     public int getAmount(ItemStack stack){
         ArrayList<Integer> amounts = new ArrayList<>();
         int amount = 0;
         if(stack.getTag() != null) {
-            stack.getTag().getList("Elements", 10).forEach((ele) -> amounts.add(((CompoundTag) ele).getInt("amount")));
+            stack.getTag().getList("Elements", 10).forEach(ele -> amounts.add(((CompoundTag) ele).getInt("amount")));
         }
         for (Integer i : amounts)
             amount += i;
         return amount;
     }
-    public void setMaxelements(ItemStack stack, int value){
-        stack.getOrCreateTag().putInt("maxelements", value);
+
+    public void setMaxElements(ItemStack stack, int value){
+        stack.getOrCreateTag().putInt("maxElements", value);
     }
-    public void setUsedelements(ItemStack stack, int value){
-        stack.getOrCreateTag().putInt("usedelements", value);
+    public void setUsedElements(ItemStack stack, int value){
+        stack.getOrCreateTag().putInt("usedElements", value);
     }
 
     /**
      * handles the upgrades
-     * @param stack itemstack which is targeted
+     * @param stack itemStack which is targeted
      */
     private void upgradeHandler(ItemStack stack){
-        setMaxelements(stack, 16);
+        setMaxElements(stack, 16);
     }
 
     public WandItem(Properties pProperties) {
         super(pProperties);
     }
 
-
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level pLevel, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
         if (pLevel.isClientSide()) {
             return super.use(pLevel, pPlayer, pUsedHand);
         }
+
         //adds the selected tag if not present
         final ItemStack itemInHand = pPlayer.getItemInHand(pUsedHand);
         if(itemInHand.getTag() == null){
@@ -98,7 +107,7 @@ public class WandItem extends Item {
                 cycleElements(pPlayer, itemInHand);
             }
 
-        } else if (getUsedelements(itemInHand) > 0) {
+        } else if (getUsedElements(itemInHand) > 0) {
             useElement(pLevel, pPlayer, itemInHand);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
@@ -121,7 +130,7 @@ public class WandItem extends Item {
             itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).putInt("amount", itemInHand.getTag().getList("Elements", 10).getCompound(getSlot(itemInHand)).getInt("amount")-1);
             slot = getSlot(itemInHand);
         }
-        setUsedelements(itemInHand, getUsedelements(itemInHand)-1);
+        setUsedElements(itemInHand, getUsedElements(itemInHand)-1);
         setSlot(itemInHand, slot);
         if(getSlot(itemInHand) == -1){
             setSlot(itemInHand, 0);
@@ -150,50 +159,51 @@ public class WandItem extends Item {
     }
 
     private void insertElement(Player pPlayer) {
-        if (pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) || pPlayer.getMainHandItem().is(ModItems.ELEMENT_USE.get())) {
+        if (!pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) && !pPlayer.getMainHandItem().is(ModItems.ELEMENT_USE.get())) {
+            return;
+        }
 
-            ElementData elementinhand = null;
+        ElementData elementInHand = null;
 
-            final ItemStack itemInHand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-            final ItemStack wand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.WAND_ITEM.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        final ItemStack itemInHand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        final ItemStack wand = pPlayer.getItemInHand(pPlayer.getOffhandItem().is(ModItems.WAND_ITEM.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
-            if (itemInHand.getTag() != null) {
-                elementinhand = ElementData.of(itemInHand.getOrCreateTag().getCompound("element"));
-                if (getUsedelements(wand) < getMaxelements(wand)) {
-                    pPlayer.setItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, Utilities.DecodeStackTags(new ItemStack(itemInHand.getItem(), itemInHand.getCount() - 1, itemInHand.getTag())));
+        if (itemInHand.getTag() != null) {
+            elementInHand = ElementData.of(itemInHand.getOrCreateTag().getCompound("element"));
+            if (getUsedElements(wand) < getMaxElements(wand)) {
+                pPlayer.setItemInHand(pPlayer.getOffhandItem().is(ModItems.ELEMENT_USE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, Utilities.DecodeStackTags(new ItemStack(itemInHand.getItem(), itemInHand.getCount() - 1, itemInHand.getTag())));
+            }
+        }
+
+        if (elementInHand == null || elementInHand.isEmpty() || wand.getTag() == null) {
+            return;
+        }
+
+        if (getUsedElements(wand) < getMaxElements(wand)) {
+
+            boolean inserted = false;
+
+            //if it already exists add one
+            for (int i = 0; i < wand.getTag().getList("Elements", 10).size(); i++) {
+                if (ElementData.of(wand.getTag().getList("Elements", 10).getCompound(i).getCompound("element")).matches(elementInHand)) {
+                    wand.getTag().getList("Elements", 10).getCompound(i).putInt("amount", wand.getTag().getList("Elements", 10).getCompound(i).getInt("amount") + 1);
+                    inserted = true;
+                    setUsedElements(wand, getUsedElements(wand) + 1);
                 }
             }
 
-            if (elementinhand == null || elementinhand.isEmpty() || wand.getTag() == null) {
-                return;
-            }
-
-            if (getUsedelements(wand) < getMaxelements(wand)) {
-
-                boolean inserted = false;
-
-                //if it already exists add one
-                for (int i = 0; i < wand.getTag().getList("Elements", 10).size(); i++) {
-                    if (ElementData.of(wand.getTag().getList("Elements", 10).getCompound(i).getCompound("element")).matches(elementinhand)) {
-                        wand.getTag().getList("Elements", 10).getCompound(i).putInt("amount", wand.getTag().getList("Elements", 10).getCompound(i).getInt("amount") + 1);
-                        inserted = true;
-                        setUsedelements(wand, getUsedelements(wand) + 1);
-                    }
-                }
-
-                if (!inserted) {
-                    ElementData finalElementinhand = elementinhand;
-                    wand.getTag().getList("Elements", 10).add(Util.make(
-                            () -> {
-                                var tag = new CompoundTag();
-                                tag.put("element", finalElementinhand.toTag());
-                                return tag;
-                            }
-                    ));
-                    wand.getTag().getList("Elements", 10).getCompound(wand.getTag().getList("Elements", 10).size() - 1).putInt("amount", 1);
-                    setUsedelements(wand, getUsedelements(wand)+1);
-                    cycleElements(pPlayer, wand);
-                }
+            if (!inserted) {
+                ElementData finalElementInHand = elementInHand;
+                wand.getTag().getList("Elements", 10).add(Util.make(
+                        () -> {
+                            var tag = new CompoundTag();
+                            tag.put("element", finalElementInHand.toTag());
+                            return tag;
+                        }
+                ));
+                wand.getTag().getList("Elements", 10).getCompound(wand.getTag().getList("Elements", 10).size() - 1).putInt("amount", 1);
+                setUsedElements(wand, getUsedElements(wand)+1);
+                cycleElements(pPlayer, wand);
             }
         }
     }
@@ -203,8 +213,8 @@ public class WandItem extends Item {
     }
 
     /**
-     * @param stack the itemstack that is targeted
-     * @return returns true if the wand is containing atleast 1 element
+     * @param stack the itemStack that is targeted
+     * @return returns true if the wand is containing at least 1 element
      */
     public static boolean hasElement(ItemStack stack) {
         return stack.getTag() != null && stack.getTag().getList("Elements", 10).size() > 0;
@@ -219,6 +229,4 @@ public class WandItem extends Item {
             return getColorForSelected(pStack);
         }
     }
-
-
 }

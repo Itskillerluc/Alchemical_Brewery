@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;

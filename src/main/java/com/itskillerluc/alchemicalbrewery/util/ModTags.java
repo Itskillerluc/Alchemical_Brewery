@@ -1,11 +1,12 @@
 package com.itskillerluc.alchemicalbrewery.util;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+@SuppressWarnings("unused")
 public class ModTags {
     public static class Items {
         public static final TagKey<Item> EXTRACTION_BLOCK_EXCEPTIONS = tag("extract_exceptions/block");

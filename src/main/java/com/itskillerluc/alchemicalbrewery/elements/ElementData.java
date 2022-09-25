@@ -1,5 +1,4 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-//TODO
 
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.entity.custom.ElementProjectileEntity;
@@ -27,7 +26,8 @@ public class ElementData {
     public int color;
     public int secColor;
     public CompoundTag additionalData;
-    public static EntityDataSerializer<ElementData> ELEMENTDATA = new EntityDataSerializer<>() {
+    public Element elementType;
+    public static EntityDataSerializer<ElementData> ELEMENT_DATA = new EntityDataSerializer<>() {
         @Override
         public void write(@NotNull FriendlyByteBuf pBuffer, @NotNull ElementData pValue) {
             pBuffer.writeUtf(pValue.displayName);
@@ -49,8 +49,6 @@ public class ElementData {
         }
     };
 
-    public Element elementType;
-
     public boolean isEmpty(){
         return elementType.getRegistryName() == null || elementType.getRegistryName().equals(new ResourceLocation(AlchemicalBrewery.MOD_ID, "empty"));
     }
@@ -59,19 +57,8 @@ public class ElementData {
         return elementType.toTag(this);
     }
 
-    public ElementData changeFromTag(CompoundTag tag) {
-        ElementData data = elementType.fromTag(tag);
-        itemModel = data.itemModel;
-        elementType = data.elementType;
-        displayName = data.displayName;
-        color = data.color;
-        secColor = data.secColor;
-        additionalData = data.additionalData;
-        return this;
-    }
-
     public ElementData decodeFromTag(CompoundTag tag) {
-        return elementType.fromTag(tag);
+        return elementType.fromTagSafe(tag);
     }
 
     public boolean matches(ElementData elementData){
@@ -83,12 +70,12 @@ public class ElementData {
         this.displayName = displayName != null ? displayName : "Empty";
         this.color = color;
         this.secColor = secColor;
-        this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();;
+        this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
     }
 
     public ElementData(String displayName, ItemStack itemModel, Integer color, Integer secColor, CompoundTag additionalInfo, Element elementType) {
         this.additionalData = additionalInfo != null ? additionalInfo : elementType.defaultAdditionalData;
-        this.itemModel = itemModel != null ? itemModel : elementType.defualtItemModel;
+        this.itemModel = itemModel != null ? itemModel : elementType.defaultItemModel;
         this.displayName = displayName != null ? displayName : elementType.getName().apply(additionalData);
         this.color = color != null ? color : elementType.getColor().applyAsInt(additionalData);
         this.secColor = secColor != null ? secColor : new Color(elementType.getColor().applyAsInt(additionalData)).darker().getRGB();
@@ -97,16 +84,16 @@ public class ElementData {
 
     public ElementData(Element elementType) {
         this.elementType = elementType != null ? elementType : ModElements.EMPTY.get();
-        this.additionalData = elementType.defaultAdditionalData != null ? elementType.defaultAdditionalData : new CompoundTag();
-        this.itemModel = elementType.defualtItemModel != null ? elementType.defualtItemModel : ItemStack.EMPTY;
-        this.displayName = elementType.defaultDisplayName != null ? elementType.defaultDisplayName : "Empty";
-        this.color = elementType.defaultColor;
-        this.secColor = elementType.defaultSecColor;
+        this.additionalData = elementType != null && elementType.defaultAdditionalData != null ? elementType.defaultAdditionalData : new CompoundTag();
+        this.itemModel = elementType != null && elementType.defaultItemModel != null ? elementType.defaultItemModel : ItemStack.EMPTY;
+        this.displayName = elementType != null && elementType.defaultDisplayName != null ? elementType.defaultDisplayName : "Empty";
+        this.color = elementType != null ? elementType.defaultColor : 0;
+        this.secColor = elementType != null ? elementType.defaultSecColor : 0;
     }
 
     public static ElementData of(CompoundTag tag){
         Element type = tag.contains("type") ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(tag.getString("type"))) : ModElements.EMPTY.get();
-        return type != null ? type.fromTag(tag) : ModElements.EMPTY.get().fromTag(tag);
+        return type != null ? type.fromTagSafe(tag) : ModElements.EMPTY.get().fromTagSafe(tag);
     }
 
 
@@ -130,10 +117,8 @@ public class ElementData {
      * @throws NullPointerException The result or entity is null
      */
     public final void run (BlockHitResult result, ElementProjectileEntity entity){
-        if(result == null){
+        if(result == null || entity == null){
             throw new NullPointerException("result is not allowed to be null.");
-        }else if(entity == null){
-            throw new NullPointerException("entity is not allowed to be null");
         }
         this.elementType.elementFunction(result.getDirection(), result.getBlockPos(), entity.getLevel(), (LivingEntity)entity.getOwner(), InteractionHand.MAIN_HAND, false, this.additionalData);
     }
@@ -150,8 +135,8 @@ public class ElementData {
         this.elementType.elementFunction(Direction.UP, entity.blockPosition(), entity.getLevel(), (LivingEntity)projectile.getOwner(), InteractionHand.MAIN_HAND, false, this.additionalData);
     }
 
-    static{
-        EntityDataSerializers.registerSerializer(ELEMENTDATA);
+    static {
+        EntityDataSerializers.registerSerializer(ELEMENT_DATA);
     }
 }
 

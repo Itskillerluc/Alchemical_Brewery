@@ -7,7 +7,7 @@ import com.itskillerluc.alchemicalbrewery.elements.Element;
 import com.itskillerluc.alchemicalbrewery.elements.ElementData;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
 import com.itskillerluc.alchemicalbrewery.item.ModItems;
-import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
+import com.itskillerluc.alchemicalbrewery.item.custom.ElementBasic;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +66,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public @NotNull ItemStack assemble(@NotNull SimpleContainer pContainer) {
-        return output.is(ModItems.ELEMENT_BASIC.get()) ? Element_Basic.fromData(element) : output;
+        return output.is(ModItems.ELEMENT_BASIC.get()) ? ElementBasic.fromData(element) : output;
     }
 
     @SuppressWarnings("unused")
@@ -140,7 +140,7 @@ public class ElementalCombinerRecipe implements Recipe<SimpleContainer> {
 
             String displayName = GsonHelper.getAsString(pSerializedRecipe, "displayName", null);
 
-            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null) != null ? ShapedRecipe.itemStackFromJson(Objects.requireNonNull(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null))) : element.defualtItemModel;
+            ItemStack displayItem = GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null) != null ? ShapedRecipe.itemStackFromJson(Objects.requireNonNull(GsonHelper.getAsJsonObject(pSerializedRecipe, "displayItem", null))) : element.defaultItemModel;
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
 

@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.util.Utilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,35 +9,22 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-
-import java.util.Objects;
 
 public class EnderElement extends Element{
 
-    public EnderElement(String Displayname) {
-        super(Displayname, null, new ItemStack(Items.ENDER_PEARL), 2458227, 2458227);
+    public EnderElement(String displayName) {
+        super(displayName, null, new ItemStack(Items.ENDER_PEARL), 2458227, 2458227);
     }
 
     void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData) {
-        BlockPos newpos;
-        newpos = switch (dir) {
-            case UP -> pos.above();
-            case DOWN -> pos.below();
-            case EAST -> pos.east();
-            case WEST -> pos.west();
-            case NORTH -> pos.north();
-            case SOUTH -> pos.south();
-        };
-        if (user != null && !level.isClientSide()) {
-            user.teleportToWithTicket(newpos.getX(), newpos.getY(), newpos.getZ());
-            if (consume) {
-                if (user.getItemInHand(hand).hasTag()) {
-                    if (!user.getItemInHand(hand).getTag().getBoolean("Creative")) {
-                        user.setItemInHand(hand, Utilities.DecodeStackTags(new ItemStack(user.getItemInHand(hand).getItem(), user.getItemInHand(hand).getCount() - 1, user.getItemInHand(hand).getTag())));
-                    }
-                }
-            }
+        BlockPos newPos = pos.relative(dir);
+        if (user == null || level.isClientSide()) {
+            return;
+        }
+        user.teleportToWithTicket(newPos.getX(), newPos.getY(), newPos.getZ());
+        ItemStack itemInHand = user.getItemInHand(hand);
+        if (consume && itemInHand.getTag() != null && !itemInHand.getTag().getBoolean("Creative")) {
+            user.setItemInHand(hand, Utilities.DecodeStackTags(new ItemStack(itemInHand.getItem(), itemInHand.getCount() - 1, itemInHand.getTag())));
         }
     }
 }

@@ -1,5 +1,5 @@
 package com.itskillerluc.alchemicalbrewery.tileentity;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.block.custom.ElementalExtractorBlock;
 import com.itskillerluc.alchemicalbrewery.container.ElementalInjectorContainer;
 
@@ -30,6 +30,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
@@ -46,7 +47,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
     int BurnTime = 0;
     int TotalBurnTime = 60;
     boolean IsBurning;
-    private boolean iscrafting = false;
+    private boolean isCrafting = false;
     private boolean finished = false;
 
     /**
@@ -57,12 +58,11 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
-
-        Containers.dropContents(this.level, this.worldPosition, inventory);
+        Containers.dropContents(Objects.requireNonNull(this.level), this.worldPosition, inventory);
     }
 
     public ElementalInjectorTile(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(ModTileEntities.ELEMENTALINJECTORTILE.get(), pWorldPosition, pBlockState);
+        super(ModTileEntities.ELEMENTAL_INJECTOR_TILE.get(), pWorldPosition, pBlockState);
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {
@@ -93,12 +93,12 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    public void load(CompoundTag pTag) {
+    public void load(@NotNull CompoundTag pTag) {
         super.load(pTag);
         this.charge = pTag.getInt("charge");
-        this.IsBurning = pTag.getBoolean("isburning");
-        this.BurnTime = pTag.getInt("burntime");
-        this.iscrafting = pTag.getBoolean("iscrafting");
+        this.IsBurning = pTag.getBoolean("isBurning");
+        this.BurnTime = pTag.getInt("burnTime");
+        this.isCrafting = pTag.getBoolean("isCrafting");
         this.finished = pTag.getBoolean("finished");
         itemHandler.deserializeNBT(pTag.getCompound("inv"));
     }
@@ -106,10 +106,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         pTag.putInt("charge", charge);
-        pTag.putBoolean("isburning", IsBurning);
-        pTag.putInt("burntime", BurnTime);
+        pTag.putBoolean("isBurning", IsBurning);
+        pTag.putInt("burnTime", BurnTime);
         pTag.put("inv", itemHandler.serializeNBT());
-        pTag.putBoolean("iscrafting",iscrafting);
+        pTag.putBoolean("isCrafting", isCrafting);
         pTag.putBoolean("finished",finished);
         super.saveAdditional(pTag);
     }
@@ -117,10 +117,11 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
     /**
      * handles everything that should be done every tick
      * @param pLevel level the tile entity is in
-     * @param pPos blockpos of the tile entity
-     * @param pState blockstate of the tile entity
+     * @param pPos blockPos of the tile entity
+     * @param pState blockState of the tile entity
      * @param pBlockEntity tile entity
      */
+    @SuppressWarnings("DuplicatedCode")
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalInjectorTile pBlockEntity){
 
         if(hasRecipe(pBlockEntity)) {
@@ -130,9 +131,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                 craftItem(pBlockEntity);
                 setChanged(pLevel, pPos, pState);
             }
-            if(pBlockEntity.iscrafting) {
+            if(pBlockEntity.isCrafting) {
                 pBlockEntity.BurnTime++;
                 setChanged(pLevel, pPos, pState);
+
                 if(pBlockEntity.BurnTime > pBlockEntity.TotalBurnTime) {
                     pBlockEntity.finished = true;
                     craftItem(pBlockEntity);
@@ -142,7 +144,7 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
             pBlockEntity.BurnTime = 0;
             pBlockEntity.IsBurning = false;
             pBlockEntity.finished = false;
-            pBlockEntity.iscrafting = false;
+            pBlockEntity.isCrafting = false;
         }
 
         pState = pState.setValue(ElementalExtractorBlock.LIT, pBlockEntity.IsBurning);
@@ -155,21 +157,23 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
      * @return true if a recipe instance of the type is present
      */
     private static boolean hasRecipe(ElementalInjectorTile entity) {
-
         Level level = entity.getLevel();
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }
-
-        Optional<ElementalInjectorRecipe> match = level.getRecipeManager()
-                .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
-
+        Optional<ElementalInjectorRecipe> match = getElementalInjectorRecipe(entity, level, inventory);
         return match.isPresent();
     }
 
+    @NotNull
+    private static Optional<ElementalInjectorRecipe> getElementalInjectorRecipe(ElementalInjectorTile entity, Level level, SimpleContainer inventory) {
+        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
+            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
+        }
+        return level.getRecipeManager()
+                .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
+    }
+
     /**
-     * adds the charge of a item to the tile entity
+     * adds the charge of an item to the tile entity
      * @param entity tile entity targeted
      */
     private static void addCharge(ElementalInjectorTile entity){
@@ -185,33 +189,27 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
                     .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
         }
 
-        if(match.isPresent()){
-            if(match.get().chargeMatches(inventory)){
-                entity.charge = entity.charge + match.get().getCharge(inventory);
-                entity.itemHandler.extractItem(0, 1, false);
-            }
+        if (match.isEmpty() || !ElementalInjectorRecipe.chargeMatches(inventory)) {
+            return;
         }
+        entity.charge = entity.charge + match.get().getCharge(inventory);
+        entity.itemHandler.extractItem(0, 1, false);
     }
 
     /**
      * crafts the item
-     * @param entity tile enitty targeted
+     * @param entity tile entity targeted
      */
     private static void craftItem(ElementalInjectorTile entity) {
         Level level = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }
-
-        Optional<ElementalInjectorRecipe> match = level.getRecipeManager()
-                .getRecipeFor(ElementalInjectorRecipe.Type.INSTANCE, inventory, level);
+        Optional<ElementalInjectorRecipe> match = getElementalInjectorRecipe(entity, level, inventory);
 
         if(match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
                 && canInsertItemIntoOutputSlot(inventory, match.get().assemble(inventory)) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()) {
             if(match.get().getCharge(inventory)<=entity.charge){
-                if(!entity.iscrafting){
-                    entity.iscrafting = true;
+                if(!entity.isCrafting){
+                    entity.isCrafting = true;
                     entity.IsBurning = true;
                 }
                 if(entity.finished){
@@ -226,15 +224,15 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
 
                     entity.IsBurning = false;
                     entity.finished = false;
-                    entity.iscrafting = false;
+                    entity.isCrafting = false;
                 }
             }
         }else{
             entity.BurnTime = 0;
             entity.IsBurning = false;
             entity.finished = false;
-            entity.iscrafting = false;
-            setChanged(entity.getLevel(), entity.getBlockPos(), entity.getBlockState());
+            entity.isCrafting = false;
+            setChanged(Objects.requireNonNull(entity.getLevel()), entity.getBlockPos(), entity.getBlockState());
         }
     }
 
@@ -244,7 +242,6 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
             return handler.cast();
         }
-
         return super.getCapability(cap, side);
     }
     @Override
@@ -292,13 +289,13 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         return inventory.getItem(2).getMaxStackSize() > inventory.getItem(2).getCount();
     }
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         return new TextComponent("Elemental Injector");
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory, @NotNull Player pPlayer) {
         return new ElementalInjectorContainer(pContainerId, pInventory, this, this.data);
     }
 }

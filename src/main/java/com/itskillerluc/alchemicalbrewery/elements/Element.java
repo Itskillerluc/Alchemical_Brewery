@@ -1,10 +1,9 @@
 package com.itskillerluc.alchemicalbrewery.elements;
-//TODO
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -16,32 +15,30 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 public abstract class Element extends ForgeRegistryEntry<Element> {
-
     public final String defaultDisplayName;
-    public final ItemStack defualtItemModel;
-
+    public final ItemStack defaultItemModel;
     public final int defaultColor;
     public final int defaultSecColor;
     public final CompoundTag defaultAdditionalData;
 
 
     /**
-     * dont use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
+     * don't use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
      */
     public CompoundTag toTag(ElementData data) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("color", data.color);
         tag.putInt("secColor", data.secColor);
         tag.putString("displayName", data.displayName);
-        tag.put("additionalData",data.additionalData);
+        tag.put("additionalData", data.additionalData);
         tag.put("itemModel", new CompoundTag());
         data.itemModel.save(tag.getCompound("itemModel"));
-        tag.putString("type",this.getRegistryName().toString());
+        tag.putString("type", Objects.requireNonNull(this.getRegistryName()).toString());
         return tag;
     }
 
@@ -83,31 +80,33 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
 
 
     /**
-     * dont use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
+     * don't use this unless you HAVE TO in very specific cases. use the wrapper in ElementData class instead
      */
-    public ElementData fromTag(CompoundTag tag) {
+    public final ElementData fromTagSafe(CompoundTag tag){
         Element type = tag.contains("type") ? ModElements.ELEMENTS.get().getValue(ResourceLocation.tryParse(tag.getString("type"))) : ModElements.EMPTY.get();
-        try {
-            ElementData toReturn = new ElementData(
-                    tag.contains("displayName") ? tag.getString("displayName") : type.defaultDisplayName,
-                    tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : type.defualtItemModel,
-                    tag.contains("color") ? tag.getInt("color") : type.defaultColor,
-                    tag.contains("secColor") ? tag.getInt("secColor") : type.defaultSecColor,
-                    tag.contains("additionalData") ? tag.getCompound("additionalData") : type.defaultAdditionalData,
-                    type);
-            return toReturn;
-        }catch(NullPointerException exception){
+        if (type == null){
             LogManager.getLogger().error("'"+tag.getString("type") + "'" + " Does not exist. Most likely a typo but could also mean it wasn't registered correctly");
-            Minecraft.getInstance().level.players().forEach((abstractClientPlayer -> {
-                abstractClientPlayer.sendMessage(new TextComponent("'"+tag.getString("type")+"'" + " Does not exist. Most likely a typo but could also mean it wasn't registered correctly"), abstractClientPlayer.getUUID());
-            }));
+            if (Minecraft.getInstance().level != null) {
+                Minecraft.getInstance().level.players().forEach((abstractClientPlayer -> abstractClientPlayer.sendMessage(new TextComponent("'" + tag.getString("type") + "'" + " Does not exist. Most likely a typo but could also mean it wasn't registered correctly"), abstractClientPlayer.getUUID())));
+            }
             return new ElementData(ModElements.EMPTY.get());
         }
+        return fromTagUnsafe(tag, type);
+    }
+
+    protected ElementData fromTagUnsafe(CompoundTag tag, Element type) {
+        return new ElementData(
+                tag.contains("displayName") ? tag.getString("displayName") : type.defaultDisplayName,
+                tag.contains("itemModel") ? ItemStack.of(tag.getCompound("itemModel")) : type.defaultItemModel,
+                tag.contains("color") ? tag.getInt("color") : type.defaultColor,
+                tag.contains("secColor") ? tag.getInt("secColor") : type.defaultSecColor,
+                tag.contains("additionalData") ? tag.getCompound("additionalData") : type.defaultAdditionalData,
+                type);
     }
 
     public Element(String defaultDisplayName, CompoundTag defaultAdditionalData, ItemStack defaultItemModel, int defaultColor, int defaultSecColor){
         this.defaultAdditionalData = defaultAdditionalData != null ? defaultAdditionalData : new CompoundTag();
-        this.defualtItemModel = defaultItemModel != null ? defaultItemModel : ItemStack.EMPTY;
+        this.defaultItemModel = defaultItemModel != null ? defaultItemModel : ItemStack.EMPTY;
         this.defaultColor = defaultColor;
         this.defaultSecColor = defaultSecColor;
         this.defaultDisplayName = defaultDisplayName != null ? defaultDisplayName : "Empty";
@@ -120,13 +119,8 @@ public abstract class Element extends ForgeRegistryEntry<Element> {
         return element.elementType.getRegistryName().equals(other.elementType.getRegistryName());
     }
 
-
     /**
      * Override this to define what the element does.
      */
     abstract void elementFunction(Direction dir, BlockPos pos, Level level, LivingEntity user, InteractionHand hand, boolean consume, CompoundTag extraData);
-
-    public int getDefaultColor() {
-        return defaultColor;
-    }
 }

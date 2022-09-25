@@ -1,33 +1,27 @@
 package com.itskillerluc.alchemicalbrewery.util;
-//TODO
+
 import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.List;
-
 public class LootHandler{
     private LootHandler() {}
-
     private static final List<String> ENTITY_TABLES = List.of("creeper");
-
 
     public static void registerEventBusListeners(IEventBus eventBus){
         eventBus.addListener(LootHandler::lootLoad);
     }
     private static void lootLoad(LootTableLoadEvent evt){
-        String entitesPrefix = "minecraft:entities/";
+        String entitiesPrefix = "minecraft:entities/";
         String name = evt.getName().toString();
 
-        if(name.startsWith(entitesPrefix)&&ENTITY_TABLES.contains(name.substring(entitesPrefix.length()))){
+        if(name.startsWith(entitiesPrefix)&&ENTITY_TABLES.contains(name.substring(entitiesPrefix.length()))){
             String file = name.substring("minecraft:".length());
             evt.getTable().addPool(getInjectPool(file));
         }

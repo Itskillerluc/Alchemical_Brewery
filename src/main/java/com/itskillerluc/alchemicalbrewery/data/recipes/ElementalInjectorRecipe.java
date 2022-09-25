@@ -5,7 +5,7 @@ import com.itskillerluc.alchemicalbrewery.AlchemicalBrewery;
 import com.itskillerluc.alchemicalbrewery.data.ChargeLoader;
 import com.itskillerluc.alchemicalbrewery.elements.Element;
 import com.itskillerluc.alchemicalbrewery.elements.ModElements;
-import com.itskillerluc.alchemicalbrewery.item.custom.Element_Basic;
+import com.itskillerluc.alchemicalbrewery.item.custom.ElementBasic;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -41,7 +41,7 @@ public class ElementalInjectorRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
-        return pContainer.getItem(1).getItem() instanceof Element_Basic && Objects.equals(Element_Basic.getElement(pContainer.getItem(1)).getRegistryName(), element.getRegistryName()) || chargeMatches(pContainer);
+        return pContainer.getItem(1).getItem() instanceof ElementBasic && Objects.equals(ElementBasic.getElement(pContainer.getItem(1)).getRegistryName(), element.getRegistryName()) || chargeMatches(pContainer);
     }
 
     public static boolean chargeMatches(SimpleContainer pContainer){
