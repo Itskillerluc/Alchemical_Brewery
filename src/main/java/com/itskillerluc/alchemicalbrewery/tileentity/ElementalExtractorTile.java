@@ -141,6 +141,7 @@ public class ElementalExtractorTile extends BlockEntity implements MenuProvider 
      */
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, ElementalExtractorTile pBlockEntity){
         if(hasRecipe(pBlockEntity)) {
+            //noinspection DuplicatedCode
             if(!pBlockEntity.IsBurning) {
                 craftItem(pBlockEntity);
                 setChanged(pLevel, pPos, pState);

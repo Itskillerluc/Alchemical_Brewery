@@ -32,7 +32,7 @@ public class ChargeLoader extends SimpleJsonResourceReloadListener {
     public static final Codec<Map<Either<TagKey<Item>, Item>, Integer>> codec = Codec.unboundedMap(Codec.either(TagKey.hashedCodec(Registry.ITEM_REGISTRY), Registry.ITEM.byNameCodec()), Codec.INT);
     private static final Map<Either<TagKey<Item>, Item>, Integer> charges = new HashMap<>();
 
-    private static final Map<Ingredient, Integer> chargeValues = new HashMap<>();
+    public static final Map<Ingredient, Integer> chargeValues = new HashMap<>();
 
     public ChargeLoader() {
         super(GSON, "charges");

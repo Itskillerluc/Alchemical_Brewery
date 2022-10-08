@@ -192,8 +192,10 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
         if (match.isEmpty() || !ElementalInjectorRecipe.chargeMatches(inventory)) {
             return;
         }
-        entity.charge = entity.charge + match.get().getCharge(inventory);
-        entity.itemHandler.extractItem(0, 1, false);
+        entity.charge = entity.charge + match.get().getCharge(inventory, entity.level);
+        if (match.get().getCharge(inventory, entity.level) != 0) {
+            entity.itemHandler.extractItem(0, 1, false);
+        }
     }
 
     /**
@@ -207,13 +209,13 @@ public class ElementalInjectorTile extends BlockEntity implements MenuProvider {
 
         if(match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
                 && canInsertItemIntoOutputSlot(inventory, match.get().assemble(inventory)) && match.get().getRecipeItems().getItem() == entity.itemHandler.getStackInSlot(1).getItem()) {
-            if(match.get().getCharge(inventory)<=entity.charge){
+            if(match.get().getCharge(inventory, entity.level)<=entity.charge){
                 if(!entity.isCrafting){
                     entity.isCrafting = true;
                     entity.IsBurning = true;
                 }
                 if(entity.finished){
-                    entity.charge = entity.charge - match.get().getCharge(inventory);
+                    entity.charge = entity.charge - match.get().getCharge(inventory, entity.level);
 
 
                     entity.itemHandler.extractItem(1, 1, false);

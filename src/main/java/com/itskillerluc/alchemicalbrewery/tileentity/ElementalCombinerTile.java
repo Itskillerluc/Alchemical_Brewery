@@ -180,9 +180,9 @@ public class ElementalCombinerTile extends BlockEntity {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
         ItemStack itemToInsert = new ItemStack(item, count, tag);
-        if(IntStream.of(entity.itemHandler.getSlots()).anyMatch(slot -> entity.itemHandler.getStackInSlot(slot).isEmpty())) {
+        if(IntStream.of(entity.itemHandler.getSlots()-1).anyMatch(slot -> entity.itemHandler.getStackInSlot(slot).isEmpty())) {
             entity.itemHandler.insertItem(
-                    IntStream.of(entity.itemHandler.getSlots())
+                    IntStream.of(entity.itemHandler.getSlots()-1)
                             .filter(slot -> entity.itemHandler.getStackInSlot(slot).isEmpty())
                             .findFirst()
                             .orElse(-1), itemToInsert, false);
@@ -200,11 +200,11 @@ public class ElementalCombinerTile extends BlockEntity {
      * @param entity tileEntity that's being targeted
      */
     public void extractItem(Player pPlayer, ElementalCombinerTile entity) {
-        int slot = IntStream.of(entity.itemHandler.getSlots())
+        int slot = IntStream.of(entity.itemHandler.getSlots()-1)
                 .filter(slotNumber -> !entity.itemHandler.getStackInSlot(slotNumber).isEmpty())
                 .max()
                 .orElse(-1);
-        if(IntStream.of(entity.itemHandler.getSlots()).anyMatch(slotNumber -> !entity.itemHandler.getStackInSlot(slotNumber).isEmpty())){
+        if(IntStream.of(entity.itemHandler.getSlots()-1).anyMatch(slotNumber -> !entity.itemHandler.getStackInSlot(slotNumber).isEmpty())){
             ItemStack item = entity.addItemTags().getItem(slot);
             pPlayer.setItemInHand(InteractionHand.MAIN_HAND, item);
             entity.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
